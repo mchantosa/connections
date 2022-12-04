@@ -1,0 +1,24 @@
+extends layout
+
+block header
+  h2 Register for an account
+
+block main
+  form(action="#" method="post") 
+    dl
+      dt
+        label(for="email") Enter your email address
+          
+      dd
+        input(type="email" name="email" id="email" placeholder="username@domain.com")
+    dl
+      dt
+        label(for="first-name") Enter password
+      dd
+        input(type="text" name="first-name" id="first_name")
+    dl
+      dt
+        label(for="first-name") Re-enter password
+      dd
+        input(type="text" name="first-name" id="first_name")
+    input(type="submit" value="Register")

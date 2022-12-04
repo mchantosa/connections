@@ -1,0 +1,28 @@
+{
+  "name": "contact-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mchantosa/contact-manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mchantosa/contact-manager/issues"
+  },
+  "homepage": "https://github.com/mchantosa/contact-manager#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "connect-loki": "^1.2.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "pg": "^8.8.0",
+    "pug": "^3.0.2"
+  }
+}
