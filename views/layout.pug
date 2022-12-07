@@ -7,7 +7,6 @@ html(lang="en-US")
 
   body
     header
-      - console.log(flash);
       - let kinds = Object.keys(flash || {});
       if kinds.length > 0
         ul

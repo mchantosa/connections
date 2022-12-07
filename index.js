@@ -123,22 +123,35 @@ app.get("/register",
 
 app.post("/register", 
   mootForAuthenticated,
-  /*[
+  [
     body("password")
       .trim()
-      .isLength({ min: 8 })
-      .withMessage("Passwords must have a minimum of 8 characters"),
-  ],*/
+      .isLength({ min: 8})
+      .withMessage("Passwords must have a minimum of 8 characters")
+      .isLength({ max: 32})
+      .withMessage("Passwords can have a maximum of 32 characters")
+      .matches(/^(?=.*[0-9])/)
+      .withMessage("Password requires a number")
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])/)
+      .withMessage("Password requires a lowercase and upper case letter")
+      .matches(/^(?=.*[*.!@$%^&(){}\[\]~])/)
+      .withMessage("Password requires a special character: *.!@$%^&(){}[]~"),
+  ],
   catchError(async (req, res) => {
     let username = req.body.email.trim();
     let password = req.body.password.trim();
     let passwordConfirm = req.body.password_confirm.trim();
 
     let existsUsername = await res.locals.store.existsUsername(username);
-    console.log(existsUsername)
+    let errors = validationResult(req);
     if(existsUsername) {
       console.log("I am here")
       req.flash("error", "This email is already associated with an account, please choose a different email or conduct a password recovery")
+      res.render("register", {
+        flash: req.flash(),
+      });
+    } else if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
       res.render("register", {
         flash: req.flash(),
       });
