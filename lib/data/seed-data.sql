@@ -1,7 +1,7 @@
 INSERT INTO users (user_email, user_password)
-  VALUES ('admin@domain.com', 'adminPass'),
-         ('developer@domain.com', 'developerPass'),
-         ('user@domain.com', 'userpass');
+  VALUES ('admin@domain.com', '$2b$10$OHEtLiPamCGROXePpQFAYOxaaQrVbr3U0NECBrEBKOnklgLXaGwMW'), --adminPass
+         ('developer@domain.com', '$2b$10$48.6hs6wndzW.ZFbKFUqhep1gLx/lmHgehH/WOXoJv3npsAdxU.vC'), --developerPass
+         ('user@domain.com', '$2b$10$amH8k0kGTCqNkRXTE8hxy.kqMQYgn4K5IfrfgDYsWhCUo.pVYmkVC'); --userPass
 
 INSERT INTO addresses (street_address_1, city, state_code, zip_code, country)
   VALUES ('123 an exciting street', 'Seattle', 'WA', '98370', 'United States'),

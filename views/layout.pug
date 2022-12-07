@@ -7,11 +7,17 @@ html(lang="en-US")
 
   body
     header
-      h1 Welcome to connections
+      - console.log(flash);
+      - let kinds = Object.keys(flash || {});
+      if kinds.length > 0
+        ul
+          each kind in kinds
+            each message in flash[kind]
+              li.flash(class=kind)= message
       block header
 
     main
       block main
 
   footer
-      block footer
+    block footer
