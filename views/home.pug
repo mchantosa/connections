@@ -1,0 +1,14 @@
+extends layout
+
+block header
+  if signedIn 
+    form(action="/logout" method="post") 
+      input(type="submit" value="Logout")
+  else
+    form(action="/login" method="get") 
+      input(type="submit" value="Login")
+
+block main
+  section.welcome-message
+    h1 Welcome to connections
+    p This is a project that I created for myself. 
