@@ -4,15 +4,46 @@ html(lang="en-US")
   head
     title Connections
     meta(charset="UTF-8")
+    link(rel="preconnect" href="https://fonts.googleapis.com")
+    link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet")
+    link(rel="stylesheet" href="/stylesheets/whitespace-reset.css")
+    link(rel="stylesheet" href="/stylesheets/main.css")
 
   body
     header
+      if signedIn 
+        nav.mb-1
+          ul
+            li(class=(activePage == 'home'? 'active-page' : ''))
+              a.center(href="/home") Connections
+            li(class=(activePage == 'userHome'? 'active-page' : ''))
+              a.center(href="/user/home") Home
+            li(class=(activePage == 'contacts'? 'active-page' : ''))
+              a.center(href="/user/contacts") Contacts
+            li(class=(activePage == 'account'? 'active-page' : ''))
+              a.center(href="/user/account") Account
+            li.login-logout
+              form(action="/logout" method="post") 
+                input.center.unbutton(type="submit" value="Logout")
+      else
+        nav.mb-1
+          ul
+            li(class=(activePage == 'home'? 'active-page' : ''))
+              a.center(href="/home") Home
+            li(class=(activePage == 'login'? 'active-page' : ''))
+              form(action="/login" method="get") 
+                input.center.unbutton(type="submit" value="Login")
+
       - let kinds = Object.keys(flash || {});
       if kinds.length > 0
-        ul
+        ul.mb-1
           each kind in kinds
             each message in flash[kind]
-              li.flash(class=kind)= message
+              li(class=kind)= message
+      section.welcome
+        h1 Welcome to connections
+        h2 How is life, the universe, and everything?
       block header
 
     main

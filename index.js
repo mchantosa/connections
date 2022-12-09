@@ -8,15 +8,16 @@ const LokiStore = store(session);
 const ConnectionsDB = require("./lib/connections-db");
 const catchError = require("./lib/catch-error")//async error wrapped
 const flash = require("express-flash");
-const WELCOME_MESSAGE = "Welcome, how's life, the universe, and everything?"
-
-//const morgan = require("morgan");
-
 const { body, validationResult } = require("express-validator");
 
+//const morgan = require("morgan");
 //app.use(morgan("common"));
-//app.use(express.static("public"));
-app.use(express.urlencoded({ extended: false }));// for parsing application/x-www-form-urlencoded, puts key-value pairs in req.body
+
+//make public directory serve static files (images, css)
+app.use(express.static("public"));
+
+//Parsing application/x-www-form-urlencoded, puts key-value pairs in req.body
+app.use(express.urlencoded({ extended: false }));
 
 //Configure session handling
 app.use(session({
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
   next();
 });
 
+//Use flash messaging
 app.use(flash());
 
 //Extract session info
@@ -87,13 +89,15 @@ app.get("/",
 
 app.get("/home",
   (req, res) => {
+    res.locals.activePage = 'home';
     res.render("home");
 });
 
 app.get("/login", 
   mootForAuthenticated, 
   (req, res) => {
-    res.render("login")
+    res.locals.activePage='login';
+    res.render("login");
 });
 
 app.post("/login", 
@@ -101,25 +105,20 @@ app.post("/login",
   catchError(async (req, res) => {
     let username = req.body.email.trim();
     let password = req.body.password.trim();
+    res.locals.loginEmail=username;
 
     let authenticated = await res.locals.store.authenticate(username, password);
     if (!authenticated) {
       req.flash("error", "Your credentials were invalid, please try again.");
+      res.locals.activePage = 'login';
       res.render("login", {
         flash: req.flash(),
       });
     } else {
-      req.flash("info", WELCOME_MESSAGE);
       signIn(req, username)
       res.redirect("/user/home");
     }
 }));
-
-app.get("/register", 
-  mootForAuthenticated, 
-  (req, res) => {
-    res.render("register");
-});
 
 app.post("/register", 
   mootForAuthenticated,
@@ -144,26 +143,30 @@ app.post("/register",
 
     let existsUsername = await res.locals.store.existsUsername(username);
     let errors = validationResult(req);
+    res.locals.registerEmail=username;
     if(existsUsername) {
-      console.log("I am here")
       req.flash("error", "This email is already associated with an account, please choose a different email or conduct a password recovery")
-      res.render("register", {
+      res.locals.activePage = 'login';
+      res.render("login", {
         flash: req.flash(),
       });
     } else if(!errors.isEmpty()) {
       errors.array().forEach(message => req.flash("error", message.msg));
-      res.render("register", {
+      res.locals.activePage = 'login';
+      res.render("login", {
         flash: req.flash(),
       });
     } else if (password !== passwordConfirm) {
       req.flash("error", "Your password and confirmation password do not match")
-      res.render("register", {
+      res.locals.activePage = 'login';
+      res.render("login", {
         flash: req.flash(),
       });
     } else {
       await res.locals.store.addUser(username, password);
       req.flash("info", WELCOME_MESSAGE);
       signIn(req, username)
+      res.locals.activePage = 'user_home';
       res.render("user/home", {
         flash: req.flash(),
       });
@@ -172,15 +175,22 @@ app.post("/register",
 
 app.post("/logout", (req, res) => {
   signOut(req);
-  flash("info", "You have logged out of the application")
+  req.flash("info", "You have logged out of the application");
   res.redirect("/home");
+});
+
+app.get("/home/how-it-works",
+  (req, res) => {
+    res.render("home/how-it-works");
 });
 
 app.get("/user/home",
   requiresAuthentication,
   (req, res) => {
-    if(req.session.signedIn) res.render("user/home");
-    else(res.redirect("/home"))
+    if(req.session.signedIn) {
+      res.locals.activePage = 'userHome';
+      res.render("user/home");
+    } else(res.redirect("/home"))
 });
 
 // Listener

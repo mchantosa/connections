@@ -1,0 +1,143 @@
+html{
+  font-family: 'Montserrat', sans-serif;
+  font: normal 16px;
+}
+
+body{
+  background-image: url("/images/coffee_desk.jpg");
+  box-sizing: border-box;
+  padding-left: 10%;
+  padding-right: 10%;
+  padding-top: 3rem;
+}
+
+.active-page{
+  background-color:#e8d498;
+}
+
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-distributed{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.mb-a-half {
+  margin-bottom: .5rem;
+}
+
+.mb-2 {
+  margin-bottom: 2rem;
+}
+
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.mb-3 {
+  margin-bottom: 3rem;
+}
+
+.tiny-text{
+  font-size: .75rem;
+}
+
+.disable{
+  color:rgb(170, 170, 170);
+}
+
+
+.column-center{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+nav ul{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+nav li{
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0 5px;
+  border-radius: 7px;
+  text-align: center;
+  background-color: #fcfff5;
+  box-shadow: 5px 5px 5px rgba(0,0,0,.6);
+}
+
+nav a, nav input{
+  width: 125px;
+  height: 3rem;
+}
+
+nav a, nav a:visited,  nav input{
+  text-decoration: none;
+  font-weight: bold;
+  color: #263e32;
+}
+
+.unbutton{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
+  border: none;
+  background-color: rgba(0,0,0,0);
+  cursor: pointer;
+}
+
+.login-register{
+  box-sizing: border-box;
+  margin-top: 5rem;
+  padding: 2rem;
+  background-color: rgba(252, 255, 245,.5);
+  width: 35%;
+}
+
+.login-register label{
+  font-size: .9rem;
+  font-weight:500;
+  color:#263e32;
+}
+
+.login-register input{
+  height:1.25rem;
+  width: 200px;
+}
+
+.login-register legend{
+  font-size: 1.25rem;
+  color:#263e32;
+}
+
+.login-register input.rebutton-login{
+  background-color:#263e32;
+  color:#fcfff5;
+  height:2rem;
+}
+
+.welcome{
+  color:#263e32
+}
+
+.welcome h1{
+  font-family: 'Caveat', cursive;
+  font-size: 3rem;
+}
+.welcome h2{
+  padding-left: 3rem;
+  font-size: 1.5rem;
+  font-weight:400;
+}
+
+body > main > section{
+  box-sizing: border-box;
+  margin: 3rem 10%;
+}
