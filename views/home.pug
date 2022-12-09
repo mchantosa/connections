@@ -1,14 +1,16 @@
 extends layout
 
-block header
-  if signedIn 
-    form(action="/logout" method="post") 
-      input(type="submit" value="Logout")
-  else
-    form(action="/login" method="get") 
-      input(type="submit" value="Login")
-
 block main
-  section.welcome-message
-    h1 Welcome to connections
-    p This is a project that I created for myself. 
+  
+  section
+    h2 Our mission
+    p To help you stay connected to those you truly care about.
+  section
+    a.unbutton.rebutton(href="/home/how-it-works") How it works
+  section
+    h2 What's on the horizon
+  section
+    h2 Why do this?
+    p It is possible to have thousands of friends accross a dozen applications and still be completely alone.
+    
+      
