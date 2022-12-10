@@ -1,27 +1,28 @@
 extends ../layout
 
 block main
-  section
-    h2 How it works
-      ol
-        li Create a list of contacts 
-          ul 
-            li For each contact, specify your communication objective
-            li Specify how often you want to contact someone: weekly, monthly, quarterly... 
-            li Specify what events you want to reach out to someone: Birthdays, Valentine's Day, Veterans Day, Halloween, Christmas...
-        li Go to your home page. 
-          ul 
-            li Your home page will update weekly with contact you should reach out to over the week
-            li You will be given you a two week heads up for birthdays and special events
-        li Manage your home page
-          ul
-            li As you go through your contact objective, update you list with a snooze or a objective completed. 
-            li If you snooze, your connection will be pushed into the following week. 
-            li If you complete the objective, your connection will be recueued based on your periodic specification, if you said quarterly, the connection will recueue in 3 months.
-            li If you reach the end of the week without a status update on your connection, it will be pushed into the next week
-          ul Helpful hints 
-            li If you step away from the app and open it to find you are due to contact EVERYONE, you can snooze yourself to a reaosnable ammount of connections and over time establish a consistent pacing. 
-            li If you never reach a reaonable pacing, concider re-evaluating your periodicity. If you have 300 contacts you with to connect with weekly, you are likely struggle with consistent pacing. 
-            li We want communication to be pleasant, not a punishment or ordeal.
-  section
-    a(href="#") Tutorial Placeholder
+  div.dilute-background
+    h1.mb-2 How it works
+    ol.enumerated-list
+      li Create a list of contacts 
+        ul.unordered-list
+          li For each contact, specify your communication objective
+          li Specify how often you want to contact someone: weekly, monthly, quarterly... 
+          li Specify what events you want to reach out to someone: Birthdays, Valentine's Day, Veterans Day, Halloween, Christmas...
+      li Go to your home page. 
+        ul.unordered-list
+          li Your home page will update weekly with contact you should reach out to over the week
+          li You will be given you a two week heads up for birthdays and special events
+      li Manage your home page
+        ul.unordered-list
+          li As you go through your contact objective, update you list with a snooze or a objective completed. 
+          li If you snooze, your connection will be pushed into the following week. 
+          li If you complete the objective, your connection will be recueued based on your periodic specification, if you said quarterly, the connection will recueue in 3 months.
+          li If you reach the end of the week without a status update on your connection, it will be pushed into the next week
+      li Helpful hints
+        ul.unordered-list
+          li If you step away from the app and open it to find you are due to contact EVERYONE, you can snooze yourself to a reaosnable ammount of connections and over time establish a consistent pacing. 
+          li If you never reach a reaonable pacing, concider re-evaluating your periodicity. If you have 300 contacts you with to connect with weekly, you are likely struggle with consistent pacing. 
+          li We want communication to be pleasant, not a punishment or ordeal.
+    section
+      a.disable(href="#") Tutorial Placeholder

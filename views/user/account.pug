@@ -1,6 +1,27 @@
 extends layout
 
-block header
-
 block main
-  p Hello World
+  div.dilute-background
+    div
+      h1 Account information 
+      dl.side-by-side.mb-a-half
+        dt Username: 
+        dd #{userData.username}
+      dl.side-by-side.mb-a-half
+        dt Email: 
+        dd #{userData.email}
+      dl.side-by-side.mb-a-half
+        dt 
+          a.disable(href="#") change password 
+      dl.side-by-side.mb-a-half
+        dt First Name:
+        dd #{userData.first_name}
+      dl.side-by-side.mb-a-half
+        dt Last Name:
+        dd #{userData.last_name}
+    div.center-align-right
+      form(action="/user/account/update-account-information" method="get") 
+        input.center.unbutton.rebutton(type="submit" value="Update account information")
+      form(action="/user/account/update-email" method="get") 
+        input.center.unbutton.rebutton(type="submit" value="Update email")
+  block overlay-top

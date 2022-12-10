@@ -103,12 +103,14 @@ app.get("/login",
 app.post("/login", 
   mootForAuthenticated, 
   catchError(async (req, res) => {
-    let username = req.body.email.trim();
+    let userId=req.body.userId.trim();
+    //let username = req.body.username.trim();
+    //let email = req.body.email.trim();
     let password = req.body.password.trim();
-    res.locals.loginEmail=username;
+    res.locals.loginId=userId;
 
-    let authenticated = await res.locals.store.authenticate(username, password);
-    if (!authenticated) {
+    let username = await res.locals.store.authenticate(userId, password);
+    if (!username) {
       req.flash("error", "Your credentials were invalid, please try again.");
       res.locals.activePage = 'login';
       res.render("login", {
@@ -135,17 +137,30 @@ app.post("/register",
       .withMessage("Password requires a lowercase and upper case letter")
       .matches(/^(?=.*[*.!@$%^&(){}\[\]~])/)
       .withMessage("Password requires a special character: *.!@$%^&(){}[]~"),
+    body("username")
+      .trim()
+      .isLength({ min: 8})
+      .withMessage("Usernames must have a minimum of 8 characters")
   ],
   catchError(async (req, res) => {
-    let username = req.body.email.trim();
+    let username = req.body.username.trim();
+    let email = req.body.email.trim();
     let password = req.body.password.trim();
     let passwordConfirm = req.body.password_confirm.trim();
 
     let existsUsername = await res.locals.store.existsUsername(username);
+    let existsEmail = await res.locals.store.existsEmail(email);
     let errors = validationResult(req);
-    res.locals.registerEmail=username;
+    res.locals.registerUsername=username;
+    res.locals.registerEmail=email;
     if(existsUsername) {
-      req.flash("error", "This email is already associated with an account, please choose a different email or conduct a password recovery")
+      req.flash("error", "This username is already associated with an account")
+      res.locals.activePage = 'login';
+      res.render("login", {
+        flash: req.flash(),
+      });
+    } else if(existsEmail) {
+      req.flash("error", "This email is already associated with an account")
       res.locals.activePage = 'login';
       res.render("login", {
         flash: req.flash(),
@@ -163,13 +178,10 @@ app.post("/register",
         flash: req.flash(),
       });
     } else {
-      await res.locals.store.addUser(username, password);
-      req.flash("info", WELCOME_MESSAGE);
+      await res.locals.store.addUser(username, email, password); 
       signIn(req, username)
       res.locals.activePage = 'user_home';
-      res.render("user/home", {
-        flash: req.flash(),
-      });
+      res.redirect('/user/home');
     }
 }));
 
@@ -186,12 +198,57 @@ app.get("/home/how-it-works",
 
 app.get("/user/home",
   requiresAuthentication,
-  (req, res) => {
+  catchError(async (req, res) => {
     if(req.session.signedIn) {
       res.locals.activePage = 'userHome';
+      res.locals.userNames = await res.locals.store.getUserNames(req.session.username);
+      res.locals.existsContacts = await res.locals.store.existsContacts(req.session.username);
       res.render("user/home");
     } else(res.redirect("/home"))
-});
+}));
+
+app.get("/user/account",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    if(req.session.signedIn) {
+      res.locals.activePage = 'account';
+      res.locals.userData = await res.locals.store.getUserData(username);
+      res.render("user/account");
+    } else(res.redirect("/home"))
+}));
+
+app.get("/user/account/update-email",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    if(req.session.signedIn) {
+      res.locals.userData = await res.locals.store.getUserData(username);
+      res.render("user/account/update-email");
+    } else(res.redirect("/home"))
+}));
+
+app.get("/user/account/update-account-information",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    if(req.session.signedIn) {
+      res.locals.userData = await res.locals.store.getUserData(username);
+      res.render("user/account/update-account-information");
+    } else(res.redirect("/home"))
+}));
+
+app.get("/user/contacts",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    if(req.session.signedIn) {
+      res.locals.activePage = 'contacts';
+      //res.local.email=req.session.username;
+      //res.locals.userNames = await res.locals.store.getUserNames(req.session.username);
+      //res.locals.existsContacts = await res.locals.store.existsContacts(req.session.username);
+      res.render("user/contacts");
+    } else(res.redirect("/home"))
+}));
 
 // Listener
 app.listen(port, host, () => {

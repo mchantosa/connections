@@ -11,43 +11,45 @@ html(lang="en-US")
     link(rel="stylesheet" href="/stylesheets/main.css")
 
   body
-    header
-      if signedIn 
-        nav.mb-1
-          ul
-            li(class=(activePage == 'home'? 'active-page' : ''))
-              a.center(href="/home") Connections
-            li(class=(activePage == 'userHome'? 'active-page' : ''))
-              a.center(href="/user/home") Home
-            li(class=(activePage == 'contacts'? 'active-page' : ''))
-              a.center(href="/user/contacts") Contacts
-            li(class=(activePage == 'account'? 'active-page' : ''))
-              a.center(href="/user/account") Account
-            li.login-logout
-              form(action="/logout" method="post") 
-                input.center.unbutton(type="submit" value="Logout")
-      else
-        nav.mb-1
-          ul
-            li(class=(activePage == 'home'? 'active-page' : ''))
-              a.center(href="/home") Home
-            li(class=(activePage == 'login'? 'active-page' : ''))
-              form(action="/login" method="get") 
-                input.center.unbutton(type="submit" value="Login")
+    block overlay-bottom
+    div.body-padding
+      header
+        if signedIn 
+          nav.center-align-right.mb-1
+            ul
+              li(class=(activePage == 'home'? 'color-active' : ''))
+                a.center.unanchor(href="/home") Connections
+              li(class=(activePage == 'userHome'? 'color-active' : ''))
+                a.center.unanchor(href="/user/home") Home
+              li(class=(activePage == 'contacts'? 'color-active' : ''))
+                a.center.unanchor(href="/user/contacts") Contacts
+              li(class=(activePage == 'account'? 'color-active' : ''))
+                a.center.unanchor(href="/user/account") Account
+              li.login-logout
+                form(action="/logout" method="post") 
+                  input.center.unbutton(type="submit" value="Logout")
+        else
+          nav.center-align-right.mb-1
+            ul
+              li(class=(activePage == 'home'? 'color-active' : ''))
+                a.center.unanchor(href="/home") Home
+              li(class=(activePage == 'login'? 'color-active' : ''))
+                form(action="/login" method="get") 
+                  input.center.unbutton(type="submit" value="Login")
 
-      - let kinds = Object.keys(flash || {});
-      if kinds.length > 0
-        ul.mb-1
-          each kind in kinds
-            each message in flash[kind]
-              li(class=kind)= message
-      section.welcome
-        h1 Welcome to connections
-        h2 How is life, the universe, and everything?
-      block header
+        - let kinds = Object.keys(flash || {});
+        if kinds.length > 0
+          ul.mb-1
+            each kind in kinds
+              each message in flash[kind]
+                li(class=kind)= message
+        section.welcome
+          h1 Welcome to connections
+          h2 How is life, the universe, and everything?
+        block header
 
-    main
-      block main
+      main
+        block main
 
   footer
     block footer
