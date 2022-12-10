@@ -1,18 +1,28 @@
 html{
   font-family: 'Montserrat', sans-serif;
   font: normal 16px;
+  color:#414b3b;
 }
 
 body{
   background-image: url("/images/coffee_desk.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
   box-sizing: border-box;
-  padding-left: 10%;
-  padding-right: 10%;
-  padding-top: 3rem;
 }
 
-.active-page{
+.body-padding{
+  padding: 3rem 5%;
+}
+
+.color-active{
   background-color:#e8d498;
+}
+
+.color-inverse{
+  background-color:#263e32;
+  color:#fcfff5
 }
 
 .center{
@@ -25,6 +35,45 @@ body{
   display: flex;
   justify-content: space-evenly;
   align-items: stretch;
+}
+
+.center-align-right{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.column-center{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+a, a.visitted{
+  color:#263e32;
+}
+
+.unanchor{
+  text-decoration: none;
+}
+
+.unbutton{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  border: none;
+  background-color: rgba(0,0,0,0);
+  cursor: pointer;
+}
+
+.rebutton{
+  background-color:#263e32;
+  color:#fcfff5;
+  height:2rem;
+  padding: 0 2rem;
+  margin: 2px;
+}
+
+.bigbutton{
+  height:3rem;
 }
 
 .mb-a-half {
@@ -48,20 +97,8 @@ body{
 }
 
 .disable{
-  color:rgb(170, 170, 170);
-}
-
-
-.column-center{
-  display:flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-nav ul{
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
+  color:rgb(150, 150, 150);
+  font-weight:lighter;
 }
 
 nav li{
@@ -79,20 +116,6 @@ nav a, nav input{
   height: 3rem;
 }
 
-nav a, nav a:visited,  nav input{
-  text-decoration: none;
-  font-weight: bold;
-  color: #263e32;
-}
-
-.unbutton{
-  font-family: 'Montserrat', sans-serif;
-  font-size: 16px;
-  border: none;
-  background-color: rgba(0,0,0,0);
-  cursor: pointer;
-}
-
 .login-register{
   box-sizing: border-box;
   margin-top: 5rem;
@@ -104,7 +127,6 @@ nav a, nav a:visited,  nav input{
 .login-register label{
   font-size: .9rem;
   font-weight:500;
-  color:#263e32;
 }
 
 .login-register input{
@@ -114,7 +136,6 @@ nav a, nav a:visited,  nav input{
 
 .login-register legend{
   font-size: 1.25rem;
-  color:#263e32;
 }
 
 .login-register input.rebutton-login{
@@ -123,21 +144,107 @@ nav a, nav a:visited,  nav input{
   height:2rem;
 }
 
-.welcome{
-  color:#263e32
-}
-
 .welcome h1{
   font-family: 'Caveat', cursive;
   font-size: 3rem;
 }
+
 .welcome h2{
   padding-left: 3rem;
   font-size: 1.5rem;
-  font-weight:400;
 }
 
-body > main > section{
+.dilute-background{
+  background-color: rgba(252, 255, 245,.6);
+  margin:3rem;
+  padding: 3rem;
   box-sizing: border-box;
-  margin: 3rem 10%;
+}
+
+body > main section{
+  box-sizing: border-box;
+  margin: 1.5rem 5%;
+}
+
+h1{
+  font-size: 2rem;
+  font-weight:bold;
+  margin: 1rem 0;
+}
+
+h2{
+  font-size: 1.5rem;
+  font-weight:400;
+  margin: .75rem 0;
+}
+
+h3{
+  font-size: 1.25rem;
+  font-weight:bold;
+  margin: .75rem 0;
+}
+
+p{
+  color:#5a4328;
+}
+
+ol.enumerated-list {
+ counter-reset: my-list-counter;
+}
+
+ol.enumerated-list>li {
+  counter-increment: my-list-counter;
+  font-size: 1.5rem;
+}
+
+ol.enumerated-list>li::before {
+  content: counter(my-list-counter) ". ";
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+ul.unordered-list{
+  list-style: square;
+  list-style-position:inside;
+}
+
+ol ul.unordered-list{
+  font-size: .75em;
+  margin-left: 2rem;
+}
+
+ul.unordered-list>li{
+  text-indent: -1.5em;
+  padding: .5em 0 .5em 1.5em;
+}
+
+dl.side-by-side > dd, dl.side-by-side > dt{
+  display:inline-block;
+}
+
+dl.side-by-side > dt{
+  font-weight: bold;
+}
+
+dl.side-by-side > dd{
+  margin-left: 1rem;
+}
+
+.front-and-center{
+  width: 50%;
+  height: 200px;
+  position: fixed;
+  top: 25%;
+  left: 25%;
+  z-index: 2;
+  background-color:#fcfff5;
+  float:none;
+}
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .4);
+  float: left;
+  position: fixed;
 }

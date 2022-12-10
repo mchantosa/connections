@@ -1,0 +1,15 @@
+extends ../account 
+
+block overlay-bottom
+  div.overlay
+block overlay-top
+  form.front-and-center.login-register(action="/login" method="post")
+    fieldset.column-center
+      legend.mb-2 Update email
+      dl.mb-1
+        dt
+          label(for="firstname") First name:  
+        dd
+          input(type="email" name="email" id="email" placeholder="username@domain.com" value=loginEmail)
+      input.unbutton.rebutton-login(type="submit" value="Update")
+      a.unanchor.rebutton-login(href="/user/account") Cancel

@@ -9,9 +9,9 @@ block main
         legend.mb-2 Login to your account
         dl.mb-1
           dt
-            label(for="email") Email:  
+            label(for="user-id") Username or email:  
           dd
-            input(type="email" name="email" id="email" placeholder="username@domain.com" value=loginEmail)
+            input(type="text" name="userId" id="user-id" value=userId)
         dl.mb-1
           dt
             label(for="password") Password:  
@@ -23,6 +23,11 @@ block main
     form.login-register(action="/register" method="post")
       fieldset.column-center
         legend.mb-2 Register for an account
+        dl.mb-1
+          dt
+            label(for="username") Choose a username 
+          dd
+            input(type="text" name="username" id="username" value=registerUsername)
         dl.mb-1
           dt
             label(for="email") Enter your email address 
