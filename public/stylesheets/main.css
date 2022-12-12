@@ -76,6 +76,29 @@ a, a.visitted{
   height:3rem;
 }
 
+.babybutton{
+  height:1rem;
+  font-size: .75rem;
+  padding: 0 1rem;
+  border-radius: 5px;
+}
+
+.w-25{
+  width:25%;
+}
+
+.p-1{
+  padding:1rem;
+}
+
+.p-2{
+  padding:2rem;
+}
+
+.p-3{
+  padding:3rem;
+}
+
 .mb-a-half {
   margin-bottom: .5rem;
 }
@@ -118,10 +141,7 @@ nav a, nav input{
 
 .login-register{
   box-sizing: border-box;
-  margin-top: 5rem;
-  padding: 2rem;
   background-color: rgba(252, 255, 245,.5);
-  width: 35%;
 }
 
 .login-register label{
@@ -130,18 +150,17 @@ nav a, nav input{
 }
 
 .login-register input{
-  height:1.25rem;
   width: 200px;
+}
+
+.login-register input[type=text], 
+.login-register input[type=password], 
+.login-register input[type=email]{
+  height: 1.25rem;
 }
 
 .login-register legend{
   font-size: 1.25rem;
-}
-
-.login-register input.rebutton-login{
-  background-color:#263e32;
-  color:#fcfff5;
-  height:2rem;
 }
 
 .welcome h1{
@@ -231,14 +250,19 @@ dl.side-by-side > dd{
 }
 
 .front-and-center{
-  width: 50%;
-  height: 200px;
+  box-sizing: border-box;
+  width: 40%;
   position: fixed;
-  top: 25%;
-  left: 25%;
+  top: 8rem;;
+  left: 30%;
   z-index: 2;
   background-color:#fcfff5;
   float:none;
+}
+
+.float-column-formatter{
+  box-sizing: border-box;
+  width:100%;
 }
 
 .overlay {
@@ -247,4 +271,33 @@ dl.side-by-side > dd{
   background-color: rgba(0, 0, 0, .4);
   float: left;
   position: fixed;
+}
+
+div.contact-list-elm:nth-child(odd){
+  background-color: #fcfff5;
+}
+
+div.contact-list-elm:nth-child(even){
+  background-color:#cee2c5;
+}
+
+dl.contact-list dt{
+  vertical-align: top;
+}
+
+.contact-list-elm{
+  display:flex;
+  padding: 2rem;
+  margin:4px;
+  border-radius: 1.5rem;
+}
+
+.left{
+  width:45%;
+  padding: 1rem;
+}
+
+.right{
+  width:45%;
+  padding:1rem;
 }

@@ -4,7 +4,7 @@ block header
 
 block main
   div.center-distributed
-    form.login-register(action="/login" method="post")
+    form.login-register.p-2(action="/login" method="post")
       fieldset.column-center
         legend.mb-2 Login to your account
         dl.mb-1
@@ -17,10 +17,10 @@ block main
             label(for="password") Password:  
           dd
             input(type="password" name="password" id="password")
-        input.mb-a-half.unbutton.rebutton-login(type="submit" value="Login")
+        input.mb-a-half.unbutton.rebutton(type="submit" value="Login")
         a.disable.tiny-text(href="/login") Forgot Password (coming soon)
 
-    form.login-register(action="/register" method="post")
+    form.login-register.p-2(action="/register" method="post")
       fieldset.column-center
         legend.mb-2 Register for an account
         dl.mb-1
@@ -40,7 +40,7 @@ block main
             input(type="password" name="password" id="password")
         dl.mb-1
           dt
-            label(for="password-confirm") Re-enter password
+            label(for="confirm-password") Re-enter password
           dd
-            input(type="password" name="password_confirm" id="password-confirm")
-        input.unbutton.rebutton-login(type="submit" value="Register")
+            input(type="password" name="confirmPassword" id="confirm-password")
+        input.unbutton.rebutton(type="submit" value="Register")
