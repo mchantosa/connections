@@ -3,13 +3,15 @@ extends ../account
 block overlay-bottom
   div.overlay
 block overlay-top
-  form.front-and-center.login-register(action="/login" method="post")
-    fieldset.column-center
-      legend.mb-2 Update email
-      dl.mb-1
-        dt
-          label(for="email") Email:  
-        dd
-          input(type="email" name="email" id="email" placeholder="username@domain.com" value=loginEmail)
-      input.unbutton.rebutton-login(type="submit" value="Update")
-      a.unanchor.rebutton-login(href="/user/account") Cancel
+  div.front-and-center.column-center.p-3
+    form.login-register.float-column-formatter.mb-2(action="/user/account/update-email" method="post")
+      fieldset.column-center
+        legend.mb-1 Update Email
+        dl.mb-a-half
+          dt
+            label(for="email") Email:  
+          dd
+            -let email = (userData.newEmail) ? userData.newEmail : userData.email
+            input(type="email" name="email" id="email" value=email)
+        input.unbutton.rebutton(type="submit" value="Update email")
+    a.unanchor.rebutton.center(href="/user/account") Cancel

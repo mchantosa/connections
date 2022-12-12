@@ -1,0 +1,17 @@
+extends ../account 
+
+block overlay-bottom
+  div.overlay
+block overlay-top
+  div.front-and-center.column-center.p-3
+    form.login-register.float-column-formatter.mb-1(action="/user/account/update-username" method="post")
+      fieldset.column-center
+        legend.mb-1 Update Username
+        dl.mb-a-half
+          dt
+            label(for="username") Username:  
+          dd
+            - let username = (userData.newUsername) ? userData.newUsername : userData.username
+            input(type="text" name="username" id="username" value=username)
+        input.unbutton.rebutton(type="submit" value="Update username")
+    a.unanchor.rebutton.center(href="/user/account") Cancel

@@ -104,13 +104,14 @@ app.post("/login",
   mootForAuthenticated, 
   catchError(async (req, res) => {
     let userId=req.body.userId.trim();
-    //let username = req.body.username.trim();
-    //let email = req.body.email.trim();
     let password = req.body.password.trim();
-    res.locals.loginId=userId;
+    res.locals.userId=userId;
 
-    let username = await res.locals.store.authenticate(userId, password);
-    if (!username) {
+    let userCridentials = await res.locals.store.getUserCredentials(userId);
+    let username = (userCridentials)? userCridentials.username: false;
+    let authenticated = await res.locals.store.authenticate(username, password);
+  
+    if (!username || !authenticated) {
       req.flash("error", "Your credentials were invalid, please try again.");
       res.locals.activePage = 'login';
       res.render("login", {
@@ -141,12 +142,14 @@ app.post("/register",
       .trim()
       .isLength({ min: 8})
       .withMessage("Usernames must have a minimum of 8 characters")
+      .matches(/^((?!@).)*$/)
+      .withMessage("Username cannot contain an @ symbol")
   ],
   catchError(async (req, res) => {
     let username = req.body.username.trim();
     let email = req.body.email.trim();
     let password = req.body.password.trim();
-    let passwordConfirm = req.body.password_confirm.trim();
+    let confirmPassword = req.body.confirmPassword.trim();
 
     let existsUsername = await res.locals.store.existsUsername(username);
     let existsEmail = await res.locals.store.existsEmail(email);
@@ -171,7 +174,7 @@ app.post("/register",
       res.render("login", {
         flash: req.flash(),
       });
-    } else if (password !== passwordConfirm) {
+    } else if (password !== confirmPassword) {
       req.flash("error", "Your password and confirmation password do not match")
       res.locals.activePage = 'login';
       res.render("login", {
@@ -199,55 +202,189 @@ app.get("/home/how-it-works",
 app.get("/user/home",
   requiresAuthentication,
   catchError(async (req, res) => {
-    if(req.session.signedIn) {
-      res.locals.activePage = 'userHome';
-      res.locals.userNames = await res.locals.store.getUserNames(req.session.username);
-      res.locals.existsContacts = await res.locals.store.existsContacts(req.session.username);
-      res.render("user/home");
-    } else(res.redirect("/home"))
+    let username = req.session.username;
+    res.locals.activePage = 'userHome';
+    res.locals.userNames = await res.locals.store.getUserNames(username);
+    res.locals.existsContacts = await res.locals.store.existsContacts(username);
+    res.render("user/home");
 }));
 
 app.get("/user/account",
   requiresAuthentication,
   catchError(async (req, res) => {
     let username = req.session.username;
-    if(req.session.signedIn) {
-      res.locals.activePage = 'account';
-      res.locals.userData = await res.locals.store.getUserData(username);
-      res.render("user/account");
-    } else(res.redirect("/home"))
+    res.locals.activePage = 'account';
+    res.locals.userData = await res.locals.store.getUserData(username);
+    res.render("user/account");
 }));
 
 app.get("/user/account/update-email",
   requiresAuthentication,
   catchError(async (req, res) => {
     let username = req.session.username;
-    if(req.session.signedIn) {
-      res.locals.userData = await res.locals.store.getUserData(username);
-      res.render("user/account/update-email");
-    } else(res.redirect("/home"))
+    res.locals.userData = await res.locals.store.getUserData(username);
+    res.render("user/account/update-email");
+}));
+
+app.get("/user/account/update-username",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    res.locals.userData = await res.locals.store.getUserData(username);
+    res.render("user/account/update-username");
 }));
 
 app.get("/user/account/update-account-information",
   requiresAuthentication,
   catchError(async (req, res) => {
     let username = req.session.username;
-    if(req.session.signedIn) {
+    res.locals.userData = await res.locals.store.getUserData(username);
+    res.render("user/account/update-account-information");
+}));
+
+app.get("/user/account/reset-password",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    res.locals.userData = await res.locals.store.getUserData(username);
+    res.render("user/account/reset-password");
+}));
+
+app.post("/user/account/update-account-information",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    let firstName = req.body.firstName.trim();
+    let lastName = req.body.lastName.trim();
+    await res.locals.store.updateUserData(username, firstName, lastName);
+    res.redirect("/user/account");
+}));
+
+app.post("/user/account/reset-password",
+  requiresAuthentication,
+  [
+    body("newPassword")
+      .trim()
+      .isLength({ min: 8})
+      .withMessage("Passwords must have a minimum of 8 characters")
+      .isLength({ max: 32})
+      .withMessage("Passwords can have a maximum of 32 characters")
+      .matches(/^(?=.*[0-9])/)
+      .withMessage("Password requires a number")
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])/)
+      .withMessage("Password requires a lowercase and upper case letter")
+      .matches(/^(?=.*[*.!@$%^&(){}\[\]~])/)
+      .withMessage("Password requires a special character: *.!@$%^&(){}[]~")
+  ],
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    let password = req.body.password.trim();
+    let newPassword = req.body.newPassword.trim();
+    let confirmPassword = req.body.confirmPassword.trim();
+    let errors = validationResult(req);
+    let passwordAuthenticated = await res.locals.store.authenticate(username, password);
+    if(!passwordAuthenticated){
+      req.flash("error", "Your password does not match our records");
+      res.redirect("/user/account/reset-password");
+    }
+    else if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      res.redirect("/user/account/reset-password");
+    } else if (newPassword !== confirmPassword) {
+      req.flash("error", "Your password and confirmation password do not match")
+      res.redirect("/user/account/reset-password");
+    } else {
+      await res.locals.store.updateUserPassword(username, newPassword);
+      req.flash("info", "Your password has been updated")
+      res.redirect("/user/account");
+    }
+}));
+
+app.post("/user/account/update-email",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    let newEmail = req.body.email.trim();
+    let userCredentials = await res.locals.store.getUserCredentials(username);
+    let email = userCredentials.email;
+    let existsEmail = await res.locals.store.existsEmail(newEmail);
+    if(email === newEmail) {
+      req.flash("info", "Your updated email matched your existing email, your email was not updated")
+      res.redirect("/user/account");
+    } else if (existsEmail) {
+      req.flash("error", "This email is already associated with an account");
       res.locals.userData = await res.locals.store.getUserData(username);
-      res.render("user/account/update-account-information");
-    } else(res.redirect("/home"))
+      res.locals.userData.newEmail = newEmail; 
+      res.render("user/account/update-email", {
+        flash: req.flash(),
+      });
+    } else {
+      let updated = await res.locals.store.updateUseremail(username, newEmail);
+      if(updated){
+        req.flash("info", "Your email has been updated");
+      }
+      res.redirect("/user/account");
+    }
+}));
+
+app.post("/user/account/update-username",
+  requiresAuthentication,
+  [
+    body("username")
+    .trim()
+    .isLength({ min: 8})
+    .withMessage("Usernames must have a minimum of 8 characters")
+    .matches(/^((?!@).)*$/)
+    .withMessage("Username cannot contain an @ symbol")
+  ],
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    let newUsername = req.body.username.trim();
+    let existsUsername = await res.locals.store.existsUsername(newUsername);
+    let errors = validationResult(req);
+    if(username === newUsername) {
+      req.flash("info", "Your updated username matched your existing username, your username was not updated")
+      res.redirect("/user/account");
+    } else if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      res.locals.userData = await res.locals.store.getUserData(username);
+      res.locals.userData.newUsername = newUsername; 
+      res.render("user/account/update-username", {
+        flash: req.flash(),
+      });
+    } else if (existsUsername) {
+      req.flash("error", "This username unavailable");
+      res.locals.userData = await res.locals.store.getUserData(username);
+      res.locals.userData.newUsername = newUsername; 
+      res.render("user/account/update-username", {
+        flash: req.flash(),
+      });
+    } else {
+      let updated= await res.locals.store.updateUsername(username, newUsername);
+      if(updated) {
+        signIn(req, newUsername);
+        req.flash("info", "Your username has been updated");
+      }
+      res.redirect("/user/account");
+    }
 }));
 
 app.get("/user/contacts",
   requiresAuthentication,
   catchError(async (req, res) => {
-    if(req.session.signedIn) {
-      res.locals.activePage = 'contacts';
-      //res.local.email=req.session.username;
-      //res.locals.userNames = await res.locals.store.getUserNames(req.session.username);
-      //res.locals.existsContacts = await res.locals.store.existsContacts(req.session.username);
-      res.render("user/contacts");
-    } else(res.redirect("/home"))
+    let username = req.session.username;
+    res.locals.activePage = 'contacts';
+    res.locals.contactData = await res.locals.store.getContactData(username);
+    console.log("ContactData: " + res.locals.contactData)
+    res.render("user/contacts");
+}));
+
+app.get("/user/contacts/edit/:id",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let id = req.params.id;
+    res.locals.contactData = await res.locals.store.getAContactData(id);
+    res.render("user/contacts/edit");
 }));
 
 // Listener

@@ -1,6 +1,8 @@
 CREATE TABLE users (
-  username text PRIMARY KEY NOT NULL,
+  id serial PRIMARY KEY,
+  username text NOT NULL UNIQUE,
   email text NOT NULL UNIQUE,
+  email_authenticated boolean NOT NULL DEFAULT FALSE,
   password_hash text NOT NULL,
   first_name varchar(20),
   last_name varchar(20)
@@ -18,13 +20,14 @@ CREATE TABLE addresses (
 
 CREATE TABLE contacts (
   id serial PRIMARY KEY,
-  first_name text NOT NULL,
-  last_name text,
+  first_name varchar(25) NOT NULL,
+  last_name varchar(25),
   birthday date,
-  phone_number varchar(50),
-  preffered_medium varchar(50),
+  preferred_medium varchar(25),
+  phone_number varchar(25),
+  notes text,
   address_id integer REFERENCES addresses(id),
-  user_username text NOT NULL REFERENCES users(username)
+  user_id integer NOT NULL REFERENCES users(id)
 ); --manual periodic address cleanup
 
 CREATE TABLE objectives (

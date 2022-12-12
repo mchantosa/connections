@@ -1,13 +1,14 @@
-extends layout
+extends ../layout
 
 block header
 
 block main
   div.dilute-background
-    h2 Contacts
+    h2 Edit Contact
     if contactData.length > 0
-      dl.contact-list
-        each contact in contactData
+      -contact = contactData[0]
+      form(action=`/user/contacts/edit/${contact.id}` method="post")
+        dl.contact-list
           div.contact-list-elm 
             div.left
               -console.log(contact)
@@ -44,8 +45,6 @@ block main
                       p #{contact.country}
                 else
                   dd #{''}
-              -let hrefAddress = '/user/contacts/edit/' + contact.id
-              a.unanchor.rebutton.babybutton(href=hrefAddress) edit
             div.right   
               h3 Notes:
-              p #{contact.notes} 
+              p #{contact.notes}
