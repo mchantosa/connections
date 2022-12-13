@@ -13,7 +13,7 @@ body{
 }
 
 .body-padding{
-  padding: 3rem 5%;
+  padding: 1rem;
 }
 
 .color-active{
@@ -175,8 +175,7 @@ nav a, nav input{
 
 .dilute-background{
   background-color: rgba(252, 255, 245,.6);
-  margin:3rem;
-  padding: 3rem;
+  padding: 1rem;
   box-sizing: border-box;
 }
 
@@ -241,10 +240,6 @@ dl.side-by-side > dd, dl.side-by-side > dt{
   display:inline-block;
 }
 
-dl.side-by-side > dt{
-  font-weight: bold;
-}
-
 dl.side-by-side > dd{
   margin-left: 1rem;
 }
@@ -268,36 +263,78 @@ dl.side-by-side > dd{
 .overlay {
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, .4);
+  background-color: rgba(0, 0, 0, .6);
   float: left;
   position: fixed;
 }
 
-div.contact-list-elm:nth-child(odd){
+.contact-list-elm:nth-child(odd){
   background-color: #fcfff5;
 }
 
-div.contact-list-elm:nth-child(even){
+.contact-list-elm:nth-child(even){
   background-color:#cee2c5;
 }
 
-dl.contact-list dt{
+.contact-list-elm dt{
+  width: 10rem;
+  min-width: 10rem;
+  max-width: 10rem;
+}
+
+.contact-list-elm dd input, .contact-list-elm dd select, .contact-list-elm dd {
+  min-width: 12rem;
+  max-width: 12rem;
+}
+
+.contact-list dt{
   vertical-align: top;
 }
 
 .contact-list-elm{
   display:flex;
+  flex-wrap: wrap;
+  justify-content:space-around;
   padding: 2rem;
   margin:4px;
   border-radius: 1.5rem;
+  min-width: 35rem;
 }
 
-.left{
+.contact-list-elm > *{
+  min-width: 20rem;
+  max-width: 40rem;
   width:45%;
-  padding: 1rem;
 }
 
-.right{
-  width:45%;
-  padding:1rem;
+.contact-list-elm .block1 > dl{
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 25rem;
 }
+
+.contact-list-elm textarea{
+  width: 100%;
+  min-height: 10rem;
+  box-sizing: border-box;
+}
+
+.contact-list footer{
+  display: flex;
+  justify-content: center;
+}
+
+.contact-list footer a, .contact-list footer input[type=submit]{
+  width:10rem;
+  border-radius: 5px;
+}
+
+.dilute-background header{
+  display: flex;
+  justify-content: center;
+}
+
+.dilute-background header h2{
+  font-weight: bold;
+}
+

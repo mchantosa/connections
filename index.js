@@ -387,6 +387,50 @@ app.get("/user/contacts/edit/:id",
     res.render("user/contacts/edit");
 }));
 
+app.post("/user/contacts/edit/:id",
+  requiresAuthentication,
+  [
+    body("firstName")
+    .trim()
+    .isLength({ min: 1})
+    .withMessage("First Name is a required field")
+    .isLength({ max: 25})
+    .withMessage("First Name cannot exceed 25 characters"),
+    body("lastName")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Last Name cannot exceed 25 characters")
+  ],
+  catchError(async (req, res) => {
+    let id = req.params.id;
+    let first_name = req.body.firstName.trim();
+    let last_name = req.body.lastName.trim();
+    let periodicity = req.body.periodicity;
+    let birthday = req.body.birthday.trim();
+    let preferred_medium = req.body.preferredMedium;
+    let phone_number = req.body.phone;
+    let streetAddress1 = req.body.streetAddress1.trim();
+    let streetAddress2 = req.body.streetAddress2.trim();
+    let city = req.body.city.trim();
+    let state_code = req.body.state;
+    let zip_code = req.body.zipCode.trim();
+    let country = req.body.country.trim();
+    let notes = req.body.notes.trim();   
+    let errors = validationResult(req);
+
+    if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      res.render("user/contacts/edit", {
+        flash: req.flash(),
+      });
+    }
+    console.log(req.body)
+    console.log('hello')
+    //res.locals.contactData = await res.locals.store.getAContactData(id);
+    res.redirect("/user/contacts");
+  
+}));
+
 // Listener
 app.listen(port, host, () => {
   console.log(`listening on port ${port} of ${host}!`);
