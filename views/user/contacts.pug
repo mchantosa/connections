@@ -4,20 +4,22 @@ block header
 
 block main
   div.dilute-background
-    h2 Contacts
+    header
+      h2 Contacts
     if contactData.length > 0
-      dl.contact-list
+      div.contact-list
         each contact in contactData
           div.contact-list-elm 
-            div.left
-              -console.log(contact)
-              dl.side-by-side.mb-a-half
+            div.block1
+              h3 Name
+              dl.side-by-side
                 dt Name: 
-                dd #{`${contact.first_name}${(contact.last_name) ? ' ' + contact.last_name : ''}`}
-              dl.side-by-side.mb-a-half
+                dd #{`${contact.first_name}${contact.last_name ? ' ' + contact.last_name : ''}`}
+              h3 When to contact
+              dl.side-by-side
                 dt Periodicity: 
-                dd #{(contact.perodicity)?contact.periodicy:'none'}
-              dl.side-by-side.mb-a-half
+                dd #{contact.perodicity ? contact.periodicy : 'none'}
+              dl.side-by-side
                 dt Birthday:
                 if contact.birthday
                   if contact.birthday.getFullYear()===1800
@@ -26,13 +28,14 @@ block main
                     dd #{contact.birthday.toLocaleDateString('en-us')}
                 else 
                   dd #{''}
-              dl.side-by-side.mb-a-half
-                dt Preffered method of contact:
-                dd #{(contact.preferred_medium) ? contact.preferred_medium  : ''}
-              dl.side-by-side.mb-a-half
+              h3 How to contact
+              dl.side-by-side
+                dt Preffered medium:
+                dd #{contact.preferred_medium ? contact.preferred_medium  : ''}
+              dl.side-by-side
                 dt Phone number:
-                dd #{(contact.phone_number) ? contact.phone_number : ''}
-              dl.side-by-side.mb-a-half
+                dd #{contact.phone_number ? contact.phone_number : ''}
+              dl.side-by-side
                 dt Address:
                 if contact.street_address_1
                   dd 
@@ -46,6 +49,8 @@ block main
                   dd #{''}
               -let hrefAddress = '/user/contacts/edit/' + contact.id
               a.unanchor.rebutton.babybutton(href=hrefAddress) edit
-            div.right   
-              h3 Notes:
-              p #{contact.notes} 
+            div.bock2   
+              h3 Notes  
+              textarea(wrap="soft" name="notes" readonly placeholder = 'Add any notes you might have here. I like to keep track of gift ideas when I notice my daughter eyeballing something.') #{contact.notes}
+        footer
+          a.unanchor.rebutton.center(href="/user/contacts/create-contact") Create Contact

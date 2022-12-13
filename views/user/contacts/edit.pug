@@ -4,47 +4,179 @@ block header
 
 block main
   div.dilute-background
-    h2 Edit Contact
+    header
+      h2 Edit Contact
     if contactData.length > 0
-      -contact = contactData[0]
-      form(action=`/user/contacts/edit/${contact.id}` method="post")
-        dl.contact-list
-          div.contact-list-elm 
-            div.left
-              -console.log(contact)
-              dl.side-by-side.mb-a-half
-                dt Name: 
-                dd #{`${contact.first_name}${(contact.last_name) ? ' ' + contact.last_name : ''}`}
-              dl.side-by-side.mb-a-half
-                dt Periodicity: 
-                dd #{(contact.perodicity)?contact.periodicy:'none'}
-              dl.side-by-side.mb-a-half
-                dt Birthday:
-                if contact.birthday
-                  if contact.birthday.getFullYear()===1800
-                    dd #{contact.birthday.toLocaleDateString('en-us', {month:"short", day:"numeric"})}
-                  else
-                    dd #{contact.birthday.toLocaleDateString('en-us')}
-                else 
-                  dd #{''}
-              dl.side-by-side.mb-a-half
-                dt Preffered method of contact:
-                dd #{(contact.preferred_medium) ? contact.preferred_medium  : ''}
-              dl.side-by-side.mb-a-half
-                dt Phone number:
-                dd #{(contact.phone_number) ? contact.phone_number : ''}
-              dl.side-by-side.mb-a-half
-                dt Address:
-                if contact.street_address_1
+      -let contact = contactData[0]
+      form.contact-list(action=`/user/contacts/edit/${contact.id}` method="post")
+        div.contact-list-elm
+          div.block1
+            h3 Name
+            dl.side-by-side
+              dt 
+                label(for="first-name") First Name: 
+              dd
+                input(type="text" name="firstName" id="first-name" value=contact.first_name)
+            dl.side-by-side
+              dt 
+                label(for="last-name") Last Name: 
+              dd
+                input(type="text" name="lastName" id="last-name" value=contact.last_name)
+            h3 When to contact
+            dl.side-by-side
+              dt  
+                label(for="periodicity") Periodicity: 
+              dd
+                select(name="periodicity" id="periodicity")
+                  option(selected = contact.periodicity ==="none" value="none") none
+                  option(selected = contact.periodicity ==="weekly" value="weekly") Weekly
+                  option(selected = contact.periodicity ==="biweekly" value="biweekly") Biweekly
+                  option(selected = contact.periodicity ==="monthly" value="monthly") Monthly
+                  option(selected = contact.periodicity ==="quarterly" value="quarterly") Quarterly
+              dt 
+              dd
+                small How often?
+            dl.side-by-side
+              dt 
+                label(for="birthday") Birthday:
+              if contact.birthday
+                if contact.birthday.getFullYear()===1800
                   dd 
-                    p #{contact.street_address_1}
-                    if (contact.street_address_2)
-                      p #{contact.street_address_2}
-                    p #{`${contact.city}, ${contact.state_code} ${contact.zip_code}`}
-                    if (contact.country)
-                      p #{contact.country}
+                    -let birthday = contact.birthday.toLocaleDateString('en-us', {month:"short", day:"numeric"})
+                    input(type="text" name="birthday" id="birthday" value=birthday)
+                  dt 
+                  dd
+                    small Format: YYYY-MM-DD, YY-MM-DD, or MM-DD
                 else
-                  dd #{''}
-            div.right   
-              h3 Notes:
-              p #{contact.notes}
+                  dd 
+                    -let birthday = contact.birthday.toLocaleDateString('en-us')
+                    input(type="text" name="birthday" id="birthday" value=birthday)
+                  dt 
+                  dd
+                    small Format: YYYY-MM-DD, YY-MM-DD, or MM-DD
+              else 
+                dd 
+                  input(type="text" name="birthday" id="birthday" placeholder='MM-DD')
+                dt 
+                dd
+                  small Format: YYYY-MM-DD, YY-MM-DD, or MM-DD
+            h3 How to contact
+            dl.side-by-side
+              dt 
+                label(for="preferred_medium") Preferred Medium:
+              dd 
+                -let preferredMedium = contact.preferred_medium || ''
+                input(type="text" name="preferredMedium" id="preferred_medium" value=preferredMedium)
+            dl.side-by-side
+              dt 
+                label(for="phone_number") Phone Number:
+              dd 
+                -let phoneNumber = contact.phone_number || ''
+                input(type="tel" name="phone" id="phone_number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" value=phoneNumber)
+              dt 
+              dd
+                small Format: 123-456-7890
+            h4 Address
+            dl.side-by-side
+              dt
+                label(for="street_address_1") Street address 1:
+              dd
+                -let streetAddress1 = contact.street_address_1||'' 
+                input(type="text" name="streetAddress1" id="street_address_1" value=streetAddress1)
+            dl.side-by-side
+              dt
+                label(for="street_address_2") Street address 2:
+              dd
+                -let streetAddress2 = contact.street_address_2||'' 
+                input(type="text" name="streetAddress2" id="street_address_2" value=streetAddress2)
+            dl.side-by-side
+              dt
+                label(for="city") City:
+              dd
+                -let city = contact.city||''
+                input(type="text" name="city" id="city" value=city)
+            dl.side-by-side
+              dt 
+                label(for="state") State:
+              dd
+                select(name="state"  id="state")
+                  -let noState= contact.state_code == false
+                  option(selected = noState) Please select a State
+                  option(selected = contact.state_code ==="AL" value="AL") Alabama
+                  option(selected = contact.state_code ==="AK" value="AK") Alaska
+                  option(selected = contact.state_code ==="AZ" value="AZ") Arizona
+                  option(selected = contact.state_code ==="AR" value="AR") Arkansas
+                  option(selected = contact.state_code ==="CA" value="CA") California
+                  option(selected = contact.state_code ==="CO" value="CO") Colorado
+                  option(selected = contact.state_code ==="CT" value="CT") Connecticut
+                  option(selected = contact.state_code ==="DE" value="DE") Delaware
+                  option(selected = contact.state_code ==="DC" value="DC") District Of Columbia
+                  option(selected = contact.state_code ==="FL" value="FL") Florida
+                  option(selected = contact.state_code ==="GA" value="GA") Georgia
+                  option(selected = contact.state_code ==="HI" value="HI") Hawaii
+                  option(selected = contact.state_code ==="ID" value="ID") Idaho
+                  option(selected = contact.state_code ==="IL" value="IL") Illinois
+                  option(selected = contact.state_code ==="IN" value="IN") Indiana
+                  option(selected = contact.state_code ==="IA" value="IA") Iowa
+                  option(selected = contact.state_code ==="KS" value="KS") Kansas
+                  option(selected = contact.state_code ==="KY" value="KY") Kentucky
+                  option(selected = contact.state_code ==="LA" value="LA") Louisiana
+                  option(selected = contact.state_code ==="ME" value="ME") Maine
+                  option(selected = contact.state_code ==="MD" value="MD") Maryland
+                  option(selected = contact.state_code ==="MA" value="MA") Massachusetts
+                  option(selected = contact.state_code ==="MI" value="MI") Michigan
+                  option(selected = contact.state_code ==="MN" value="MN") Minnesota
+                  option(selected = contact.state_code ==="MS" value="MS") Mississippi
+                  option(selected = contact.state_code ==="MO" value="MO") Missouri
+                  option(selected = contact.state_code ==="MT" value="MT") Montana
+                  option(selected = contact.state_code ==="NE" value="NE") Nebraska
+                  option(selected = contact.state_code ==="NV" value="NV") Nevada
+                  option(selected = contact.state_code ==="NH" value="NH") New Hampshire
+                  option(selected = contact.state_code ==="NJ" value="NJ") New Jersey
+                  option(selected = contact.state_code ==="NM" value="NM") New Mexico
+                  option(selected = contact.state_code ==="NY" value="NY") New York
+                  option(selected = contact.state_code ==="NC" value="NC") North Carolina
+                  option(selected = contact.state_code ==="ND" value="ND") North Dakota
+                  option(selected = contact.state_code ==="OH" value="OH") Ohio
+                  option(selected = contact.state_code ==="OK" value="OK") Oklahoma
+                  option(selected = contact.state_code ==="OR" value="OR") Oregon
+                  option(selected = contact.state_code ==="PA" value="PA") Pennsylvania
+                  option(selected = contact.state_code ==="RI" value="RI") Rhode Island
+                  option(selected = contact.state_code ==="SC" value="SC") South Carolina
+                  option(selected = contact.state_code ==="SD" value="SD") South Dakota
+                  option(selected = contact.state_code ==="TN" value="TN") Tennessee
+                  option(selected = contact.state_code ==="TX" value="TX") Texas
+                  option(selected = contact.state_code ==="UT" value="UT") Utah
+                  option(selected = contact.state_code ==="VT" value="VT") Vermont
+                  option(selected = contact.state_code ==="VA" value="VA") Virginia
+                  option(selected = contact.state_code ==="WA" value="WA") Washington
+                  option(selected = contact.state_code ==="WV" value="WV") West Virginia
+                  option(selected = contact.state_code ==="WI" value="WI") Wisconsin
+                  option(selected = contact.state_code ==="WY" value="WY") Wyoming
+                  option(selected = contact.state_code ==="AS" value="AS") American Samoa
+                  option(selected = contact.state_code ==="GU" value="GU") Guam
+                  option(selected = contact.state_code ==="MP" value="MP") Northern Mariana Islands
+                  option(selected = contact.state_code ==="PR" value="PR") Puerto Rico
+                  option(selected = contact.state_code ==="UM" value="UM") United States Minor Outlying Islands
+                  option(selected = contact.state_code ==="VI" value="VI") Virgin Islands
+                  option(selected = contact.state_code ==="AA" value="AA") Armed Forces Americas (AA)
+                  option(selected = contact.state_code ==="AP" value="AP") Armed Forces Pacific (AP)
+                  option(selected = contact.state_code ==="AE" value="AE") Armed Forces Others (AE)
+            dl.side-by-side
+              dt
+                label(for="zip_code") Zipcode:
+              dd
+                -let zipCode = contact.zip_code || ''
+                input(type="text" name="zipCode" id="zip_code" value=zipCode)
+            dl.side-by-side
+              dt 
+                label(for="country") Country: 
+              dd
+                -let country = contact.country || ''
+                input(type="text" name="country" id="country" value=country)
+          div.block2   
+              h3 Notes  
+              textarea(wrap="soft" name="notes" placeholder = 'Add any notes you might have here. I like to keep track of gift ideas when I notice my daughter eyeballing something.') #{contact.notes}
+        footer
+          input.unbutton.rebutton(type="submit" value="Edit contact")
+          a.unanchor.rebutton.center(href="/user/contacts") Cancel
