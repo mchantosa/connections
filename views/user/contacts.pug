@@ -1,56 +1,43 @@
 extends layout
 
 block header
-
+ 
 block main
   div.dilute-background
-    header
+    header.contact-list
       h2 Contacts
-    if contactData.length > 0
+      nav.secondary-nav
+        a.unanchor.rebutton.center(href="/user/contacts/create-contact") Create Contact
+    if contacts.length > 0
       div.contact-list
-        each contact in contactData
-          div.contact-list-elm 
-            div.block1
-              h3 Name
-              dl.side-by-side
-                dt Name: 
-                dd #{`${contact.first_name}${contact.last_name ? ' ' + contact.last_name : ''}`}
-              h3 When to contact
-              dl.side-by-side
-                dt Periodicity: 
-                dd #{contact.perodicity ? contact.periodicy : 'none'}
-              dl.side-by-side
-                dt Birthday:
-                if contact.birthday
-                  if contact.birthday.getFullYear()===1800
-                    dd #{contact.birthday.toLocaleDateString('en-us', {month:"short", day:"numeric"})}
-                  else
-                    dd #{contact.birthday.toLocaleDateString('en-us')}
-                else 
-                  dd #{''}
-              h3 How to contact
-              dl.side-by-side
-                dt Preffered medium:
-                dd #{contact.preferred_medium ? contact.preferred_medium  : ''}
-              dl.side-by-side
-                dt Phone number:
-                dd #{contact.phone_number ? contact.phone_number : ''}
-              dl.side-by-side
-                dt Address:
-                if contact.street_address_1
-                  dd 
+        each contact in contacts
+          div.contact-list-elm.alternate
+            -let hrefAddress = '/user/contacts/' + contact.id
+              a.unanchor(href=hrefAddress)
+                div.block1
+                  h3 Name
+                  p #{`${contact.first_name = contact.first_name || ''} ${contact.last_name = contact.last_name || ''}`}
+                div.block2  
+                  h3 Contact Information
+                  dl.side-by-side
+                    dt Preffered medium:
+                    dd #{contact.preferred_medium ? contact.preferred_medium  : 'none'}
+                  dl.side-by-side
+                    dt Phone number:
+                    dd #{contact.phone_number ? contact.phone_number : 'none'}
+                  dl.side-by-side
+                    dt Email:
+                    dd #{contact.email ? contact.email : 'none'}
+                div.block3
+                  h3 Address
+                  if (contact.street_address_1)
                     p #{contact.street_address_1}
                     if (contact.street_address_2)
                       p #{contact.street_address_2}
                     p #{`${contact.city}, ${contact.state_code} ${contact.zip_code}`}
-                    if (contact.country)
-                      p #{contact.country}
-                else
-                  dd #{''}
-              -let hrefAddress = '/user/contacts/edit/' + contact.id
-              a.unanchor.rebutton.babybutton(href=hrefAddress) edit
-            div.bock2   
-              h3 Notes  
-              textarea(wrap="soft" name="notes" readonly placeholder = 'Add any notes you might have here. I like to keep track of gift ideas when I notice my daughter eyeballing something.') #{contact.notes}
-        footer
-          a.unanchor.rebutton.center(href="/user/contacts/create-contact") Create Contact
+                    p #{contact.country}
+                  else
+                    dd #{'none'} 
+                div.block4 
+                  h3 Objectives
+                  p #{`${(contact.objectives.length) ? contact.objectives.length : 'Empty'}`}

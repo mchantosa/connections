@@ -9,13 +9,14 @@ html(lang="en-US")
     link(href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet")
     link(rel="stylesheet" href="/stylesheets/whitespace-reset.css")
     link(rel="stylesheet" href="/stylesheets/main.css")
+    script(src="/javascripts/application.js")
 
   body
     block overlay-bottom
     div.body-padding
       header
         if signedIn 
-          nav.center-align-right.mb-1
+          nav#primary-nav.center-align-right.mb-1
             ul
               li(class=(activePage == 'home'? 'color-active' : ''))
                 a.center.unanchor(href="/home") Connections
@@ -29,7 +30,7 @@ html(lang="en-US")
                 form(action="/logout" method="post") 
                   input.center.unbutton(type="submit" value="Logout")
         else
-          nav.center-align-right.mb-1
+          nav#primary-nav.center-align-right.mb-1
             ul
               li(class=(activePage == 'home'? 'color-active' : ''))
                 a.center.unanchor(href="/home") Home
