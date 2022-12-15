@@ -16,15 +16,6 @@ body{
   padding: 1rem;
 }
 
-.color-active{
-  background-color:#e8d498;
-}
-
-.color-inverse{
-  background-color:#263e32;
-  color:#fcfff5
-}
-
 .center{
   display: flex;
   justify-content: center;
@@ -69,7 +60,7 @@ a, a.visitted{
   color:#fcfff5;
   height:2rem;
   padding: 0 2rem;
-  margin: 2px;
+  border-radius: 5px;
 }
 
 .bigbutton{
@@ -124,7 +115,7 @@ a, a.visitted{
   font-weight:lighter;
 }
 
-nav li{
+#primary-nav li{
   display: inline-block;
   box-sizing: border-box;
   margin: 0 5px;
@@ -134,10 +125,23 @@ nav li{
   box-shadow: 5px 5px 5px rgba(0,0,0,.6);
 }
 
-nav a, nav input{
+#primary-nav a, #primary-nav input{
   width: 125px;
   height: 3rem;
 }
+
+#primary-nav .color-active{
+  background-color:#e8d498;
+}
+
+.secondary-nav {
+  display: flex;
+  justify-content:right;
+}
+.secondary-nav a, .secondary-nav input{
+  margin: 2px;
+} 
+
 
 .login-register{
   box-sizing: border-box;
@@ -202,10 +206,6 @@ h3{
   margin: .75rem 0;
 }
 
-p{
-  color:#5a4328;
-}
-
 ol.enumerated-list {
  counter-reset: my-list-counter;
 }
@@ -268,49 +268,67 @@ dl.side-by-side > dd{
   position: fixed;
 }
 
-.contact-list-elm:nth-child(odd){
+.alternate:nth-child(odd){
   background-color: #fcfff5;
 }
 
-.contact-list-elm:nth-child(even){
+.alternate:nth-child(even){
   background-color:#cee2c5;
 }
 
+.contact-list-elm:hover{
+  box-shadow: 5px 5px 5px rgba(0,0,0,.6);
+}
+
+
+.contact-list-elm, .contact{
+  margin-bottom: 10px;
+  background-color: #fcfff5;
+}
+
 .contact-list-elm dt{
-  width: 10rem;
-  min-width: 10rem;
-  max-width: 10rem;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
 }
 
 .contact-list-elm dd input, .contact-list-elm dd select, .contact-list-elm dd {
-  min-width: 12rem;
-  max-width: 12rem;
+  min-width: 200px;
+  max-width: 200px;
 }
 
-.contact-list dt{
+.contact-list-elm dt{
   vertical-align: top;
 }
 
-.contact-list-elm{
+.contact-list-elm > a{
   display:flex;
   flex-wrap: wrap;
-  justify-content:space-around;
+  justify-content:left;
   padding: 2rem;
   margin:4px;
   border-radius: 1.5rem;
   min-width: 35rem;
 }
 
-.contact-list-elm > *{
-  min-width: 20rem;
-  max-width: 40rem;
-  width:45%;
+.contact-list-elm .block2{
+  min-width: 250px;
+  max-width: 400px;
+  width:33%;
 }
 
-.contact-list-elm .block1 > dl{
+.contact-list-elm .block1, 
+.contact-list-elm .block3, 
+.contact-list-elm .block4{
+  min-width: 225px;
+  max-width: 250px;
+  width:25%;
+}
+
+.contact-list-elm dl{
   display: flex;
   flex-wrap: wrap;
-  max-width: 25rem;
+  max-width: 376px;
 }
 
 .contact-list-elm textarea{
@@ -329,6 +347,16 @@ dl.side-by-side > dd{
   border-radius: 5px;
 }
 
+header.contact-list{
+  display: flex;
+  flex-direction: column;
+}
+
+header.contact-list > h2{
+  display: flex;
+  justify-content: center;
+}
+
 .dilute-background header{
   display: flex;
   justify-content: center;
@@ -338,3 +366,47 @@ dl.side-by-side > dd{
   font-weight: bold;
 }
 
+.contact {
+  display:flex;
+  flex-direction: column;
+}
+
+.contact div.horizontal {
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.contact .block-left{
+  min-width:280px;/*32+16+200+32*/
+  max-width: 360px;
+  flex:none;
+  box-sizing: border-box;
+  padding: 32px;
+}
+
+.contact .block-right{
+  min-width: 360px; /*element*/
+  flex:auto; /*element*/
+  padding: 32px 32px 32px 0; /*element*/
+  display:flex; /*container*/
+  flex-direction: column; /*container*/
+}
+
+.objectives-elm > a, .objectives-header{
+  display:flex;
+  justify-content:space-between;
+  align-items: center;
+}
+
+.objectives-elm > a > *, .objectives-header > *{
+  min-width: 100px;
+  width: 200px;
+}
+
+.objectives-elm {
+  margin-bottom: 10px;
+}
+
+.objectives-elm:hover{
+  box-shadow: 5px 5px 5px rgba(0,0,0,.6);
+}

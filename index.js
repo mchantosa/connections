@@ -9,6 +9,10 @@ const ConnectionsDB = require("./lib/connections-db");
 const catchError = require("./lib/catch-error")//async error wrapped
 const flash = require("express-flash");
 const { body, validationResult } = require("express-validator");
+const { render } = require("pug");
+const moment = require('moment'); 
+const Objective = require("./lib/objective");
+const Contact = require("./lib/contact");
 
 //const morgan = require("morgan");
 //app.use(morgan("common"));
@@ -91,6 +95,11 @@ app.get("/home",
   (req, res) => {
     res.locals.activePage = 'home';
     res.render("home");
+});
+
+app.get("/home/how-it-works",
+  (req, res) => {
+    res.render("home/how-it-works");
 });
 
 app.get("/login", 
@@ -194,70 +203,111 @@ app.post("/logout", (req, res) => {
   res.redirect("/home");
 });
 
-app.get("/home/how-it-works",
-  (req, res) => {
-    res.render("home/how-it-works");
-});
-
 app.get("/user/home",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
     res.locals.activePage = 'userHome';
-    res.locals.userNames = await res.locals.store.getUserNames(username);
-    res.locals.existsContacts = await res.locals.store.existsContacts(username);
+    res.locals.userNames = await res.locals.store.getUserNames();
+    res.locals.existsContacts = await res.locals.store.existsContacts();
     res.render("user/home");
 }));
 
 app.get("/user/account",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
     res.locals.activePage = 'account';
-    res.locals.userData = await res.locals.store.getUserData(username);
+    res.locals.userData = await res.locals.store.getUserData();
     res.render("user/account");
 }));
 
 app.get("/user/account/update-email",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
-    res.locals.userData = await res.locals.store.getUserData(username);
+    res.locals.userData = await res.locals.store.getUserData();
     res.render("user/account/update-email");
+}));
+
+app.post("/user/account/update-email",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let username = req.session.username;
+    let newEmail = req.body.email.trim();
+    let userCredentials = await res.locals.store.getUserCredentials(username);
+    let email = userCredentials.email;
+    let existsEmail = await res.locals.store.existsEmail(newEmail);
+    if(email === newEmail) {
+      req.flash("info", "Your updated email matched your existing email, your email was not updated")
+      res.redirect("/user/account");
+    } else if (existsEmail) {
+      req.flash("error", "This email is already associated with an account");
+      res.locals.userData = await res.locals.store.getUserData();
+      res.locals.userData.newEmail = newEmail; 
+      res.render("user/account/update-email", {
+        flash: req.flash(),
+      });
+    } else {
+      let updated = await res.locals.store.updateUseremail(newEmail);
+      if(updated){
+        req.flash("info", "Your email has been updated");
+      }
+      res.redirect("/user/account");
+    }
 }));
 
 app.get("/user/account/update-username",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
-    res.locals.userData = await res.locals.store.getUserData(username);
+    res.locals.userData = await res.locals.store.getUserData();
     res.render("user/account/update-username");
 }));
 
-app.get("/user/account/update-account-information",
+app.post("/user/account/update-username",
   requiresAuthentication,
+  [
+    body("username")
+    .trim()
+    .isLength({ min: 8})
+    .withMessage("Usernames must have a minimum of 8 characters")
+    .matches(/^((?!@).)*$/)
+    .withMessage("Username cannot contain an @ symbol")
+  ],
   catchError(async (req, res) => {
     let username = req.session.username;
-    res.locals.userData = await res.locals.store.getUserData(username);
-    res.render("user/account/update-account-information");
+    let newUsername = req.body.username.trim();
+    let existsUsername = await res.locals.store.existsUsername(newUsername);
+    let errors = validationResult(req);
+    if(username === newUsername) {
+      req.flash("info", "Your updated username matched your existing username, your username was not updated")
+      res.redirect("/user/account");
+    } else if(!errors.isEmpty()) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      res.locals.userData = await res.locals.store.getUserData();
+      res.locals.userData.newUsername = newUsername; 
+      res.render("user/account/update-username", {
+        flash: req.flash(),
+      });
+    } else if (existsUsername) {
+      req.flash("error", "This username unavailable");
+      res.locals.userData = await res.locals.store.getUserData();
+      res.locals.userData.newUsername = newUsername; 
+      res.render("user/account/update-username", {
+        flash: req.flash(),
+      });
+    } else {
+      let updated= await res.locals.store.updateUsername(newUsername);
+      if(updated) {
+        signIn(req, newUsername);
+        req.flash("info", "Your username has been updated");
+      }
+      res.redirect("/user/account");
+    }
 }));
 
 app.get("/user/account/reset-password",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
-    res.locals.userData = await res.locals.store.getUserData(username);
+    res.locals.userData = await res.locals.store.getUserData();
     res.render("user/account/reset-password");
-}));
-
-app.post("/user/account/update-account-information",
-  requiresAuthentication,
-  catchError(async (req, res) => {
-    let username = req.session.username;
-    let firstName = req.body.firstName.trim();
-    let lastName = req.body.lastName.trim();
-    await res.locals.store.updateUserData(username, firstName, lastName);
-    res.redirect("/user/account");
 }));
 
 app.post("/user/account/reset-password",
@@ -294,92 +344,46 @@ app.post("/user/account/reset-password",
       req.flash("error", "Your password and confirmation password do not match")
       res.redirect("/user/account/reset-password");
     } else {
-      await res.locals.store.updateUserPassword(username, newPassword);
+      await res.locals.store.updateUserPassword(newPassword);
       req.flash("info", "Your password has been updated")
       res.redirect("/user/account");
     }
 }));
 
-app.post("/user/account/update-email",
+app.get("/user/account/update-account-information",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
-    let newEmail = req.body.email.trim();
-    let userCredentials = await res.locals.store.getUserCredentials(username);
-    let email = userCredentials.email;
-    let existsEmail = await res.locals.store.existsEmail(newEmail);
-    if(email === newEmail) {
-      req.flash("info", "Your updated email matched your existing email, your email was not updated")
-      res.redirect("/user/account");
-    } else if (existsEmail) {
-      req.flash("error", "This email is already associated with an account");
-      res.locals.userData = await res.locals.store.getUserData(username);
-      res.locals.userData.newEmail = newEmail; 
-      res.render("user/account/update-email", {
-        flash: req.flash(),
-      });
-    } else {
-      let updated = await res.locals.store.updateUseremail(username, newEmail);
-      if(updated){
-        req.flash("info", "Your email has been updated");
-      }
-      res.redirect("/user/account");
-    }
+    res.locals.userData = await res.locals.store.getUserData();
+    res.render("user/account/update-account-information");
 }));
 
-app.post("/user/account/update-username",
+app.post("/user/account/update-account-information",
   requiresAuthentication,
-  [
-    body("username")
-    .trim()
-    .isLength({ min: 8})
-    .withMessage("Usernames must have a minimum of 8 characters")
-    .matches(/^((?!@).)*$/)
-    .withMessage("Username cannot contain an @ symbol")
-  ],
   catchError(async (req, res) => {
-    let username = req.session.username;
-    let newUsername = req.body.username.trim();
-    let existsUsername = await res.locals.store.existsUsername(newUsername);
-    let errors = validationResult(req);
-    if(username === newUsername) {
-      req.flash("info", "Your updated username matched your existing username, your username was not updated")
-      res.redirect("/user/account");
-    } else if(!errors.isEmpty()) {
-      errors.array().forEach(message => req.flash("error", message.msg));
-      res.locals.userData = await res.locals.store.getUserData(username);
-      res.locals.userData.newUsername = newUsername; 
-      res.render("user/account/update-username", {
-        flash: req.flash(),
-      });
-    } else if (existsUsername) {
-      req.flash("error", "This username unavailable");
-      res.locals.userData = await res.locals.store.getUserData(username);
-      res.locals.userData.newUsername = newUsername; 
-      res.render("user/account/update-username", {
-        flash: req.flash(),
-      });
-    } else {
-      let updated= await res.locals.store.updateUsername(username, newUsername);
-      if(updated) {
-        signIn(req, newUsername);
-        req.flash("info", "Your username has been updated");
-      }
-      res.redirect("/user/account");
-    }
+    let firstName = req.body.firstName.trim();
+    let lastName = req.body.lastName.trim();
+    await res.locals.store.updateUserData(firstName, lastName);
+    res.redirect("/user/account");
 }));
 
 app.get("/user/contacts",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let username = req.session.username;
     res.locals.activePage = 'contacts';
-    res.locals.contactData = await res.locals.store.getContactData(username);
-    console.log("ContactData: " + res.locals.contactData)
+    res.locals.contacts = await res.locals.store.getContacts();
     res.render("user/contacts");
 }));
 
-app.get("/user/contacts/edit/:id",
+app.get("/user/contacts/:contact_id",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let contactId = req.params.contact_id;
+    res.locals.objectiveVehicle= new Objective();
+    res.locals.contact = await res.locals.store.getContact(contactId);
+    res.render("user/contacts/contact-id");
+}));
+
+app.get("/user/contacts/:contact_id/edit",
   requiresAuthentication,
   catchError(async (req, res) => {
     let id = req.params.id;
@@ -387,13 +391,23 @@ app.get("/user/contacts/edit/:id",
     res.render("user/contacts/edit");
 }));
 
-app.post("/user/contacts/edit/:id",
+app.post("/user/contacts/:contact_id/delete",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let contactId = req.params.contact_id;
+    let contactVehicle = new Contact();
+    contactVehicle.mount(await res.locals.store.getContact(contactId));
+    let contactName = contactVehicle.getName();
+    res.locals.contact = await res.locals.store.removeContact(contactId);
+    req.flash("info", `Contact ${contactName} has been deleted`)
+    res.redirect("/user/contacts");
+}));
+
+app.post("/user/contacts/edit/:contact_id/objective",
   requiresAuthentication,
   [
     body("firstName")
     .trim()
-    .isLength({ min: 1})
-    .withMessage("First Name is a required field")
     .isLength({ max: 25})
     .withMessage("First Name cannot exceed 25 characters"),
     body("lastName")
@@ -402,31 +416,56 @@ app.post("/user/contacts/edit/:id",
     .withMessage("Last Name cannot exceed 25 characters")
   ],
   catchError(async (req, res) => {
-    let id = req.params.id;
-    let first_name = req.body.firstName.trim();
-    let last_name = req.body.lastName.trim();
-    let periodicity = req.body.periodicity;
-    let birthday = req.body.birthday.trim();
-    let preferred_medium = req.body.preferredMedium;
-    let phone_number = req.body.phone;
-    let streetAddress1 = req.body.streetAddress1.trim();
-    let streetAddress2 = req.body.streetAddress2.trim();
-    let city = req.body.city.trim();
-    let state_code = req.body.state;
-    let zip_code = req.body.zipCode.trim();
-    let country = req.body.country.trim();
-    let notes = req.body.notes.trim();   
-    let errors = validationResult(req);
+    let contact = {};
+    contact.id = req.params.id;
+    contact.first_name = req.body.firstName.trim();
+    contact.last_name = req.body.lastName.trim();
+    contact.periodicity = req.body.periodicity;
+    contact.birthday = req.body.birthday.trim();
+    contact.preferred_medium = req.body.preferredMedium;
+    contact.phone_number = req.body.phone;
+    contact.streetAddress1 = req.body.streetAddress1.trim();
+    contact.streetAddress2 = req.body.streetAddress2.trim();
+    contact.city = req.body.city.trim();
+    contact.state_code = req.body.state;
+    contact.zip_code = req.body.zipCode.trim();
+    contact.country = req.body.country.trim();
+    contact.notes = req.body.notes.trim();   
 
+    let errors = validationResult(req);
     if(!errors.isEmpty()) {
       errors.array().forEach(message => req.flash("error", message.msg));
+      res.locals.contactData = await res.locals.store.getAContactData(contact.id);
+      res.render("user/contacts/edit", {
+        flash: req.flash(),
+      });
+    } else if([contact.first_name, contact.last_name].join('').length === 0){
+      req.flash("error", "A contact name is required, please enter either a first or last name");
       res.render("user/contacts/edit", {
         flash: req.flash(),
       });
     }
+    let errorArr = []; 
+    
+    let birthday = contact.birthday;
+    if (birthday.split('/').length === 3) birthday = birthday.split('/');
+    else birthday = birthday.split('-');
+    if(![2, 3].includes(birthday.length)){
+      errorArr.push("Birthday must be of format YYYY-MM-DD, YY-MM-DD, or MM-DD");
+    } 
+    //if(contact.birthday.split('/').length === 3){
+      //let birthday = contact.birthday.split('/');
+      //let errors = [];
+      //let [year, month, day] = [parseInt(birthday[0]), 
+      //  parseInt(birthday[1]), 
+      //  parseInt(birthday[2])];
+      //if(month < 1 || month > 12) errors.push("Invalid MM, month must be an integer between 1 and 12")
+      //if(day < 1 || day > 31) errors.push("Invalid DD, day must be an integer between 1 and 31")
+      //if(day > 29 && month === 2) errors.push("Invalid date, February cannot have more that 20 days")
+      //if(day === 31 && [4,6,9,11].includes(day))errors.push("Invalid DD, April, June, September, and November have 30 days")
+
     console.log(req.body)
     console.log('hello')
-    //res.locals.contactData = await res.locals.store.getAContactData(id);
     res.redirect("/user/contacts");
   
 }));

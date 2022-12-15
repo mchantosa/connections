@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon index.js"
+    "start": "npx nodemon index.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,11 @@
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
     "express-validator": "^6.14.2",
+    "moment": "^2.29.4",
     "pg": "^8.8.0",
     "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1"
   }
 }
