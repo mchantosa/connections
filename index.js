@@ -370,6 +370,7 @@ app.get("/user/contacts",
   requiresAuthentication,
   catchError(async (req, res) => {
     res.locals.activePage = 'contacts';
+    res.locals.contactVehicle = new Contact();
     res.locals.contacts = await res.locals.store.getContacts();
     res.render("user/contacts");
 }));
@@ -378,17 +379,70 @@ app.get("/user/contacts/:contact_id",
   requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
-    res.locals.objectiveVehicle= new Objective();
-    res.locals.contact = await res.locals.store.getContact(contactId);
+    res.locals.contact = Contact.makeContact(
+      await res.locals.store.getContact(contactId));
     res.render("user/contacts/contact-id");
 }));
 
 app.get("/user/contacts/:contact_id/edit",
   requiresAuthentication,
   catchError(async (req, res) => {
-    let id = req.params.id;
-    res.locals.contactData = await res.locals.store.getAContactData(id);
+    let contactId = req.params.contact_id;
+    res.locals.contact = Contact.makeContact(
+      await res.locals.store.getContact(contactId));
     res.render("user/contacts/edit");
+}));
+
+app.post("/user/contacts/:contact_id/edit",
+  requiresAuthentication, [
+    body("firstName")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("First Name cannot exceed 25 characters"),
+    body("lastName")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Last Name cannot exceed 25 characters")
+  ],
+  catchError(async (req, res) => {
+    let contactId = req.params.contact_id;
+
+    let contact = Contact.makeContact(
+      {
+        id : contactId,
+        first_name : req.body.firstName,
+        last_name : req.body.lastName,
+        preferred_medium : req.body.preferredMedium,
+        phone_number : req.body.phone,
+        email : req.body.email,
+        street_address_1 : req.body.streetAddress1,
+        street_address_2 : req.body.streetAddress2,
+        city : req.body.city,
+        state_code : req.body.state,
+        zip_code : req.body.zipCode,
+        country : req.body.country,
+        notes : req.body.notes,
+      },
+      await res.locals.store.getObjectives(contactId));
+
+    let errors = validationResult(req);
+    let errorsCustom = [];
+    if(!contact.getName()){
+      errorsCustom.push("A contact name is required, please enter either a first or last name")
+    }
+    if(!errors.isEmpty()||errorsCustom.length) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      errorsCustom.forEach(message => req.flash("error", message));
+      res.locals.contact = contact;
+      res.render('user/contacts/edit',{
+        flash: req.flash(),
+      })
+    } else{
+      req.flash("info", `${contact.getName()} changes were saved`)
+      res.redirect(`/user/contacts/${contactId}`);
+    }
+
+   
 }));
 
 app.post("/user/contacts/:contact_id/delete",
@@ -400,7 +454,7 @@ app.post("/user/contacts/:contact_id/delete",
     let contactName = contactVehicle.getName();
     res.locals.contact = await res.locals.store.removeContact(contactId);
     req.flash("info", `Contact ${contactName} has been deleted`)
-    res.redirect("/user/contacts");
+    res.redirect("/user/contacts/edit");
 }));
 
 app.post("/user/contacts/edit/:contact_id/objective",

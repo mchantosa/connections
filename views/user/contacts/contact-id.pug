@@ -5,9 +5,10 @@ block header
 block main
   div.dilute-background
     header.contact-list
-      h2 #{`Contact information for ${[contact.first_name, contact.last_name].join(' ')}`}
+    -console.log(contact)
+      h2 #{`Contact information for ${contact.getName()}`}
       nav.secondary-nav
-        a.unanchor.rebutton.center(href="/user/contacts/:contact_id/edit") Edit Contact
+        a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}/edit`) Edit Contact
         form.delete(action=`/user/contacts/${contact.id}/delete` method="post")
           input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
     div.contact-list
@@ -16,28 +17,21 @@ block main
           div.block-left
             div
               h3 Name
-              p #{`${contact.first_name = contact.first_name || ''} ${contact.last_name = contact.last_name || ''}`}
+              p #{contact.getName()}
             div
               h3 Contact Information
               dl.side-by-side
                 dt Preferred medium:
-                dd #{contact.preferred_medium ? contact.preferred_medium  : 'none'}
+                dd #{contact.getPreferredMedium()}
               dl.side-by-side
                 dt Phone number:
-                dd #{contact.phone_number ? contact.phone_number : 'none'}
+                dd #{contact.getPhoneNumber()}
               dl.side-by-side
                 dt Email:
-                dd #{contact.email ? contact.email : 'none'}
+                dd #{contact.getEmail()}
             div
               h3 Address
-              if (contact.street_address_1)
-                p #{contact.street_address_1}
-                if (contact.street_address_2)
-                  p #{contact.street_address_2}
-                p #{`${contact.city}, ${contact.state_code} ${contact.zip_code}`}
-                p #{contact.country}
-              else
-                dd #{'none'} 
+              p #{contact.getAddress()}
           div.block-right
             h3.center.mb-2 Objectives
             div.objectives-header
@@ -47,16 +41,14 @@ block main
               h4 Reminder
             if contact.objectives.length > 0
               each objective in contact.objectives
-                -objectiveVehicle.mount(objective)
-                -console.log(objectiveVehicle)
                 div.alternate.objectives-elm
                   a.unanchor(href="/user/contacts/:contact_id/objectives/:objective_id")
-                    p #{`${objectiveVehicle.occasion}`}
-                    p #{`${objectiveVehicle.getOccasionDate()}`}
-                    p #{`${objectiveVehicle.periodicity}`}
-                    p #{`${objectiveVehicle.reminder}`}   
+                    p #{`${objective.occasion}`}
+                    p #{`${objective.getOccasionDate()}`}
+                    p #{`${objective.periodicity}`}
+                    p #{`${objective.reminder}`}   
             else 
               p.mb-2
               h1.center This contact currently has no objectives
             h3.center Notes
-            textarea(wrap="soft" name="notes" readonly placeholder = 'Add any notes you might have here. I like to keep track of gift ideas when I notice my daughter eyeballing something.') #{contact.notes}  
+            textarea(wrap="soft" name="notes" readonly placeholder = contact.getPlaceholderNotes()) #{contact.notes}  
