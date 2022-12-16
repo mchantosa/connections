@@ -11,33 +11,27 @@ block main
     if contacts.length > 0
       div.contact-list
         each contact in contacts
+          -contactVehicle.mount(contact)
           div.contact-list-elm.alternate
             -let hrefAddress = '/user/contacts/' + contact.id
               a.unanchor(href=hrefAddress)
                 div.block1
                   h3 Name
-                  p #{`${contact.first_name = contact.first_name || ''} ${contact.last_name = contact.last_name || ''}`}
+                  p #{contactVehicle.getName()}
                 div.block2  
                   h3 Contact Information
                   dl.side-by-side
-                    dt Preffered medium:
-                    dd #{contact.preferred_medium ? contact.preferred_medium  : 'none'}
+                    dt Preferred medium:
+                    dd #{contactVehicle.getPreferredMedium()}
                   dl.side-by-side
                     dt Phone number:
-                    dd #{contact.phone_number ? contact.phone_number : 'none'}
+                    dd #{contactVehicle.getPhoneNumber()}
                   dl.side-by-side
                     dt Email:
-                    dd #{contact.email ? contact.email : 'none'}
+                    dd #{contactVehicle.getEmail()}
                 div.block3
                   h3 Address
-                  if (contact.street_address_1)
-                    p #{contact.street_address_1}
-                    if (contact.street_address_2)
-                      p #{contact.street_address_2}
-                    p #{`${contact.city}, ${contact.state_code} ${contact.zip_code}`}
-                    p #{contact.country}
-                  else
-                    dd #{'none'} 
+                  p #{contactVehicle.getAddress()} 
                 div.block4 
                   h3 Objectives
-                  p #{`${(contact.objectives.length) ? contact.objectives.length : 'Empty'}`}
+                  p #{contactVehicle.countObjectives()}
