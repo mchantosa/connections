@@ -4,13 +4,13 @@ block header
  
 block main
   div.dilute-background
-    header.contact-list
+    header.contact-view
       h2 #{`Contact edit page for ${contact.getName()}`}
       nav.secondary-nav
         form.delete(action=`/user/contacts/${contact.id}/delete` method="post")
           input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
-    div.contact-list
-      form.contact(action=`/user/contacts/${contact.id}/edit` method="post")
+    div.contact-view
+      form.contact-main(action=`/user/contacts/${contact.id}/edit` method="post")
         div.horizontal
           div.block-left
             div
@@ -67,7 +67,7 @@ block main
                   label(for="state") State:
                 dd
                   select(name="state"  id="state")
-                    option(selected = contact.getInputState()) Please select a State
+                    option(selected = contact.getInputState() value = 'none') Please select a State
                     option(selected = contact.getInputState() ==="AL" value="AL") Alabama
                     option(selected = contact.getInputState() ==="AK" value="AK") Alaska
                     option(selected = contact.getInputState() ==="AZ" value="AZ") Arizona
@@ -154,9 +154,10 @@ block main
                     p #{`${objective.periodicity}`}
                     p #{`${objective.reminder}`}   
             else 
-              p.mb-2
-              h1.center This contact currently has no objectives
+              div.center.p-1
+                h2.center.alert This contact currently has no objectives
             h3.center Notes
-            textarea(wrap="soft" name="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getInputNotes()}  
-        footer
-          input.unbutton.rebutton(type="submit" value="Save Changes")
+            textarea(wrap="soft" name="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getInputNotes()}
+            div.center.p-1 
+              a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}`) Cancel
+              input.unbutton.rebutton.center(type="submit" value="Save Changes")

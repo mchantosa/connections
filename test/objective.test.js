@@ -39,7 +39,13 @@ describe('Test: Objective', () => {
 
   describe('getOccasionDate()', () => {
 
-    test('Test: formats date date_occasion', () => {
+    test('Test: no this.date_occasion returns undefined', () => {
+      //Returns date_occasion of type Date as string formatted to YYYY-MM-DD
+      let objective = new Objective();
+      expect(objective.getOccasionDate()).toBeUndefined();
+    });
+
+    test('Test: formats Date date_occasion', () => {
       //Returns date_occasion of type Date as string formatted to YYYY-MM-DD
       let objective = new Objective({
         date_occasion: new Date('2000/02/03')
@@ -63,6 +69,90 @@ describe('Test: Objective', () => {
       expect(objective.getOccasionDate()).toBe('02-03');
     });
 
+    test('Test: returns "Invalid date" for date_occasion of "invalid"', () => {
+      //Returns 'invalid' for bad input
+      let objective1 = new Objective({
+        date_occasion: '',
+      });
+      let objective2 = new Objective({
+        date_occasion: 'invalid',
+      });
+      expect(objective1.getOccasionDate()).toBeUndefined();
+      expect(objective2.getOccasionDate()).toBe("Invalid date");
+    });
+  })
+
+  describe('Test: sanitizeDate()', () => {
+   
+    test('Test: undefined', () => {
+      let objective = new Objective();
+      objective.sanitizeDateOccasion();
+      expect(objective.date_occasion).toBeUndefined();
+    });
+
+    test('Test: 3', () => {
+      expect(() => {
+        let objective = new Objective({date_occasion: 3});
+        objective.sanitizeDateOccasion();
+      }).toThrow("No numbers!");
+    });
+
+    test('Test: Date object', () => {
+      let objective = new Objective({date_occasion: new Date('2022/02/20')});
+      objective.sanitizeDateOccasion();
+      console.log(objective.date_occasion);
+      expect(objective.date_occasion).toBe("2022-02-20");
+    });
+    
+    test('Test: "11/29"', () => {
+      let objective = new Objective({
+        date_occasion: "11/29"
+      });
+      objective.sanitizeDateOccasion();
+      expect(objective.date_occasion).toBe("1100-11-29");
+    });
+
+    test('Test: "1-3"', () => {
+      let objective = new Objective({
+        date_occasion:"1-3"
+      });
+      objective.sanitizeDateOccasion();
+      expect(objective.date_occasion).toBe("1100-01-03");
+    });
+
+    test('Test: "2022/02/20"', () => {
+      let objective = new Objective({
+        date_occasion:"2022/02/20"
+      });
+      objective.sanitizeDateOccasion();
+      expect(objective.date_occasion).toBe("2022-02-20");
+    });
+
+    test('Test: "2022-02-20"', () => {
+      let objective = new Objective({
+        date_occasion:"2022/02/20"
+      });
+      objective.sanitizeDateOccasion();
+      expect(objective.date_occasion).toBe("2022-02-20");
+    });
+
+    test('Test: "2001/02/29"', () => {
+      let objective = new Objective({
+        date_occasion:"2001/02/29"
+      });
+      objective.sanitizeDateOccasion();
+      expect(objective.date_occasion).toBe("invalid");
+    });
+
   })
 
 });
+
+//Grab an empty test
+// describe('Test: something', () => {
+   
+//   test('Test: 1+2', () => {
+//     expect(1+2).toBe(3);
+//   });
+  
+// })

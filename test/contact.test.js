@@ -30,12 +30,50 @@ describe('Test: Contact', () => {
       let contact = Contact.makeContact(contactData, objectiveData);
       expect(contact instanceof Contact).toBe(true);
       expect(contact.objectives[0] instanceof Objective).toBe(true)
+      expect(contact.objectives[0].contact_id).toBe(contact.id)
+      expect(contact.objectives[1].contact_id).toBe(contact.id)
+      delete contact.objectives[0].contact_id;
+      delete contact.objectives[1].contact_id;
+      delete objectiveData[0].contact_id;
+      delete objectiveData[1].contact_id;
       expect(contact.objectives).toEqual(objectiveData);
       expect(contact.getEmail()).toBe('none');
       expect(contact.objectives[1].getOccasionDate()).toBe('02-20')
     });
 
   })
+
+  test('Test: Contact.makeContact(contactData, objectData) propagates contact.id to contact objective,contact_id', () => {
+    let contact = new Contact({id:5, notes:'Shiva bit me'});
+    let objectiveData = [
+      new Objective({ sillyData: 'I love my cat'}),
+      new Objective({
+        id: 1, //int
+        contact_id: 1, //int
+        occasion: 'birthday', //varchar(25)
+        date_occasion: '1100-02-20', //date
+        periodicity: 'weekly', //text
+        date_next_contact: new Date(), //date
+        date_last_contact: new Date('2022/11/03'),//date
+        reminder: 'month', //text
+      })
+    ];
+    contact.objectives = objectiveData;
+    contact.mountObjectives();
+    expect(contact instanceof Contact).toBe(true);
+    expect(contact.objectives[0] instanceof Objective).toBe(true)
+    expect(contact.objectives[0].contact_id).toBe(contact.id)
+    expect(contact.objectives[1].contact_id).toBe(contact.id)
+    delete contact.objectives[0].contact_id;
+    delete contact.objectives[1].contact_id;
+    delete objectiveData[0].contact_id;
+    delete objectiveData[1].contact_id;
+    expect(contact.objectives).toEqual(objectiveData);
+    expect(contact.getEmail()).toBe('none');
+    expect(contact.objectives[1].getOccasionDate()).toBe('02-20')
+  });
+
+})
 
   describe('Test Initialization', () => {
 
@@ -91,6 +129,16 @@ describe('Test: Contact', () => {
   })
 
   describe('Test: mountObjectives(objectiveData) ', () => {
+
+    test('Test: contact.mountObjectives() links a contact.id to objective.contact_id', () => {
+      let contact = new Contact({
+        id: 5,
+      });
+      contact.mountObjectives([{test : 1},{Shiva: "is naughty"}]);
+      contact.objectives.forEach(objective => {
+        expect(objective.contact_id).toBe(5);  
+      });
+    });
    
     test('Test: contact.mountObjectives(), if objectives are undefined, sets objectives to []', () => {
       let contact = new Contact();
@@ -175,6 +223,6 @@ describe('Test: Contact', () => {
       expect(contact.objectives[0].sillyData).toBe('I love my cat');
       expect(contact.objectives[1].getOccasionDate()).toBe('02-20');
     });
-  })
-
 });
+
+

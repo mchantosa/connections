@@ -33,13 +33,32 @@ body{
   justify-content: flex-end;
 }
 
+.center-justified{
+  display:flex;
+  align-items: center;
+  justify-content:space-between;
+}
+
 .column-center{
   display:flex;
   flex-direction: column;
   align-items: center;
 }
 
-a, a.visitted{
+.column-center-justified{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.narrow-400{
+  min-width: 400px;
+  width: 400px;
+  max-width: 400px;
+}
+
+a, a.visited{
   color:#263e32;
 }
 
@@ -61,6 +80,8 @@ a, a.visitted{
   height:2rem;
   padding: 0 2rem;
   border-radius: 5px;
+  text-align: center;
+  margin: 2px;
 }
 
 .bigbutton{
@@ -89,6 +110,9 @@ a, a.visitted{
 .p-3{
   padding:3rem;
 }
+.m-2{
+  margin:2rem;
+}
 
 .mb-a-half {
   margin-bottom: .5rem;
@@ -113,6 +137,10 @@ a, a.visitted{
 .disable{
   color:rgb(150, 150, 150);
   font-weight:lighter;
+}
+
+.error, .alert{
+  color:#C0392B;
 }
 
 #primary-nav li{
@@ -141,7 +169,6 @@ a, a.visitted{
 .secondary-nav a, .secondary-nav input{
   margin: 2px;
 } 
-
 
 .login-register{
   box-sizing: border-box;
@@ -276,32 +303,32 @@ dl.side-by-side > dd{
   background-color:#cee2c5;
 }
 
-.contact-list-elm:hover{
+.contact-view-elm:hover{
   box-shadow: 5px 5px 5px rgba(0,0,0,.6);
 }
 
 
-.contact-list-elm, .contact{
+.contact-view-elm, .contact-main{
   margin-bottom: 10px;
   background-color: #fcfff5;
 }
 
-.contact-list-elm dt{
+.contact-view-elm dt{
   width: 160px;
   min-width: 160px;
   max-width: 160px;
 }
 
-.contact-list-elm dd input, .contact-list-elm dd select, .contact-list-elm dd {
+.contact-view-elm dd input, .contact-view-elm dd select, .contact-view-elm dd {
   min-width: 200px;
   max-width: 200px;
 }
 
-.contact-list-elm dt{
+.contact-view-elm dt{
   vertical-align: top;
 }
 
-.contact-list-elm > a{
+.contact-view-elm > a{
   display:flex;
   flex-wrap: wrap;
   justify-content:left;
@@ -311,48 +338,48 @@ dl.side-by-side > dd{
   min-width: 35rem;
 }
 
-.contact-list-elm .block2{
+.contact-view-elm .block2{
   min-width: 250px;
   max-width: 400px;
   width:33%;
 }
 
-.contact-list-elm .block1, 
-.contact-list-elm .block3, 
-.contact-list-elm .block4{
+.contact-view-elm .block1, 
+.contact-view-elm .block3, 
+.contact-view-elm .block4{
   min-width: 225px;
   max-width: 250px;
   width:25%;
 }
 
-.contact-list-elm dl{
+.contact-view-elm dl{
   display: flex;
   flex-wrap: wrap;
   max-width: 376px;
 }
 
-.contact-list-elm textarea{
+textarea {
   width: 100%;
   min-height: 10rem;
   box-sizing: border-box;
 }
 
-.contact-list footer{
+.contact-view footer{
   display: flex;
   justify-content: center;
 }
 
-.contact-list footer a, .contact-list footer input[type=submit]{
+.contact-view footer a, .contact-view footer input[type=submit]{
   width:10rem;
   border-radius: 5px;
 }
 
-header.contact-list{
+header.contact-view{
   display: flex;
   flex-direction: column;
 }
 
-header.contact-list > h2{
+header.contact-view > h2{
   display: flex;
   justify-content: center;
 }
@@ -362,21 +389,17 @@ header.contact-list > h2{
   justify-content: center;
 }
 
-.dilute-background header h2{
-  font-weight: bold;
-}
-
-.contact {
+.contact-main {
   display:flex;
   flex-direction: column;
 }
 
-.contact div.horizontal {
+.contact-main div.horizontal {
   display:flex;
   flex-wrap: wrap;
 }
 
-.contact .block-left{
+.contact-main .block-left{
   min-width:280px;/*32+16+200+32*/
   max-width: 360px;
   flex:none;
@@ -384,7 +407,7 @@ header.contact-list > h2{
   padding: 32px;
 }
 
-.contact .block-right{
+.contact-main .block-right{
   min-width: 360px; /*element*/
   flex:auto; /*element*/
   padding: 32px 32px 32px 0; /*element*/
@@ -409,4 +432,26 @@ header.contact-list > h2{
 
 .objectives-elm a:hover{
   box-shadow: 5px 5px 5px rgba(0,0,0,.6);
+}
+
+dl.narrow-400 dt,
+dl.narrow-400 dd,
+dl.narrow-400 input,
+dl.narrow-400 select{
+ min-width: 190px;
+}
+
+dl.narrow-400{
+ padding: 5px 0;
+}
+
+dl.side-by-side dd{
+  display: flex;
+}
+
+.required::after {
+  content: "*";
+  margin-left: 6px;
+  color:#C0392B;
+  width:10px;
 }

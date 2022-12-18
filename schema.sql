@@ -13,25 +13,26 @@ CREATE TABLE contacts (
   user_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   first_name varchar(25),
   last_name varchar(25),
-  preferred_medium varchar(25),
+  preferred_medium varchar(100),
   phone_number varchar(25),
-  email varchar(25),
-  street_address_1 text,
-  street_address_2 text,
-  city text,
-  state_code text, 
-  zip_code text,
-  country text,
+  email varchar(100),
+  street_address_1 varchar(100),
+  street_address_2 varchar(100),
+  city varchar(50),
+  state_code varchar(50), 
+  zip_code varchar(25),
+  country varchar(25),
   notes text
 );
 
 CREATE TABLE objectives (
   id serial PRIMARY KEY ,
   contact_id integer NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
-  occasion varchar(25),
+  occasion varchar(100),
   date_occasion date,
   periodicity text,
   date_next_contact date,
   date_last_contact date,
-  reminder text
+  reminder text,
+  notes text
 );
