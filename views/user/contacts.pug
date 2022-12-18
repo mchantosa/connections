@@ -4,15 +4,15 @@ block header
  
 block main
   div.dilute-background
-    header.contact-list
+    header.contact-view
       h2 Contacts
       nav.secondary-nav
         a.unanchor.rebutton.center(href="/user/contacts/create-contact") Create Contact
     if contacts.length > 0
-      div.contact-list
+      div.contact-view
         each contact in contacts
           -contactVehicle.mount(contact)
-          div.contact-list-elm.alternate
+          div.contact-view-elm.alternate
             -let hrefAddress = '/user/contacts/' + contact.id
               a.unanchor(href=hrefAddress)
                 div.block1

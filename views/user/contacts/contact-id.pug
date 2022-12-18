@@ -4,15 +4,14 @@ block header
  
 block main
   div.dilute-background
-    header.contact-list
-    -console.log(contact)
+    header.contact-view
       h2 #{`Contact information for ${contact.getName()}`}
       nav.secondary-nav
         a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}/edit`) Edit Contact
         form.delete(action=`/user/contacts/${contact.id}/delete` method="post")
           input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
-    div.contact-list
-      div.contact
+    div.contact-view
+      div.contact-main
         div.horizontal
           div.block-left
             div
@@ -33,22 +32,25 @@ block main
               h3 Address
               p #{contact.getAddress()}
           div.block-right
-            h3.center.mb-2 Objectives
-            div.objectives-header
-              h4 Occasion
-              h4 Date 
-              h4 Periodicity
-              h4 Reminder
-            if contact.objectives.length > 0
-              each objective in contact.objectives
-                div.alternate.objectives-elm
-                  a.unanchor(href="/user/contacts/:contact_id/objectives/:objective_id")
-                    p #{`${objective.occasion}`}
-                    p #{`${objective.getOccasionDate()}`}
-                    p #{`${objective.periodicity}`}
-                    p #{`${objective.reminder}`}   
-            else 
-              p.mb-2
-              h1.center This contact currently has no objectives
+            div
+              h3.center.mb-2 Objectives
+              div.objectives-header
+                h4 Occasion
+                h4 Date 
+                h4 Periodicity
+                h4 Reminder
+              if contact.objectives.length > 0
+                each objective in contact.objectives
+                  div.alternate.objectives-elm
+                    a.unanchor(href="/user/contacts/:contact_id/objectives/:objective_id")
+                      p #{`${objective.occasion}`}
+                      p #{`${objective.getOccasionDate()}`}
+                      p #{`${objective.periodicity}`}
+                      p #{`${objective.reminder}`}   
+              else 
+                div.center.p-1
+                  h2.center.alert This contact currently has no objectives
+              div.center.p-1
+                a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}/objectives/create-objective`) Create an objective
             h3.center Notes
-            textarea(wrap="soft" name="notes" readonly placeholder = contact.getPlaceholderNotes()) #{contact.notes}  
+            textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.notes}

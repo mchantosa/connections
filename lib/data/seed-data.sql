@@ -30,10 +30,10 @@ INSERT INTO contacts (user_id, first_name , last_name,
 
 INSERT INTO objectives (contact_id, occasion, date_occasion, 
   periodicity, date_next_contact, date_last_contact, reminder)
-  VALUES(1, 'Birthday', '2000-11-03', 'ANNUAL', NULL, NULL, 30),
-  (1, 'Anniversary', '2008-10-03', 'ANNUAL', NULL, NULL, 30),
-  (1, 'Christmas', '1100-12-25', 'ANNUAL', NULL, NULL, 30),
-  (1, 'Valentine''s Day', '1100-02-14', 'ANNUAL', NULL, NULL, 14);
+  VALUES(1, 'Birthday', '2000-11-03', 'Annual', NULL, NULL, 30),
+  (1, 'Coffee Date', '2008-10-03', 'Weekly', NULL, NULL, 30),
+  (1, 'Christmas', '1100-12-25', 'Annual', NULL, NULL, 30),
+  (1, 'Valentine''s Day', '1100-02-14', 'Annual', NULL, NULL, 14);
 
 
 

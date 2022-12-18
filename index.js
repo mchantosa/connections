@@ -246,7 +246,7 @@ app.post("/user/account/update-email",
         flash: req.flash(),
       });
     } else {
-      let updated = await res.locals.store.updateUseremail(newEmail);
+      let updated = await res.locals.store.updateUserEmail(newEmail);
       if(updated){
         req.flash("info", "Your email has been updated");
       }
@@ -375,6 +375,91 @@ app.get("/user/contacts",
     res.render("user/contacts");
 }));
 
+app.get("/user/contacts/create-contact",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    res.locals.contact = Contact.makeContact();
+    res.render("user/contacts/create-contact");
+}));
+
+app.post("/user/contacts/create-contact",
+  requiresAuthentication, [
+    body("firstName")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("First Name cannot exceed 25 characters"),
+    body("lastName")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Last Name cannot exceed 25 characters"),
+    body("preferred_medium")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Preferred Medium cannot exceed 100 characters"),
+    body("email")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Email cannot exceed 100 characters"),
+    body("street_address_1")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Street address 1 cannot exceed 100 characters"),
+    body("street_address_2")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Street address 2 cannot exceed 100 characters"),
+    body("city")
+    .trim()
+    .isLength({ max: 50})
+    .withMessage("City cannot exceed 50 characters"),
+    body("zip_code")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Zipcode cannot exceed 25 characters"),
+    body("country")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Country cannot exceed 25 characters")
+  ],
+  catchError(async (req, res) => {
+    let contactId = req.params.contact_id;
+
+    let contact = Contact.makeContact(
+      {
+        id : contactId,
+        first_name : req.body.firstName,
+        last_name : req.body.lastName,
+        preferred_medium : req.body.preferredMedium,
+        phone_number : req.body.phone,
+        email : req.body.email,
+        street_address_1 : req.body.streetAddress1,
+        street_address_2 : req.body.streetAddress2,
+        city : req.body.city,
+        state_code : req.body.state,
+        zip_code : req.body.zipCode,
+        country : req.body.country,
+        notes : req.body.notes,
+      });
+
+    let errors = validationResult(req);
+    let errorsCustom = [];
+    if(!contact.getName()){
+      errorsCustom.push("A contact name is required, please enter either a first or last name")
+    }
+    if(!errors.isEmpty()||errorsCustom.length) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      errorsCustom.forEach(message => req.flash("error", message));
+      res.locals.contact = contact;
+      res.render('user/contacts/create-contact',{
+        flash: req.flash(), 
+      })
+    } else{
+      res.locals.store.createContact(contact);
+      req.flash("info", `${contact.getName()} was created`);
+      res.redirect(`/user/contacts`);
+    } 
+}));
+
 app.get("/user/contacts/:contact_id",
   requiresAuthentication,
   catchError(async (req, res) => {
@@ -402,8 +487,37 @@ app.post("/user/contacts/:contact_id/edit",
     body("lastName")
     .trim()
     .isLength({ max: 25})
-    .withMessage("Last Name cannot exceed 25 characters")
+    .withMessage("Last Name cannot exceed 25 characters"),
+    body("preferred_medium")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Preferred Medium cannot exceed 100 characters"),
+    body("email")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Email cannot exceed 100 characters"),
+    body("street_address_1")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Street address 1 cannot exceed 100 characters"),
+    body("street_address_2")
+    .trim()
+    .isLength({ max: 100})
+    .withMessage("Street address 2 cannot exceed 100 characters"),
+    body("city")
+    .trim()
+    .isLength({ max: 50})
+    .withMessage("City cannot exceed 50 characters"),
+    body("zip_code")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Zipcode cannot exceed 25 characters"),
+    body("country")
+    .trim()
+    .isLength({ max: 25})
+    .withMessage("Country cannot exceed 25 characters")
   ],
+
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
 
@@ -435,14 +549,13 @@ app.post("/user/contacts/:contact_id/edit",
       errorsCustom.forEach(message => req.flash("error", message));
       res.locals.contact = contact;
       res.render('user/contacts/edit',{
-        flash: req.flash(),
+        flash: req.flash(), 
       })
     } else{
-      req.flash("info", `${contact.getName()} changes were saved`)
+      res.locals.store.updateContact(contact);
+      req.flash("info", `${contact.getName()} changes were saved`);
       res.redirect(`/user/contacts/${contactId}`);
-    }
-
-   
+    } 
 }));
 
 app.post("/user/contacts/:contact_id/delete",
@@ -453,75 +566,72 @@ app.post("/user/contacts/:contact_id/delete",
     contactVehicle.mount(await res.locals.store.getContact(contactId));
     let contactName = contactVehicle.getName();
     res.locals.contact = await res.locals.store.removeContact(contactId);
-    req.flash("info", `Contact ${contactName} has been deleted`)
+    req.flash("info", `Contact ${contactName} has been deleted`);
     res.redirect("/user/contacts/edit");
 }));
 
-app.post("/user/contacts/edit/:contact_id/objective",
+app.get("/user/contacts/:contact_id/objectives/create-objective",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+  const contact_id = req.params.contact_id;
+  let contactNames = await res.locals.store.getContactName(contact_id);
+  
+  let contact = Contact.makeContact(contactNames, [new Objective()])
+  res.locals.contact = contact;
+  res.render(`user/contacts/objectives/create-objective`);
+}));
+
+app.post("/user/contacts/:contact_id/objectives/create-objective",
   requiresAuthentication,
   [
-    body("firstName")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("First Name cannot exceed 25 characters"),
-    body("lastName")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Last Name cannot exceed 25 characters")
+    body("occasion")
+      .trim()
+      .isLength({min: 1})
+      .withMessage("Occasion required")
+      .isLength({ max: 100})
+      .withMessage("Occasion cannot exceed 100 characters"),
+    body("date_occasion")
+      .trim()
+      .isLength({min: 1})
+      .withMessage("Occasion date is required"),
+    body("periodicity")
+      .trim()
+      .isLength({min: 1})
+      .withMessage("Periodicity is required")
   ],
   catchError(async (req, res) => {
-    let contact = {};
-    contact.id = req.params.id;
-    contact.first_name = req.body.firstName.trim();
-    contact.last_name = req.body.lastName.trim();
-    contact.periodicity = req.body.periodicity;
-    contact.birthday = req.body.birthday.trim();
-    contact.preferred_medium = req.body.preferredMedium;
-    contact.phone_number = req.body.phone;
-    contact.streetAddress1 = req.body.streetAddress1.trim();
-    contact.streetAddress2 = req.body.streetAddress2.trim();
-    contact.city = req.body.city.trim();
-    contact.state_code = req.body.state;
-    contact.zip_code = req.body.zipCode.trim();
-    contact.country = req.body.country.trim();
-    contact.notes = req.body.notes.trim();   
+    let contactId = req.params.contact_id;
+    let contactNames = await res.locals.store.getContactName(contactId);
+    let contact = Contact.makeContact(contactNames, [new Objective(
+      {
+        occasion: req.body.occasion,
+        date_occasion: req.body.date_occasion,
+        periodicity: req.body.periodicity,
+        reminder: req.body.reminder,
+        notes: req.body.notes,
+      }
+    )])
+    let objective = contact.objectives[0];
 
     let errors = validationResult(req);
-    if(!errors.isEmpty()) {
-      errors.array().forEach(message => req.flash("error", message.msg));
-      res.locals.contactData = await res.locals.store.getAContactData(contact.id);
-      res.render("user/contacts/edit", {
-        flash: req.flash(),
-      });
-    } else if([contact.first_name, contact.last_name].join('').length === 0){
-      req.flash("error", "A contact name is required, please enter either a first or last name");
-      res.render("user/contacts/edit", {
-        flash: req.flash(),
-      });
-    }
-    let errorArr = []; 
+    let errorsCustom = [];
     
-    let birthday = contact.birthday;
-    if (birthday.split('/').length === 3) birthday = birthday.split('/');
-    else birthday = birthday.split('-');
-    if(![2, 3].includes(birthday.length)){
-      errorArr.push("Birthday must be of format YYYY-MM-DD, YY-MM-DD, or MM-DD");
+    objective.sanitizeDateOccasion();
+    if(objective.getOccasionDate()==="Invalid date"){
+      errorsCustom.push("Not a valid date, please try again")
+    }
+    if(!errors.isEmpty()||errorsCustom.length) {
+      errors.array().forEach(message => req.flash("error", message.msg));
+      errorsCustom.forEach(message => req.flash("error", message));
+      res.locals.contact = contact;
+      res.render('user/contacts/objectives/create-objective',{
+        flash: req.flash(), 
+      })
+    } else{
+      res.locals.store.createObjective(objective, contactId);
+      req.flash("info", `Objective was added`);
+      res.redirect(`/user/contacts/${contactId}`);
     } 
-    //if(contact.birthday.split('/').length === 3){
-      //let birthday = contact.birthday.split('/');
-      //let errors = [];
-      //let [year, month, day] = [parseInt(birthday[0]), 
-      //  parseInt(birthday[1]), 
-      //  parseInt(birthday[2])];
-      //if(month < 1 || month > 12) errors.push("Invalid MM, month must be an integer between 1 and 12")
-      //if(day < 1 || day > 31) errors.push("Invalid DD, day must be an integer between 1 and 31")
-      //if(day > 29 && month === 2) errors.push("Invalid date, February cannot have more that 20 days")
-      //if(day === 31 && [4,6,9,11].includes(day))errors.push("Invalid DD, April, June, September, and November have 30 days")
-
-    console.log(req.body)
-    console.log('hello')
-    res.redirect("/user/contacts");
-  
 }));
 
 // Listener
