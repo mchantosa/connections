@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require("express");
 const session = require("express-session");
 const store = require("connect-loki");
@@ -565,7 +567,7 @@ app.post("/user/contacts/:contact_id/delete",
     let contactVehicle = new Contact();
     contactVehicle.mount(await res.locals.store.getContact(contactId));
     let contactName = contactVehicle.getName();
-    res.locals.contact = await res.locals.store.removeContact(contactId);
+    res.locals.contact = await res.locals.store.deleteContact(contactId);
     req.flash("info", `Contact ${contactName} has been deleted`);
     res.redirect("/user/contacts/edit");
 }));
@@ -632,6 +634,97 @@ app.post("/user/contacts/:contact_id/objectives/create-objective",
       req.flash("info", `Objective was added`);
       res.redirect(`/user/contacts/${contactId}`);
     } 
+}));
+
+app.get("/user/contacts/:contact_id/objectives/:objective_id",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+  const contact_id = req.params.contact_id;
+  const objective_id = req.params.objective_id;
+
+  let contactNames = await res.locals.store.getContactName(contact_id);
+  let objectiveData = await res.locals.store.getObjective(objective_id);
+  let contact = Contact.makeContact(contactNames, [new Objective(objectiveData)])
+  res.locals.contact = contact;
+  res.render(`user/contacts/objectives/objective-id`);
+}));
+
+app.get("/user/contacts/:contact_id/objectives/:objective_id/edit",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+  const contact_id = req.params.contact_id;
+  const objective_id = req.params.objective_id;
+  
+  let contactNames = await res.locals.store.getContactName(contact_id);
+  let objectiveData = await res.locals.store.getObjective(objective_id);
+  let contact = Contact.makeContact(contactNames, [new Objective(objectiveData)])
+  res.locals.contact = contact;
+  res.render(`user/contacts/objectives/edit`);
+}));
+
+app.post("/user/contacts/:contact_id/objectives/:objective_id/edit",
+requiresAuthentication,
+[
+  body("occasion")
+    .trim()
+    .isLength({min: 1})
+    .withMessage("Occasion required")
+    .isLength({ max: 100})
+    .withMessage("Occasion cannot exceed 100 characters"),
+  body("date_occasion")
+    .trim()
+    .isLength({min: 1})
+    .withMessage("Occasion date is required"),
+  body("periodicity")
+    .trim()
+    .isLength({min: 1})
+    .withMessage("Periodicity is required")
+],
+catchError(async (req, res) => {
+  let contactId = req.params.contact_id;
+  let objectiveId = req.params.objective_id;
+  let contactNames = await res.locals.store.getContactName(contactId);
+  let contact = Contact.makeContact(contactNames, [new Objective(
+    {
+      id: objectiveId,
+      occasion: req.body.occasion,
+      date_occasion: req.body.date_occasion,
+      periodicity: req.body.periodicity,
+      reminder: req.body.reminder,
+      notes: req.body.notes,
+    }
+  )])
+  let objective = contact.objectives[0];
+
+  let errors = validationResult(req);
+  let errorsCustom = [];
+  
+  objective.sanitizeDateOccasion();
+  if(objective.getOccasionDate()==="Invalid date"){
+    errorsCustom.push("Not a valid date, please try again")
+  }
+  if(!errors.isEmpty()||errorsCustom.length) {
+    errors.array().forEach(message => req.flash("error", message.msg));
+    errorsCustom.forEach(message => req.flash("error", message));
+    res.locals.contact = contact;
+    res.render('user/contacts/objectives/edit',{
+      flash: req.flash(), 
+    })
+  } else{
+    res.locals.store.updateObjective(objective);
+    req.flash("info", `Objective was added`);
+    res.redirect(`/user/contacts/${contactId}/`);
+  } 
+}));
+
+app.post("/user/contacts/:contact_id/objectives/:objective_id/delete",
+  requiresAuthentication,
+  catchError(async (req, res) => {
+    let contactId = req.params.contact_id;
+    let objectiveId = req.params.contact_id;
+    res.locals.store.deleteObjective(objectiveId);
+    req.flash("info", `Objective has been deleted`);
+    res.redirect(`/user/contacts/${contactId}`);
 }));
 
 // Listener

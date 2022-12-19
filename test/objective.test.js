@@ -1,3 +1,5 @@
+"use strict";
+
 const Objective= require("../lib/objective");
 
 describe('Test: Objective', () => {

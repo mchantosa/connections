@@ -1,3 +1,5 @@
+"use strict";
+
 const Contact= require("../lib/contact");
 const Objective= require("../lib/objective");
 
