@@ -263,14 +263,6 @@ ul.unordered-list>li{
   padding: .5em 0 .5em 1.5em;
 }
 
-dl.side-by-side > dd, dl.side-by-side > dt{
-  display:inline-block;
-}
-
-dl.side-by-side > dd{
-  margin-left: 1rem;
-}
-
 .front-and-center{
   box-sizing: border-box;
   width: 40%;
@@ -394,36 +386,46 @@ header.contact-view > h2{
   flex-direction: column;
 }
 
-.contact-main div.horizontal {
+div.horizontal {
   display:flex;
   flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .contact-main .block-left{
   min-width:280px;/*32+16+200+32*/
   max-width: 360px;
-  flex:none;
   box-sizing: border-box;
   padding: 32px;
 }
 
 .contact-main .block-right{
-  min-width: 360px; /*element*/
-  flex:auto; /*element*/
+  min-width: 400px; /*element*/
+  max-width: 600px; /*element*/
+  width: 600px; /*element*/
   padding: 32px 32px 32px 0; /*element*/
   display:flex; /*container*/
   flex-direction: column; /*container*/
+  align-items: center;
+  justify-content: space-between;
 }
 
-.objectives-elm > a,.objectives-elm > div, .objectives-header{
+.objectives-elm > a,
+.objectives-elm > div, 
+.objectives-header{
   display:flex;
   justify-content:space-between;
   align-items: center;
 }
 
-.objectives-elm > a > *, .objectives-elm > div > *, .objectives-header > *{
-  min-width: 100px;
-  width: 200px;
+.objectives-elm > a > *, 
+.objectives-elm > div > *, 
+.objectives-header > *{
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  min-width: 120px;
+  width: 120px;
 }
 
 .objectives-elm {
@@ -434,19 +436,47 @@ header.contact-view > h2{
   box-shadow: 5px 5px 5px rgba(0,0,0,.6);
 }
 
-dl.narrow-400 dt,
-dl.narrow-400 dd,
+dl.side-by-side {
+  display:flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+textarea{
+  width:80%;
+}
+
+dl.side-by-side > dd{
+  margin-left: 16 px;
+}
+
+.narrow-400{
+  min-width: 360px;
+  max-width: 400px;
+  width:380px;
+}
+
+dl.narrow-400 dt{
+  max-width: 150px;
+  max-width:150px
+}
+
+dl.narrow-400 dd{
+  max-width: 200px;
+  width:200px;
+  display: flex;
+  justify-content: flex-start;
+}
+
 dl.narrow-400 input,
 dl.narrow-400 select{
- min-width: 190px;
+  max-width: 180px;
+  width:180px;
 }
+
 
 dl.narrow-400{
  padding: 5px 0;
-}
-
-dl.side-by-side dd{
-  display: flex;
 }
 
 .required::after {

@@ -15,54 +15,55 @@ block main
           div.block-left
             div
               h3 Name
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="first-name") First Name: 
                 dd
                   input(type="text" name="firstName" id="first-name" value=contact.getInputFirstName())
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="last-name") Last Name: 
                 dd
                   input(type="text" name="lastName" id="last-name" value=contact.getInputLastName())
             div
               h3 Contact Information
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="preferred_medium") Preferred Medium:
                 dd 
                   input(type="text" name="preferredMedium" id="preferred_medium" value=contact.getInputPreferredMedium())
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="phone_number") Phone Number:
                 dd 
                   input(type="tel" name="phone" id="phone_number" pattern=contact.getPhonePattern() value=contact.getInputPhoneNumber())
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                 dd
                   small Format: 123-456-7890
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="email") Email:
                 dd 
                   input(type="email" name="email" id="email" placeholder='username@domain.com' value=contact.getInputEmail())
             div
               h3 Address
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt
                   label(for="street_address_1") Street address 1:
                 dd
                   input(type="text" name="streetAddress1" id="street_address_1" value=contact.getInputStreetAddress1())
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt
                   label(for="street_address_2") Street address 2:
                 dd
                   input(type="text" name="streetAddress2" id="street_address_2" value=contact.getInputStreetAddress2())
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt
                   label(for="city") City:
                 dd
                   input(type="text" name="city" id="city" value=contact.getInputCity())
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="state") State:
                 dd
@@ -128,12 +129,12 @@ block main
                     option(selected = contact.getInputState() ==="AA" value="AA") Armed Forces Americas (AA)
                     option(selected = contact.getInputState() ==="AP" value="AP") Armed Forces Pacific (AP)
                     option(selected = contact.getInputState() ==="AE" value="AE") Armed Forces Others (AE)
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt
                   label(for="zip_code") Zipcode:
                 dd
                   input(type="text" name="zipCode" id="zip_code" value=contact.getInputZipcode())
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt 
                   label(for="country") Country: 
                 dd

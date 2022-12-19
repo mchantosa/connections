@@ -19,13 +19,13 @@ block main
               p #{contact.getName()}
             div
               h3 Contact Information
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt Preferred medium:
                 dd #{contact.getPreferredMedium()}
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt Phone number:
                 dd #{contact.getPhoneNumber()}
-              dl.side-by-side
+              dl.side-by-side.center-justified.narrow-400
                 dt Email:
                 dd #{contact.getEmail()}
             div
@@ -42,7 +42,7 @@ block main
               if contact.objectives.length > 0
                 each objective in contact.objectives
                   div.alternate.objectives-elm
-                    a.unanchor(href="/user/contacts/:contact_id/objectives/:objective_id")
+                    a.unanchor(href=`/user/contacts/${contact.id}/objectives/${objective.id}` )
                       p #{`${objective.occasion}`}
                       p #{`${objective.getOccasionDate()}`}
                       p #{`${objective.periodicity}`}
