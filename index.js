@@ -19,6 +19,24 @@ const Contact = require("./lib/contact");
 //const morgan = require("morgan");
 //app.use(morgan("common"));
 
+const findNavVector = (page, endPage) => {
+  let navVector = [page];
+  let index = 1;
+  while (true){
+    let fails = 0;
+    if (page + index <= endPage){
+      navVector.push(page + index);
+    } else fails++;
+    if (page - index >= 0){
+      navVector.unshift(page - index);
+    } else fails++;
+    if (fails === 2) break;
+    if (navVector.length >= 5) break;
+    index++;
+  }
+  return navVector;
+}
+
 //make public directory serve static files (images, css)
 app.use(express.static("public"));
 
@@ -371,10 +389,24 @@ app.post("/user/account/update-account-information",
 app.get("/user/contacts",
   requiresAuthentication,
   catchError(async (req, res) => {
-    res.locals.activePage = 'contacts';
-    res.locals.contactVehicle = new Contact();
-    res.locals.contacts = await res.locals.store.getContacts();
-    res.render("user/contacts");
+    let page = (req.query.page) ? +req.query.page : 0;
+    let totalContacts = await res.locals.store.getContactsCount();
+    let endPage = Math.floor(totalContacts/ConnectionsDB.PAGINATE);
+    let navVector = findNavVector(page, endPage);
+    console.log(navVector);
+    
+    if((page < 0) || (page > endPage )){
+      req.flash("error", `Your query parameter must be a number between 0 and ${endPage}`);
+      res.redirect("/user/contacts");
+    } else {
+      res.locals.activePage = 'home';
+      res.locals.page = page;
+      res.locals.endPage = endPage;
+      res.locals.navVector = navVector;
+      res.locals.contactVehicle = new Contact();
+      res.locals.contacts = await res.locals.store.getContacts(page);
+      res.render("user/contacts");
+    }
 }));
 
 app.get("/user/contacts/create-contact",

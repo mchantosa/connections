@@ -485,3 +485,31 @@ dl.narrow-400{
   color:#C0392B;
   width:10px;
 }
+
+nav.pagination{
+  display:flex;
+  justify-content: center;
+}
+
+nav.pagination .page{
+  margin: 0 .5rem;
+  width: 1.25rem;
+  background-color: #263e32;
+  color: #fcfff5;
+  border-radius: 5px;
+  text-decoration: none;
+  text-align: center !important;
+}
+
+nav.pagination .prev, 
+nav.pagination .next{
+  margin: 0 1rem;
+}
+
+nav.pagination .selected{
+  background-color: #fcfff5;
+  color: #263e32;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 5px 5px 5px rgba(0,0,0,.6);
+}
