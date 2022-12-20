@@ -393,13 +393,12 @@ app.get("/user/contacts",
     let totalContacts = await res.locals.store.getContactsCount();
     let endPage = Math.floor(totalContacts/ConnectionsDB.PAGINATE);
     let navVector = findNavVector(page, endPage);
-    console.log(navVector);
     
     if((page < 0) || (page > endPage )){
       req.flash("error", `Your query parameter must be a number between 0 and ${endPage}`);
       res.redirect("/user/contacts");
     } else {
-      res.locals.activePage = 'home';
+      res.locals.activePage = 'contacts';
       res.locals.page = page;
       res.locals.endPage = endPage;
       res.locals.navVector = navVector;
@@ -498,9 +497,22 @@ app.get("/user/contacts/:contact_id",
   requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
-    res.locals.contact = Contact.makeContact(
-      await res.locals.store.getContact(contactId));
-    res.render("user/contacts/contact-id");
+    let page = (req.query.page) ? +req.query.page : 0;
+    let totalObjectives = await res.locals.store.getObjectivesCount(contactId);
+    let endPage = Math.floor(totalObjectives/ConnectionsDB.PAGINATE);
+    let navVector = findNavVector(page, endPage);
+    
+    if((page < 0) || (page > endPage )){
+      req.flash("error", `Your query parameter must be a number between 0 and ${endPage}`);
+      res.redirect(`/user/contacts/${contactId}`);
+    } else {
+      res.locals.page = page;
+      res.locals.endPage = endPage;
+      res.locals.navVector = navVector;
+      res.locals.contact = Contact.makeContact(
+        await res.locals.store.getContact(contactId,page));
+      res.render("user/contacts/contact-id");
+    }
 }));
 
 app.get("/user/contacts/:contact_id/edit",
