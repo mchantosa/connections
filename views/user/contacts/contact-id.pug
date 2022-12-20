@@ -47,6 +47,17 @@ block main
                       p #{`${objective.getOccasionDate()}`}
                       p #{`${objective.periodicity}`}
                       p #{`${objective.reminder}`}   
+                nav.pagination
+                  span.prev
+                    a(rel="prev" href=`/user/contacts/${contact.id}?page=${0}`) Start
+                  each n in navVector
+                    if n === page
+                      span.page.center.selected #{n}
+                    else
+                      span.page.center
+                        a.page(href=`/user/contacts/${contact.id}?page=${n}`) #{n}
+                  span.next
+                    a(rel="next" href=`/user/contacts/${contact.id}?page=${endPage}`) End
               else 
                 div.center.p-1
                   h2.center.alert This contact currently has no objectives

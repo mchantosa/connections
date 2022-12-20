@@ -1,10 +1,3 @@
-create table objectives (
-	contact_id INT,
-	occasion VARCHAR(50),
-	date_occasion DATE,
-	periodicity VARCHAR(9),
-	reminder VARCHAR(8)
-);
 insert into objectives (contact_id, occasion, date_occasion, periodicity, reminder) values (69, 'fjokieecdypoktrjnnblwt', '2022-04-03', 'Annual', null);
 insert into objectives (contact_id, occasion, date_occasion, periodicity, reminder) values (26, 'gfcjgyqryicusgkgmziihy', '2022-04-06', 'Monthly', '2 Weeks');
 insert into objectives (contact_id, occasion, date_occasion, periodicity, reminder) values (40, 'jdvhbbgucskttjjmtvrsgs', '2022-01-25', 'Biweekly', null);
