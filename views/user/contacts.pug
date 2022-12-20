@@ -34,4 +34,18 @@ block main
                   p #{contactVehicle.getAddress()} 
                 div.block4 
                   h3 Objectives
-                  p #{contactVehicle.countObjectives()}
+                  p #{contactVehicle.objectivesCount}
+        div
+          //- Need n and end
+          nav.pagination
+            span.prev
+              a(rel="prev" href=`/user/contacts?page=${0}`) Start
+            each n in navVector
+              if n === page
+                span.page.center.selected #{n}
+              else
+                span.page.center
+                  a.page(href=`/user/contacts?page=${n}`) #{n}
+            span.next
+              a(rel="next" href=`/user/contacts?page=${endPage}`) End
+            
