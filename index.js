@@ -418,41 +418,58 @@ app.get("/user/contacts/create-contact",
 app.post("/user/contacts/create-contact",
   requiresAuthentication, [
     body("firstName")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("First Name cannot exceed 25 characters"),
+      .trim()
+      .isLength({ max: 25})
+      .withMessage("First Name cannot exceed 25 characters"),
     body("lastName")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Last Name cannot exceed 25 characters"),
+      .trim()
+      .isLength({ max: 25})
+      .withMessage("Last Name cannot exceed 25 characters"),
     body("preferred_medium")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Preferred Medium cannot exceed 100 characters"),
+      .trim()
+      .isLength({ max: 100})
+      .withMessage("Preferred Medium cannot exceed 100 characters"),
+    body("phone")
+      .trim().optional({checkFalsy:true, checkNull:true})
+      .matches(/^\d\d\d-\d\d\d-\d\d\d\d$/)
+      .withMessage('Invalid phone number format. Use ###-###-####.'),
     body("email")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Email cannot exceed 100 characters"),
+      .trim().optional({checkFalsy:true, checkNull:true})
+      .isLength({ max: 100})
+      .withMessage("Email cannot exceed 100 characters")
+      .isEmail()
+      .withMessage("Invalid Email"),
     body("street_address_1")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Street address 1 cannot exceed 100 characters"),
+      .trim()
+      .isLength({ max: 100})
+      .withMessage("Street address 1 cannot exceed 100 characters"),
     body("street_address_2")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Street address 2 cannot exceed 100 characters"),
+      .trim()
+      .isLength({ max: 100})
+      .withMessage("Street address 2 cannot exceed 100 characters"),
     body("city")
-    .trim()
-    .isLength({ max: 50})
-    .withMessage("City cannot exceed 50 characters"),
+      .trim()
+      .isLength({ max: 50})
+      .withMessage("City cannot exceed 50 characters"),
+    body("state_code")
+      .trim().isIn([undefined, "", "AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA",
+        "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS",
+        "MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA",
+        "RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","AS","GU",
+        "MP","PR","UM","VI","AA","AP","AE","VI","AA","AP","AE"])
+      .withMessage("Must be a valid state abbreviation"),
     body("zip_code")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Zipcode cannot exceed 25 characters"),
+      .trim().optional({checkFalsy:true, checkNull:true})
+      .custom((value) => {
+        const t1 = /^[0-9]{5}$/.test(value)
+        const t2 = /^[0-9]{5}-[0-9]{4}$/.test(value)
+        return t1 || t2;
+      })
+      .withMessage("Zipcode has an invalid format. Use ##### or #####-####"),
     body("country")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Country cannot exceed 25 characters")
+      .trim()
+      .isLength({ max: 25})
+      .withMessage("Country cannot exceed 25 characters")
   ],
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
@@ -473,9 +490,9 @@ app.post("/user/contacts/create-contact",
         country : req.body.country,
         notes : req.body.notes,
       });
-
     let errors = validationResult(req);
     let errorsCustom = [];
+
     if(!contact.getName()){
       errorsCustom.push("A contact name is required, please enter either a first or last name")
     }
@@ -498,7 +515,7 @@ app.get("/user/contacts/:contact_id",
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
     let page = (req.query.page) ? +req.query.page : 0;
-    let totalObjectives = await res.locals.store.getObjectivesCount(contactId);
+    let totalObjectives = await res.locals.store.getObjectivesCount(+contactId);
     let endPage = Math.floor(totalObjectives/ConnectionsDB.PAGINATE);
     let navVector = findNavVector(page, endPage);
     
@@ -510,7 +527,7 @@ app.get("/user/contacts/:contact_id",
       res.locals.endPage = endPage;
       res.locals.navVector = navVector;
       res.locals.contact = Contact.makeContact(
-        await res.locals.store.getContact(contactId,page));
+        await res.locals.store.getContact(+contactId,page));
       res.render("user/contacts/contact-id");
     }
 }));
@@ -520,50 +537,66 @@ app.get("/user/contacts/:contact_id/edit",
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
     res.locals.contact = Contact.makeContact(
-      await res.locals.store.getContact(contactId));
+      await res.locals.store.getContact(+contactId));
     res.render("user/contacts/edit");
 }));
 
 app.post("/user/contacts/:contact_id/edit",
   requiresAuthentication, [
     body("firstName")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("First Name cannot exceed 25 characters"),
+      .trim()
+      .isLength({ max: 25})
+      .withMessage("First Name cannot exceed 25 characters"),
     body("lastName")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Last Name cannot exceed 25 characters"),
+      .trim()
+      .isLength({ max: 25})
+      .withMessage("Last Name cannot exceed 25 characters"),
     body("preferred_medium")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Preferred Medium cannot exceed 100 characters"),
+      .trim()
+      .isLength({ max: 100})
+      .withMessage("Preferred Medium cannot exceed 100 characters"),
+    body("phone")
+      .trim().optional({checkFalsy:true, checkNull:true})
+      .matches(/^\d\d\d-\d\d\d-\d\d\d\d$/)
+      .withMessage('Invalid phone number format. Use ###-###-####.'),
     body("email")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Email cannot exceed 100 characters"),
+      .trim().optional({checkFalsy:true, checkNull:true})
+      .isLength({ max: 100})
+      .withMessage("Email cannot exceed 100 characters")
+      .isEmail()
+      .withMessage("Invalid Email"),
     body("street_address_1")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Street address 1 cannot exceed 100 characters"),
+      .trim()
+      .isLength({ max: 100})
+      .withMessage("Street address 1 cannot exceed 100 characters"),
     body("street_address_2")
-    .trim()
-    .isLength({ max: 100})
-    .withMessage("Street address 2 cannot exceed 100 characters"),
+      .trim()
+      .isLength({ max: 100})
+      .withMessage("Street address 2 cannot exceed 100 characters"),
     body("city")
-    .trim()
-    .isLength({ max: 50})
-    .withMessage("City cannot exceed 50 characters"),
+      .trim()
+      .isLength({ max: 50})
+      .withMessage("City cannot exceed 50 characters"),
+    body("state_code")
+      .trim().isIn([undefined, "", "AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA",
+        "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS",
+        "MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA",
+        "RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","AS","GU",
+        "MP","PR","UM","VI","AA","AP","AE","VI","AA","AP","AE"])
+      .withMessage("Must be a valid state abbreviation"),
     body("zip_code")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Zipcode cannot exceed 25 characters"),
+      .trim().optional({checkFalsy:true, checkNull:true})
+      .custom((value) => {
+        const t1 = /^[0-9]{5}$/.test(value)
+        const t2 = /^[0-9]{5}-[0-9]{4}$/.test(value)
+        return t1 || t2;
+      })
+      .withMessage("Zipcode has an invalid format. Use ##### or #####-####"),
     body("country")
-    .trim()
-    .isLength({ max: 25})
-    .withMessage("Country cannot exceed 25 characters")
+      .trim()
+      .isLength({ max: 25})
+      .withMessage("Country cannot exceed 25 characters")
   ],
-
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
 
@@ -583,10 +616,10 @@ app.post("/user/contacts/:contact_id/edit",
         country : req.body.country,
         notes : req.body.notes,
       },
-      await res.locals.store.getObjectives(contactId));
-
+    await res.locals.store.getObjectives(+contactId));
     let errors = validationResult(req);
     let errorsCustom = [];
+
     if(!contact.getName()){
       errorsCustom.push("A contact name is required, please enter either a first or last name")
     }
@@ -609,18 +642,18 @@ app.post("/user/contacts/:contact_id/delete",
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
     let contactVehicle = new Contact();
-    contactVehicle.mount(await res.locals.store.getContact(contactId));
+    contactVehicle.mount(await res.locals.store.getContact(+contactId));
     let contactName = contactVehicle.getName();
-    res.locals.contact = await res.locals.store.deleteContact(contactId);
+    res.locals.contact = await res.locals.store.deleteContact(+contactId);
     req.flash("info", `Contact ${contactName} has been deleted`);
-    res.redirect("/user/contacts/edit");
+    res.redirect("/user/contacts");
 }));
 
 app.get("/user/contacts/:contact_id/objectives/create-objective",
   requiresAuthentication,
   catchError(async (req, res) => {
   const contact_id = req.params.contact_id;
-  let contactNames = await res.locals.store.getContactName(contact_id);
+  let contactNames = await res.locals.store.getContactName(+contact_id);
   
   let contact = Contact.makeContact(contactNames, [new Objective()])
   res.locals.contact = contact;
@@ -633,21 +666,26 @@ app.post("/user/contacts/:contact_id/objectives/create-objective",
     body("occasion")
       .trim()
       .isLength({min: 1})
-      .withMessage("Occasion required")
+      .withMessage("An occasion is required")
       .isLength({ max: 100})
       .withMessage("Occasion cannot exceed 100 characters"),
     body("date_occasion")
       .trim()
       .isLength({min: 1})
-      .withMessage("Occasion date is required"),
+      .withMessage("An occasion date is required"),
     body("periodicity")
       .trim()
       .isLength({min: 1})
       .withMessage("Periodicity is required")
+      .isIn(Objective.PERIOD)
+      .withMessage("Periodicity must be Weekly, Biweekly, Monthly, Quarterly, or Annual"),
+    body("reminder")
+      .trim().isIn([undefined, "", ...Objective.PERIOD])
+      .withMessage("If you have a reminder, it must be 1 Week, 2 Weeks, 1 Month, or 2 Months"),
   ],
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
-    let contactNames = await res.locals.store.getContactName(contactId);
+    let contactNames = await res.locals.store.getContactName(+contactId);
     let contact = Contact.makeContact(contactNames, [new Objective(
       {
         occasion: req.body.occasion,
@@ -674,7 +712,7 @@ app.post("/user/contacts/:contact_id/objectives/create-objective",
         flash: req.flash(), 
       })
     } else{
-      res.locals.store.createObjective(objective, contactId);
+      res.locals.store.createObjective(objective, +contactId);
       req.flash("info", `Objective was added`);
       res.redirect(`/user/contacts/${contactId}`);
     } 
@@ -686,7 +724,7 @@ app.get("/user/contacts/:contact_id/objectives/:objective_id",
   const contact_id = req.params.contact_id;
   const objective_id = req.params.objective_id;
 
-  let contactNames = await res.locals.store.getContactName(contact_id);
+  let contactNames = await res.locals.store.getContactName(+contact_id);
   let objectiveData = await res.locals.store.getObjective(objective_id);
   let contact = Contact.makeContact(contactNames, [new Objective(objectiveData)])
   res.locals.contact = contact;
@@ -699,7 +737,7 @@ app.get("/user/contacts/:contact_id/objectives/:objective_id/edit",
   const contact_id = req.params.contact_id;
   const objective_id = req.params.objective_id;
   
-  let contactNames = await res.locals.store.getContactName(contact_id);
+  let contactNames = await res.locals.store.getContactName(+contact_id);
   let objectiveData = await res.locals.store.getObjective(objective_id);
   let contact = Contact.makeContact(contactNames, [new Objective(objectiveData)])
   res.locals.contact = contact;
@@ -712,22 +750,28 @@ requiresAuthentication,
   body("occasion")
     .trim()
     .isLength({min: 1})
-    .withMessage("Occasion required")
+    .withMessage("An occasion is required")
     .isLength({ max: 100})
     .withMessage("Occasion cannot exceed 100 characters"),
   body("date_occasion")
     .trim()
     .isLength({min: 1})
-    .withMessage("Occasion date is required"),
+    .withMessage("An occasion date is required"),
   body("periodicity")
     .trim()
     .isLength({min: 1})
     .withMessage("Periodicity is required")
-],
+    .isIn(Objective.PERIOD)
+    .withMessage("Periodicity must be Weekly, Biweekly, Monthly, Quarterly, or Annual"),
+  body("reminder")
+    .trim().isIn([undefined, "", ...Objective.PERIOD])
+    .withMessage("If you have a reminder, it must be 1 Week, 2 Weeks, 1 Month, or 2 Months"),
+]
+,
 catchError(async (req, res) => {
   let contactId = req.params.contact_id;
   let objectiveId = req.params.objective_id;
-  let contactNames = await res.locals.store.getContactName(contactId);
+  let contactNames = await res.locals.store.getContactName(+contactId);
   let contact = Contact.makeContact(contactNames, [new Objective(
     {
       id: objectiveId,
@@ -765,8 +809,8 @@ app.post("/user/contacts/:contact_id/objectives/:objective_id/delete",
   requiresAuthentication,
   catchError(async (req, res) => {
     let contactId = req.params.contact_id;
-    let objectiveId = req.params.contact_id;
-    res.locals.store.deleteObjective(objectiveId);
+    let objectiveId = req.params.objective_id;
+    res.locals.store.deleteObjective(+objectiveId);
     req.flash("info", `Objective has been deleted`);
     res.redirect(`/user/contacts/${contactId}`);
 }));
