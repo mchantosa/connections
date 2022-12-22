@@ -31,6 +31,9 @@
     "pug": "^3.0.2"
   },
   "devDependencies": {
+    "eslint": "^8.30.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "jest": "^29.3.1"
   }
 }

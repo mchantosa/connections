@@ -7,8 +7,8 @@ block main
     header.contact-view
       h2 #{`Contact information for ${contact.getName()}`}
       nav.secondary-nav
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}/edit`) Edit Contact
-        form.delete(action=`/user/contacts/${contact.id}/delete` method="post")
+        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}/edit`) Edit Contact
+        form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
           input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
     div.contact-view
       div.contact-main
@@ -21,16 +21,16 @@ block main
               h3 Contact Information
               dl.side-by-side.center-justified.narrow-400
                 dt Preferred medium:
-                dd #{contact.getPreferredMedium()}
+                dd #{contact.getPreferredMediumPretty()}
               dl.side-by-side.center-justified.narrow-400
                 dt Phone number:
-                dd #{contact.getPhoneNumber()}
+                dd #{contact.getPhoneNumberPretty()}
               dl.side-by-side.center-justified.narrow-400
                 dt Email:
-                dd #{contact.getEmail()}
+                dd #{contact.getEmailPretty()}
             div
               h3 Address
-              p #{contact.getAddress()}
+              p #{contact.getAddressPretty()}
           div.block-right
             div
               h3.center.mb-2 Objectives
@@ -39,29 +39,29 @@ block main
                 h4 Date 
                 h4 Periodicity
                 h4 Reminder
-              if contact.objectives.length > 0
+              if contact.countObjectives() > 0
                 each objective in contact.objectives
                   div.alternate.objectives-elm
-                    a.unanchor(href=`/user/contacts/${contact.id}/objectives/${objective.id}` )
-                      p #{`${objective.occasion}`}
+                    a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}` )
+                      p #{`${objective.getOccasion()}`}
                       p #{`${objective.getOccasionDate()}`}
-                      p #{`${objective.periodicity}`}
-                      p #{`${objective.reminder}`}   
+                      p #{`${objective.getPeriodicity()}`}
+                      p #{`${objective.getReminder()}`}   
                 nav.pagination
                   span.prev
-                    a(rel="prev" href=`/user/contacts/${contact.id}?page=${0}`) Start
+                    a(rel="prev" href=`/user/contacts/${contact.getId()}?page=${0}`) Start
                   each n in navVector
                     if n === page
                       span.page.center.selected #{n}
                     else
                       span.page.center
-                        a.page(href=`/user/contacts/${contact.id}?page=${n}`) #{n}
+                        a.page(href=`/user/contacts/${contact.getId()}?page=${n}`) #{n}
                   span.next
-                    a(rel="next" href=`/user/contacts/${contact.id}?page=${endPage}`) End
+                    a(rel="next" href=`/user/contacts/${contact.getId()}?page=${endPage}`) End
               else 
                 div.center.p-1
                   h2.center.alert This contact currently has no objectives
               div.center.p-1
-                a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}/objectives/create-objective`) Create an objective
+                a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
             h3.center Notes
-            textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.notes}
+            textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.getNotes()}
