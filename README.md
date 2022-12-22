@@ -19,10 +19,16 @@ This application is intended to help you stay connected to those you truly care 
 
 ## Setup
 
-- The version of node you used to run this application.
-- The browser (including version number) that you used to test this application.
-- The version of PostgreSQL you used to create any databases.
 - How to install, configure, and run the application.
+  1. Unzip and do to /lib/data directory
+  2. 
+- The version of node you used to run this application.
+
+- Test Environments
+  - This application was tested in Chrome 
+  - This application was also tested with Postman
+- The version of PostgreSQL you used to create any databases.
+
 - Any additional details the grader may need to run your code.
 - Keep in mind that your grader may be unfamiliar with the problem domain. If you think that's a possibility, you may wish to add a brief discussion of the vocabulary and concepts used in the application.
 - Make sure the grader can start the application with the npm start command.

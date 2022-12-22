@@ -1,7 +1,7 @@
 CREATE TABLE users (
   id serial PRIMARY KEY,
-  username varchar(100) text NOT NULL UNIQUE,
-  email varchar(100) text NOT NULL UNIQUE,
+  username varchar(100) NOT NULL UNIQUE,
+  email varchar(100) NOT NULL UNIQUE,
   email_authenticated boolean NOT NULL DEFAULT FALSE,
   password_hash text NOT NULL,
   first_name varchar(25),
