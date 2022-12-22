@@ -10,10 +10,11 @@ block main
         a.unanchor.rebutton.center(href="/user/contacts/create-contact") Create Contact
     if contacts.length > 0
       div.contact-view
-        each contact in contacts
-          -contactVehicle.mount(contact)
+        each contactData in contacts
+          -contactVehicle.mount(contactData)
+          -let contact = contactVehicle
           div.contact-view-elm.alternate
-            -let hrefAddress = '/user/contacts/' + contact.id
+            -let hrefAddress = `/user/contacts/${contact.getId()}`
               a.unanchor(href=hrefAddress)
                 div.block1
                   h3 Name
@@ -22,16 +23,16 @@ block main
                   h3 Contact Information
                   dl.side-by-side
                     dt Preferred medium:
-                    dd #{contactVehicle.getPreferredMedium()}
+                    dd #{contactVehicle.getPreferredMediumPretty()}
                   dl.side-by-side
                     dt Phone number:
-                    dd #{contactVehicle.getPhoneNumber()}
+                    dd #{contactVehicle.getPhoneNumberPretty()}
                   dl.side-by-side
                     dt Email:
-                    dd #{contactVehicle.getEmail()}
+                    dd #{contactVehicle.getEmailPretty()}
                 div.block3
                   h3 Address
-                  p #{contactVehicle.getAddress()} 
+                  p #{contactVehicle.getAddressPretty()} 
                 div.block4 
                   h3 Objectives
                   p #{contactVehicle.objectivesCount}
