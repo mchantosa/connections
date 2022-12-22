@@ -745,10 +745,11 @@ app.post(
       .trim()
       .isLength({ min: 1 })
       .withMessage('Periodicity is required')
-      .isIn(Objective.PERIOD)
+      .isIn(Objective.getPeriods())
       .withMessage('Periodicity must be Weekly, Biweekly, Monthly, Quarterly, or Annual'),
     body('reminder')
-      .trim().isIn([undefined, '', ...Objective.PERIOD])
+      .trim()
+      .isIn([undefined, '', ...Objective.getReminders()])
       .withMessage('If you have a reminder, it must be 1 Week, 2 Weeks, 1 Month, or 2 Months'),
   ],
   catchError(async (req, res) => {
@@ -796,7 +797,7 @@ app.get(
     const objectiveId = req.params.objective_id;
 
     const contactNames = await res.locals.store.getContactName(+contactId);
-    const objectiveData = await res.locals.store.getObjective(objectiveId);
+    const objectiveData = await res.locals.store.getObjective(+objectiveId);
     const contact = Contact.makeContact(contactNames, [new Objective(objectiveData)]);
     res.locals.contact = contact;
     res.render('user/contacts/objectives/objective-id');
@@ -812,7 +813,7 @@ app.get(
     const objectiveId = req.params.objective_id;
 
     const contactNames = await res.locals.store.getContactName(+contactId);
-    const objectiveData = await res.locals.store.getObjective(objectiveId);
+    const objectiveData = await res.locals.store.getObjective(+objectiveId);
     const contact = Contact.makeContact(contactNames, [new Objective(objectiveData)]);
     res.locals.contact = contact;
     res.render('user/contacts/objectives/edit');
@@ -838,10 +839,10 @@ app.post(
       .trim()
       .isLength({ min: 1 })
       .withMessage('Periodicity is required')
-      .isIn(Objective.PERIOD)
+      .isIn(Objective.getPeriods())
       .withMessage('Periodicity must be Weekly, Biweekly, Monthly, Quarterly, or Annual'),
     body('reminder')
-      .trim().isIn([undefined, '', ...Objective.PERIOD])
+      .trim().isIn([undefined, '', ...Objective.getReminders()])
       .withMessage('If you have a reminder, it must be 1 Week, 2 Weeks, 1 Month, or 2 Months'),
   ],
   catchError(async (req, res) => {
@@ -876,7 +877,7 @@ app.post(
       });
     } else {
       res.locals.store.updateObjective(objective);
-      req.flash('info', 'Objective was added');
+      req.flash('info', 'Objective updated');
       res.redirect(`/user/contacts/${contactId}/`);
     }
   }),
