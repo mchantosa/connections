@@ -158,7 +158,8 @@ block main
               div.center.p-1
                 h2.center.alert This contact currently has no objectives
             h3.center Notes
-            textarea(wrap="soft" name="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getNotes()}
+            div.center.mb-2
+              textarea(wrap="soft" name="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getNotes()}
             div.center.p-1 
               a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}`) Cancel
               input.unbutton.rebutton.center(type="submit" value="Save Changes")

@@ -391,24 +391,24 @@ div.horizontal {
   flex-wrap: wrap;
   justify-content: space-between;
 }
-
-.contact-main .block-left{
-  min-width:280px;/*32+16+200+32*/
+/*32+16+200+32*/
+/* .contact-main .block-left{
+  min-width:280px;
   max-width: 360px;
   box-sizing: border-box;
   padding: 32px;
-}
+} */
 
-.contact-main .block-right{
-  min-width: 400px; /*element*/
-  max-width: 600px; /*element*/
-  width: 600px; /*element*/
-  padding: 32px 32px 32px 0; /*element*/
-  display:flex; /*container*/
-  flex-direction: column; /*container*/
+/* .contact-main .block-right{
+  min-width: 400px; 
+  max-width: 600px; 
+  width: 600px; 
+  padding: 32px 32px 32px 0; 
+  display:flex; 
+  flex-direction: column; 
   align-items: center;
   justify-content: space-between;
-}
+} */
 
 .objectives-elm > a,
 .objectives-elm > div, 
@@ -424,8 +424,8 @@ div.horizontal {
   display: flex;
   justify-content: center;
   align-content: center;
-  min-width: 120px;
-  width: 120px;
+  inline-size: 180px; 
+  overflow: hidden;
 }
 
 .objectives-elm {
@@ -462,16 +462,16 @@ dl.narrow-400 dt{
 }
 
 dl.narrow-400 dd{
-  max-width: 200px;
-  width:200px;
+  inline-size: 200px; 
+  overflow: hidden;
   display: flex;
   justify-content: flex-start;
 }
 
 dl.narrow-400 input,
 dl.narrow-400 select{
-  max-width: 180px;
-  width:180px;
+  inline-size: 200px; 
+  overflow: hidden;
 }
 
 
