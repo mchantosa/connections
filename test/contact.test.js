@@ -8,7 +8,7 @@ describe('Test: Contact', () => {
       const contact = Contact.makeContact();
       expect(contact instanceof Contact).toBe(true);
       expect(contact.objectives).toEqual([]);
-      expect(contact.getEmail()).toBe('none');
+      expect(contact.getEmailPretty()).toBe('none');
     });
 
     test('Test: Contact.makeContact(contactData, objectData) returns a contact with contact data and objectives containing objective data', () => {
@@ -36,7 +36,7 @@ describe('Test: Contact', () => {
       delete objectiveData[0].contact_id;
       delete objectiveData[1].contact_id;
       expect(contact.objectives).toEqual(objectiveData);
-      expect(contact.getEmail()).toBe('none');
+      expect(contact.getEmailPretty()).toBe('none');
       expect(contact.objectives[1].getOccasionDate()).toBe('02-20');
     });
   });
@@ -67,7 +67,7 @@ describe('Test: Contact', () => {
     delete objectiveData[0].contact_id;
     delete objectiveData[1].contact_id;
     expect(contact.objectives).toEqual(objectiveData);
-    expect(contact.getEmail()).toBe('none');
+    expect(contact.getEmailPretty()).toBe('none');
     expect(contact.objectives[1].getOccasionDate()).toBe('02-20');
   });
 });
@@ -116,7 +116,7 @@ describe('Test: mount(contactData) ', () => {
     const contact = new Contact();
     const contactData = { notes: 'Shiva bit me' };
     contact.mount(contactData);
-    expect(contact.getInputNotes()).toBe('Shiva bit me');
+    expect(contact.getNotes()).toBe('Shiva bit me');
   });
 });
 

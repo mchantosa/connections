@@ -64,4 +64,5 @@ block main
               div.center.p-1
                 a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
             h3.center Notes
-            textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.getNotes()}
+            div.center.mb-2
+              textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.getNotes()}
