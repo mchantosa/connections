@@ -13,9 +13,6 @@ const ConnectionsDB = require('./lib/connections-db');
 const Objective = require('./lib/objective');
 const Contact = require('./lib/contact');
 
-// const morgan = require("morgan");
-// app.use(morgan("common"));
-
 const findNavVector = (page, endPage) => {
   const navVector = [page];
   let index = 1;
@@ -103,6 +100,18 @@ const requiresUserContactValidation = catchError(async (req, res, next) => {
   }
 });
 
+const requiresContactObjectiveValidation = catchError(async (req, res, next) => {
+  const contactId = req.params.contact_id;
+  const objectiveId = req.params.objective_id;
+  const authenticated = await res.locals.store.contactOwnsObjective(+contactId, +objectiveId);
+  if (!authenticated) {
+    req.flash('error', 'Error loading objective');// don't want to verify objective existence
+    res.redirect(302, `/user/contacts/${contactId}`);
+  } else {
+    next();
+  }
+});
+
 const signIn = (req, username) => {
   req.session.username = username;
   req.session.signedIn = true;
@@ -174,24 +183,32 @@ app.post(
   '/register',
   mootForAuthenticated,
   [
+    body('username')
+      .trim()
+      .isLength({ min: 8 })
+      .withMessage('Username must have a minimum of 8 characters')
+      .isLength({ max: 100 })
+      .withMessage('Username cannot exceed 100 characters')
+      .matches(/^((?!@).)*$/)
+      .withMessage('Username cannot contain an @ symbol'),
+    body('email')
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage('An email is required')
+      .isLength({ max: 100 })
+      .withMessage('Email cannot exceed 100 characters')
+      .isEmail()
+      .withMessage('Invalid Email'),
     body('password')
       .trim()
       .isLength({ min: 8 })
       .withMessage('Passwords must have a minimum of 8 characters')
-      .isLength({ max: 32 })
-      .withMessage('Passwords can have a maximum of 32 characters')
       .matches(/^(?=.*[0-9])/)
       .withMessage('Password requires a number')
       .matches(/^(?=.*[a-z])(?=.*[A-Z])/)
       .withMessage('Password requires a lowercase and upper case letter')
       .matches(/^(?=.*[*.!@$%^&(){}[\]~])/)
       .withMessage('Password requires a special character: *.!@$%^&(){}[]~'),
-    body('username')
-      .trim()
-      .isLength({ min: 8 })
-      .withMessage('Usernames must have a minimum of 8 characters')
-      .matches(/^((?!@).)*$/)
-      .withMessage('Username cannot contain an @ symbol'),
   ],
   catchError(async (req, res) => {
     const username = req.body.username.trim();
@@ -276,13 +293,32 @@ app.get(
 app.post(
   '/user/account/update-email',
   requiresAuthentication,
+  [
+    body('email')
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage('An email is required')
+      .isLength({ max: 100 })
+      .withMessage('Email cannot exceed 100 characters')
+      .isEmail()
+      .withMessage('Invalid Email'),
+  ],
   catchError(async (req, res) => {
     const { username } = req.session;
     const newEmail = req.body.email.trim();
     const userCredentials = await res.locals.store.getUserCredentials(username);
     const { email } = userCredentials;
     const existsEmail = await res.locals.store.existsEmail(newEmail);
-    if (email === newEmail) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      errors.array().forEach((message) => req.flash('error', message.msg));
+      res.locals.userData = await res.locals.store.getUserData();
+      res.locals.userData.newEmail = newEmail;
+      res.render('user/account/update-email', {
+        flash: req.flash(),
+      });
+    } else if (email === newEmail) {
       req.flash('info', 'Your updated email matched your existing email, your email was not updated');
       res.redirect('/user/account');
     } else if (existsEmail) {
@@ -318,7 +354,9 @@ app.post(
     body('username')
       .trim()
       .isLength({ min: 8 })
-      .withMessage('Usernames must have a minimum of 8 characters')
+      .withMessage('Username must have a minimum of 8 characters')
+      .isLength({ max: 100 })
+      .withMessage('Username cannot exceed 100 characters')
       .matches(/^((?!@).)*$/)
       .withMessage('Username cannot contain an @ symbol'),
   ],
@@ -372,8 +410,6 @@ app.post(
       .trim()
       .isLength({ min: 8 })
       .withMessage('Passwords must have a minimum of 8 characters')
-      .isLength({ max: 32 })
-      .withMessage('Passwords can have a maximum of 32 characters')
       .matches(/^(?=.*[0-9])/)
       .withMessage('Password requires a number')
       .matches(/^(?=.*[a-z])(?=.*[A-Z])/)
@@ -417,11 +453,32 @@ app.get(
 app.post(
   '/user/account/update-account-information',
   requiresAuthentication,
+  [
+    body('first_name')
+      .trim()
+      .isLength({ max: 25 })
+      .withMessage('First name cannot exceed 25 characters'),
+    body('last_name')
+      .trim()
+      .isLength({ max: 25 })
+      .withMessage('Last name cannot exceed 25 characters'),
+  ],
   catchError(async (req, res) => {
-    const firstName = req.body.firstName.trim();
-    const lastName = req.body.lastName.trim();
-    await res.locals.store.updateUserData(firstName, lastName);
-    res.redirect('/user/account');
+    const firstName = req.body.first_name;
+    const lastName = req.body.last_name;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      errors.array().forEach((message) => req.flash('error', message.msg));
+      res.locals.userData = await res.locals.store.getUserData();
+      res.locals.userData.first_name = firstName;
+      res.locals.userData.last_name = lastName;
+      res.render('user/account/update-account-information', {
+        flash: req.flash(),
+      });
+    } else {
+      await res.locals.store.updateUserData(firstName, lastName);
+      res.redirect('/user/account');
+    }
   }),
 );
 
@@ -792,6 +849,7 @@ app.get(
   '/user/contacts/:contact_id/objectives/:objective_id',
   requiresAuthentication,
   requiresUserContactValidation,
+  requiresContactObjectiveValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
     const objectiveId = req.params.objective_id;
@@ -808,6 +866,7 @@ app.get(
   '/user/contacts/:contact_id/objectives/:objective_id/edit',
   requiresAuthentication,
   requiresUserContactValidation,
+  requiresContactObjectiveValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
     const objectiveId = req.params.objective_id;
@@ -824,6 +883,7 @@ app.post(
   '/user/contacts/:contact_id/objectives/:objective_id/edit',
   requiresAuthentication,
   requiresUserContactValidation,
+  requiresContactObjectiveValidation,
   [
     body('occasion')
       .trim()
@@ -887,6 +947,7 @@ app.post(
   '/user/contacts/:contact_id/objectives/:objective_id/delete',
   requiresAuthentication,
   requiresUserContactValidation,
+  requiresContactObjectiveValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
     const objectiveId = req.params.objective_id;
