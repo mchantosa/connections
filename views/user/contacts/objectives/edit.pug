@@ -8,9 +8,9 @@ block main
     header.contact-view
       h2 #{`Edit ${objective.getOccasion()} for ${contact.getName()}`}
       nav.secondary-nav
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.id}`) Return to contact
+        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}`) Return to contact
         
-    form.contact-main(action=`/user/contacts/${contact.id}/objectives/${objective.id}/edit` method="post")
+    form.contact-main(action=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/edit` method="post")
       div.column-center.p-2
         dl.side-by-side.center-justified.narrow-400
           dt
@@ -45,7 +45,7 @@ block main
           dd
             select(name="reminder"  id="reminder")
               -let reminders = objective.getReminders();
-                option(selected = !reminders.includes(objective.getReminder()) disabled) Please choose one
+                option(selected = !reminders.includes(objective.getReminder()) value = "") Please choose one
                 each reminder in reminders
                   option(selected = reminder === objective.getReminder() value = reminder) #{reminder}
       div.column-center 
