@@ -20,8 +20,12 @@ This application is intended to help you stay connected to those you truly care 
 ## Setup
 
 - How to install, configure, and run the application.
-  1. Unzip and do to /lib/data directory
-  2. 
+  1. Unzip
+  2. Populate database
+    - Open terminal to contact-manager-main/lib/data
+    - Execute ./create-connections-db.sh, this will delete any exiting connections database and create a new one.
+    - Execute  
+
 - The version of node you used to run this application.
 
 - Test Environments
