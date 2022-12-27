@@ -1,46 +1,52 @@
 extends layout
 
-block header
-
 block main
-  div.center-distributed
-    form.login-register.p-2(action="/login" method="post")
-      fieldset.column-center
-        legend.mb-2 Login to your account
-        dl.mb-1
-          dt
-            label(for="user-id") Username or email:  
-          dd
-            input(type="text" name="userId" id="user-id" value=userId)
-        dl.mb-1
-          dt
-            label(for="password") Password:  
-          dd
-            input(type="password" name="password" id="password")
-        input.mb-a-half.unbutton.rebutton(type="submit" value="Login")
-        a.disable.tiny-text(href="/login") Forgot Password (coming soon)
-
-    form.login-register.p-2(action="/register" method="post")
-      fieldset.column-center
-        legend.mb-2 Register for an account
-        dl.mb-1
-          dt
-            label(for="username") Choose a username 
-          dd
-            input(type="text" name="username" id="username" value=registerUsername)
-        dl.mb-1
-          dt
-            label(for="email") Enter your email address 
-          dd
-            input(type="email" name="email" id="email" placeholder="username@domain.com" value=registerEmail)
-        dl.mb-1
-          dt
-            label(for="password") Enter password
-          dd
-            input(type="password" name="password" id="password")
-        dl.mb-1
-          dt
-            label(for="confirm-password") Re-enter password
-          dd
-            input(type="password" name="confirmPassword" id="confirm-password")
-        input.unbutton.rebutton(type="submit" value="Register")
+  form(action="/login" method="post")
+    div.login.flex-column-center
+      h2 Login to your account
+      br
+      dl.side-by-side
+        dt
+          label(for="user-id") Username or email:  
+        dd
+          input(type="text" name="userId" id="user-id" value=userId)
+      dl.side-by-side
+        dt
+          label(for="password") Password:  
+        dd
+          input(type="password" name="password" id="password")
+      dl.side-by-side
+        dt
+        dd
+          input.unbutton.rebutton(type="submit" value="Login")
+      a.disable(href="/login") Forgot Password (coming soon)
+  br
+  br
+  form(action="/register" method="post")
+    div.account.flex-column-center
+      h2 Register for an account
+      br
+      dl.side-by-side
+        dt
+          label(for="username") Choose a username 
+        dd
+          input(type="text" name="username" id="username" value=registerUsername)
+      dl.side-by-side
+        dt
+          label(for="email") Enter your email address 
+        dd
+          input(type="email" name="email" id="email" placeholder="username@domain.com" value=registerEmail)
+      dl.side-by-side
+        dt
+          label(for="password") Enter password
+        dd
+          input(type="password" name="password" id="password")
+      dl.side-by-side
+        dt
+          label(for="confirm-password") Re-enter password
+        dd
+          input(type="password" name="confirmPassword" id="confirm-password")
+      dl.side-by-side
+        dt 
+        dd
+          input.unbutton.rebutton(type="submit" value="Register")

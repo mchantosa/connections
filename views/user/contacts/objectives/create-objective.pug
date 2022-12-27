@@ -1,55 +1,51 @@
 extends ../../layout
 
 block header
- 
-block main
   -let objective = contact.objectives[0]
-  div.dilute-background
-    header.contact-view
-      h2 #{`Create objective for ${contact.getName()}`}
-      nav.secondary-nav
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}`) Return to contact
+  h2 #{`Create objective for ${contact.getName()}`}
+  nav.flex-right
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
         
-    form.contact-main(action=`/user/contacts/${contact.getId()}/objectives/create-objective` method="post")
-      div.column-center.p-2
-        dl.side-by-side.center-justified.narrow-400
-          dt
-            label(for="occasion") Occasion:
-          dd.required
-            input(type="text" name="occasion" id="occasion" value = objective.getOccasion())
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            label(for="date_occasion") Occasion date:
-          dd.required
-            input(type="text" name="date_occasion" id="date_occasion" placeholder = "YYYY-MM-DD" value = objective.getOccasionDate())
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-          dd
-            small Format: YYYY-MM-DD or MM-DD
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            label(for="periodicity") Periodicity:
-          dd.required
-            select(name="periodicity"  id="periodicity")
-              -let periods = objective.getPeriods();
-                option(selected = !periods.includes(objective.getPeriodicity()) disabled) Please choose one
-                each period in periods
-                  option(selected = period === objective.getPeriodicity() value = period) #{period}
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-          dd
-            small How often does this occasion take place?
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            label(for="reminder") Reminder:
-          dd
-            select(name="reminder"  id="reminder")
-              -let reminders = objective.getReminders();
-                option(selected = !reminders.includes(objective.getReminder()) value = "") Please choose one
-                each reminder in reminders
-                  option(selected = reminder === objective.getReminder() value = reminder) #{reminder}
-      div.column-center 
-        h3.center Notes
-        textarea(wrap="soft" name="notes" placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}
-        div.p-1
-          input.unbutton.rebutton(type="submit" value="Create Objective")
+block main
+  form(action=`/user/contacts/${contact.getId()}/objectives/create-objective` method="post")
+    div.contact.flex-column-center
+      dl.side-by-side
+        dt
+          label(for="occasion") Occasion:
+        dd.required
+          input(type="text" name="occasion" id="occasion" value = objective.getOccasion())
+      dl.side-by-side
+        dt 
+          label(for="date_occasion") Occasion date:
+        dd.required
+          input(type="text" name="date_occasion" id="date_occasion" placeholder = "YYYY-MM-DD" value = objective.getOccasionDate())
+      dl.format
+        dt.skinny
+        dd.flex-right Format: YYYY-MM-DD or MM-DD
+      dl.side-by-side
+        dt 
+          label(for="periodicity") Periodicity:
+        dd.required
+          select(name="periodicity"  id="periodicity")
+            -let periods = objective.getPeriods();
+              option(selected = !periods.includes(objective.getPeriodicity()) disabled) Please choose one
+              each period in periods
+                option(selected = period === objective.getPeriodicity() value = period) #{period}
+      dl.format
+        dt.skinny
+        dd.flex-right How often does this occasion take place?
+      dl.side-by-side
+        dt 
+          label(for="reminder") Reminder:
+        dd
+          select(name="reminder"  id="reminder")
+            -let reminders = objective.getReminders();
+              option(selected = !reminders.includes(objective.getReminder()) value = "") Please choose one
+              each reminder in reminders
+                option(selected = reminder === objective.getReminder() value = reminder) #{reminder}
+      br
+      h3 Notes
+      br
+      textarea(wrap="soft" name="notes" placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}
+      br
+      input.unbutton.rebutton(type="submit" value="Create Objective")

@@ -1,52 +1,33 @@
 extends layout
 
 block header
+  h2 Contacts
+  nav.flex-right
+    a.unanchor.rebutton(href="/user/contacts/create-contact") Create Contact
  
 block main
-  div.dilute-background
-    header.contact-view
-      h2 Contacts
-      nav.secondary-nav
-        a.unanchor.rebutton.center(href="/user/contacts/create-contact") Create Contact
-    if contacts.length > 0
-      div.contact-view
-        each contactData in contacts
-          -contactVehicle.mount(contactData)
-          -let contact = contactVehicle
-          div.contact-view-elm.alternate
-            -let hrefAddress = `/user/contacts/${contact.getId()}`
-              a.unanchor(href=hrefAddress)
-                div.block1
-                  h3 Name
-                  p #{contactVehicle.getName()}
-                div.block2  
-                  h3 Contact Information
-                  dl.side-by-side
-                    dt Preferred medium:
-                    dd #{contactVehicle.getPreferredMediumPretty()}
-                  dl.side-by-side
-                    dt Phone number:
-                    dd #{contactVehicle.getPhoneNumberPretty()}
-                  dl.side-by-side
-                    dt Email:
-                    dd #{contactVehicle.getEmailPretty()}
-                div.block3
-                  h3 Address
-                  p #{contactVehicle.getAddressPretty()} 
-                div.block4 
-                  h3 Objectives
-                  p #{contactVehicle.objectivesCount}
-        div
-          //- Need n and end
-          nav.pagination
-            span.prev
-              a(rel="prev" href=`/user/contacts?page=${0}`) Start
-            each n in navVector
-              if n === page
-                span.page.center.selected #{n}
-              else
-                span.page.center
-                  a.page(href=`/user/contacts?page=${n}`) #{n}
-            span.next
-              a(rel="next" href=`/user/contacts?page=${endPage}`) End
-            
+  if contacts.length > 0
+    each contactData in contacts
+      -contactVehicle.mount(contactData)
+      -let contact = contactVehicle
+      div.alternate.hover
+        -let hrefAddress = `/user/contacts/${contact.getId()}`
+          a.unanchor(href=hrefAddress)
+            p #[strong Name:] #{contactVehicle.getName()}
+            p #[strong Preferred Medium:] #{contactVehicle.getPreferredMediumPretty()}
+            p #[strong Objectives:] #{contactVehicle.objectivesCount}
+    br
+    br
+    div.flex-center
+      nav.pagination
+        span.end
+          a.unanchor(rel="prev" href=`/user/contacts?page=${0}`) Start
+        each n in navVector
+          if n === page
+            span.page.active #{n}
+          else
+            span.page
+              a.unanchor(href=`/user/contacts?page=${n}`) #{n}
+        span.end
+          a.unanchor(rel="next" href=`/user/contacts?page=${endPage}`) End
+          

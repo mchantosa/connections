@@ -1,68 +1,65 @@
 extends ../layout
 
 block header
+  h2 #{`Contact information for ${contact.getName()}`}
+  nav.flex-right
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/edit`) Edit Contact
+    form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
+      input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
  
-block main
-  div.dilute-background
-    header.contact-view
-      h2 #{`Contact information for ${contact.getName()}`}
-      nav.secondary-nav
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}/edit`) Edit Contact
-        form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
-          input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
-    div.contact-view
-      div.contact-main
-        div.horizontal
-          div.block-left
-            div
-              h3 Name
-              p #{contact.getName()}
-            div
-              h3 Contact Information
-              dl.side-by-side.center-justified.narrow-400
-                dt Preferred medium:
-                dd #{contact.getPreferredMediumPretty()}
-              dl.side-by-side.center-justified.narrow-400
-                dt Phone number:
-                dd #{contact.getPhoneNumberPretty()}
-              dl.side-by-side.center-justified.narrow-400
-                dt Email:
-                dd #{contact.getEmailPretty()}
-            div
-              h3 Address
-              p #{contact.getAddressPretty()}
-          div.block-right
-            div
-              h3.center.mb-2 Objectives
-              div.objectives-header
-                h4 Occasion
-                h4 Date 
-                h4 Periodicity
-                h4 Reminder
-              if contact.countObjectives() > 0
-                each objective in contact.objectives
-                  div.alternate.objectives-elm
-                    a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}` )
-                      p #{`${objective.getOccasion()}`}
-                      p #{`${objective.getOccasionDate()}`}
-                      p #{`${objective.getPeriodicity()}`}
-                      p #{`${objective.getReminder()}`}   
-                nav.pagination
-                  span.prev
-                    a(rel="prev" href=`/user/contacts/${contact.getId()}?page=${0}`) Start
-                  each n in navVector
-                    if n === page
-                      span.page.center.selected #{n}
-                    else
-                      span.page.center
-                        a.page(href=`/user/contacts/${contact.getId()}?page=${n}`) #{n}
-                  span.next
-                    a(rel="next" href=`/user/contacts/${contact.getId()}?page=${endPage}`) End
-              else 
-                div.center.p-1
-                  h2.center.alert This contact currently has no objectives
-              div.center.p-1
-                a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
-            h3.center Notes
-            div.center.mb-2
-              textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.getNotes()}
+block main  
+  div.contact.flex-column-center
+    h2 Name 
+    p #{contact.getName()}
+    br
+    h2 Contact Information
+    br
+    div
+      dl.side-by-side 
+        dt Preferred medium:
+        dd #{contact.getPreferredMediumPretty()}
+      dl.side-by-side 
+        dt Phone:
+        dd #{contact.getPhoneNumberPretty()}
+      dl.side-by-side 
+        dt Email:
+        dd #{contact.getEmailPretty()}
+    br
+    h2 Address: 
+    br
+    p #{contact.getAddressPretty()}
+    br
+    h2 Objectives
+    br
+    div
+      if contact.countObjectives() > 0
+        each objective in contact.objectives
+          div.alternate.hover
+            a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}` )
+              p Occasion #{`${objective.getOccasion()}`}
+              p Date #{`${objective.getOccasionDate()}`}
+              p Periodicity #{`${objective.getPeriodicity()}`}
+              p Reminder #{`${objective.getReminder()}`}   
+        br
+        div.flex-center
+          nav.pagination
+            span.end
+              a(rel="prev" href=`/user/contacts/${contact.getId()}?page=${0}`) Start
+            each n in navVector
+              if n === page
+                span.page.active #{n}
+              else
+                span.page
+                  a(href=`/user/contacts/${contact.getId()}?page=${n}`) #{n}
+            span.end
+              a(rel="next" href=`/user/contacts/${contact.getId()}?page=${endPage}`) End
+      else 
+        h2 This contact currently has no objectives
+      br
+      div
+        a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
+    br
+    h2 Notes
+    br
+    div
+      textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.getNotes()}
