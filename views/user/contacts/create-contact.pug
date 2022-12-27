@@ -1,159 +1,144 @@
 extends ../layout
 
 block header
+  h2 #{`Create a contact`}
  
 block main
-  div.dilute-background
-    header.contact-view
-      h2 #{`Create a contact`}
-    div.contact-view
-      form.contact-main(action=`/user/contacts/create-contact` method="post")
-        div.horizontal
-          div.block-left
-            div
-              h3 Name
-              dl.side-by-side
-                dt 
-                  label(for="first-name") First Name: 
-                dd
-                  input(type="text" name="first_name" id="first-name" value=contact.getFirstName())
-              dl.side-by-side
-                dt 
-                  label(for="last-name") Last Name: 
-                dd
-                  input(type="text" name="last_name" id="last-name" value=contact.getLastName())
-            div
-              h3 Contact Information
-              dl.side-by-side
-                dt 
-                  label(for="preferred_medium") Preferred Medium:
-                dd 
-                  input(type="text" name="preferred_medium" id="preferred_medium" value=contact.getPreferredMedium())
-              dl.side-by-side
-                dt 
-                  label(for="phone_number") Phone Number:
-                dd 
-                  input(type="tel" name="phone_number" id="phone_number" pattern=contact.getPhonePattern() value=contact.getPhoneNumber())
-                dt 
-                dd
-                  small Format: 123-456-7890
-              dl.side-by-side
-                dt 
-                  label(for="email") Email:
-                dd 
-                  input(type="email" name="email" id="email" placeholder='username@domain.com' value=contact.getEmail())
-            div
-              h3 Address
-              dl.side-by-side
-                dt
-                  label(for="street_address_1") Street address 1:
-                dd
-                  input(type="text" name="street_address_1" id="street_address_1" value=contact.getStreetAddress1())
-              dl.side-by-side
-                dt
-                  label(for="street_address_2") Street address 2:
-                dd
-                  input(type="text" name="street_address_2" id="street_address_2" value=contact.getStreetAddress2())
-              dl.side-by-side
-                dt
-                  label(for="city") City:
-                dd
-                  input(type="text" name="city" id="city" value=contact.getCity())
-              dl.side-by-side
-                dt 
-                  label(for="state") State:
-                dd
-                  select(name="state_code"  id="state")
-                    option(selected = contact.getState() value = "") Please select a state
-                    option(selected = contact.getState() ==="AL" value="AL") Alabama
-                    option(selected = contact.getState() ==="AK" value="AK") Alaska
-                    option(selected = contact.getState() ==="AZ" value="AZ") Arizona
-                    option(selected = contact.getState() ==="AR" value="AR") Arkansas
-                    option(selected = contact.getState() ==="CA" value="CA") California
-                    option(selected = contact.getState() ==="CO" value="CO") Colorado
-                    option(selected = contact.getState() ==="CT" value="CT") Connecticut
-                    option(selected = contact.getState() ==="DE" value="DE") Delaware
-                    option(selected = contact.getState() ==="DC" value="DC") District Of Columbia
-                    option(selected = contact.getState() ==="FL" value="FL") Florida
-                    option(selected = contact.getState() ==="GA" value="GA") Georgia
-                    option(selected = contact.getState() ==="HI" value="HI") Hawaii
-                    option(selected = contact.getState() ==="ID" value="ID") Idaho
-                    option(selected = contact.getState() ==="IL" value="IL") Illinois
-                    option(selected = contact.getState() ==="IN" value="IN") Indiana
-                    option(selected = contact.getState() ==="IA" value="IA") Iowa
-                    option(selected = contact.getState() ==="KS" value="KS") Kansas
-                    option(selected = contact.getState() ==="KY" value="KY") Kentucky
-                    option(selected = contact.getState() ==="LA" value="LA") Louisiana
-                    option(selected = contact.getState() ==="ME" value="ME") Maine
-                    option(selected = contact.getState() ==="MD" value="MD") Maryland
-                    option(selected = contact.getState() ==="MA" value="MA") Massachusetts
-                    option(selected = contact.getState() ==="MI" value="MI") Michigan
-                    option(selected = contact.getState() ==="MN" value="MN") Minnesota
-                    option(selected = contact.getState() ==="MS" value="MS") Mississippi
-                    option(selected = contact.getState() ==="MO" value="MO") Missouri
-                    option(selected = contact.getState() ==="MT" value="MT") Montana
-                    option(selected = contact.getState() ==="NE" value="NE") Nebraska
-                    option(selected = contact.getState() ==="NV" value="NV") Nevada
-                    option(selected = contact.getState() ==="NH" value="NH") New Hampshire
-                    option(selected = contact.getState() ==="NJ" value="NJ") New Jersey
-                    option(selected = contact.getState() ==="NM" value="NM") New Mexico
-                    option(selected = contact.getState() ==="NY" value="NY") New York
-                    option(selected = contact.getState() ==="NC" value="NC") North Carolina
-                    option(selected = contact.getState() ==="ND" value="ND") North Dakota
-                    option(selected = contact.getState() ==="OH" value="OH") Ohio
-                    option(selected = contact.getState() ==="OK" value="OK") Oklahoma
-                    option(selected = contact.getState() ==="OR" value="OR") Oregon
-                    option(selected = contact.getState() ==="PA" value="PA") Pennsylvania
-                    option(selected = contact.getState() ==="RI" value="RI") Rhode Island
-                    option(selected = contact.getState() ==="SC" value="SC") South Carolina
-                    option(selected = contact.getState() ==="SD" value="SD") South Dakota
-                    option(selected = contact.getState() ==="TN" value="TN") Tennessee
-                    option(selected = contact.getState() ==="TX" value="TX") Texas
-                    option(selected = contact.getState() ==="UT" value="UT") Utah
-                    option(selected = contact.getState() ==="VT" value="VT") Vermont
-                    option(selected = contact.getState() ==="VA" value="VA") Virginia
-                    option(selected = contact.getState() ==="WA" value="WA") Washington
-                    option(selected = contact.getState() ==="WV" value="WV") West Virginia
-                    option(selected = contact.getState() ==="WI" value="WI") Wisconsin
-                    option(selected = contact.getState() ==="WY" value="WY") Wyoming
-                    option(selected = contact.getState() ==="AS" value="AS") American Samoa
-                    option(selected = contact.getState() ==="GU" value="GU") Guam
-                    option(selected = contact.getState() ==="MP" value="MP") Northern Mariana Islands
-                    option(selected = contact.getState() ==="PR" value="PR") Puerto Rico
-                    option(selected = contact.getState() ==="UM" value="UM") United States Minor Outlying Islands
-                    option(selected = contact.getState() ==="VI" value="VI") Virgin Islands
-                    option(selected = contact.getState() ==="AA" value="AA") Armed Forces Americas (AA)
-                    option(selected = contact.getState() ==="AP" value="AP") Armed Forces Pacific (AP)
-                    option(selected = contact.getState() ==="AE" value="AE") Armed Forces Others (AE)
-              dl.side-by-side
-                dt
-                  label(for="zip_code") Zipcode:
-                dd
-                  input(type="text" name="zip_code" id="zip_code" value=contact.getZipcode())
-              dl.side-by-side
-                dt 
-                  label(for="country") Country: 
-                dd
-                  input(type="text" name="country" id="country" value=contact.getCountry())
-          div.block-right
-            h3.center.mb-2 Objectives
-            div.objectives-header
-              h4 Occasion
-              h4 Date 
-              h4 Periodicity
-              h4 Reminder
-            if contact.countObjectives() > 0
-              each objective in contact.objectives
-                div.alternate.objectives-elm
-                  div
-                    p #{`${objective.occasion}`}
-                    p #{`${objective.getOccasionDate()}`}
-                    p #{`${objective.periodicity}`}
-                    p #{`${objective.reminder}`}   
-            else 
-              p.mb-2
-              h2.alert.center This contact currently has no objectives
-            h3.center Notes
-            textarea(wrap="soft" name="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getNotes()}  
-            div.center
-              input.unbutton.rebutton(type="submit" value="Save Contact")
+  form(action=`/user/contacts/create-contact` method="post")
+    div.contact.flex-column-center
+      h3 Name
+      br
+      div
+        dl.side-by-side
+          dt 
+            label(for="first-name") First Name: 
+          dd
+            input(type="text" name="first_name" id="first-name" value=contact.getFirstName())
+        dl.side-by-side
+          dt 
+            label(for="last-name") Last Name: 
+          dd
+            input(type="text" name="last_name" id="last-name" value=contact.getLastName())
+      br
+      h3 Contact Information
+      br
+      div
+        dl.side-by-side
+          dt 
+            label(for="preferred_medium") Preferred Medium:
+          dd
+            input(type="text" name="preferred_medium" id="preferred_medium" value=contact.getPreferredMedium())
+        dl.side-by-side
+          dt 
+            label(for="phone_number") Phone Number:
+          dd
+            input(type="tel" name="phone_number" id="phone_number" pattern=contact.getPhonePattern() value=contact.getPhoneNumber())
+        dl.format
+          dt.skinny
+          dd.flex-right Format: 123-456-7890
+        dl.side-by-side
+          dt
+            label(for="email") Email:
+          dd
+            input(type="email" name="email" id="email" placeholder='username@domain.com' value=contact.getEmail())
+      br
+      h3 Address
+      br
+      div
+        dl.side-by-side
+          dt
+            label(for="street_address_1") Street address 1:
+          dd
+            input(type="text" name="street_address_1" id="street_address_1" value=contact.getStreetAddress1())
+        dl.side-by-side
+          dt
+            label(for="street_address_2") Street address 2:
+          dd
+            input(type="text" name="street_address_2" id="street_address_2" value=contact.getStreetAddress2())
+        dl.side-by-side
+          dt
+            label(for="city") City:
+          dd
+            input(type="text" name="city" id="city" value=contact.getCity())
+        dl.side-by-side
+          dt 
+            label(for="state") State:
+          dd
+            select(name="state_code"  id="state")
+              option(selected = contact.getState() value = "") Please select a state
+              option(selected = contact.getState() ==="AL" value="AL") Alabama
+              option(selected = contact.getState() ==="AK" value="AK") Alaska
+              option(selected = contact.getState() ==="AZ" value="AZ") Arizona
+              option(selected = contact.getState() ==="AR" value="AR") Arkansas
+              option(selected = contact.getState() ==="CA" value="CA") California
+              option(selected = contact.getState() ==="CO" value="CO") Colorado
+              option(selected = contact.getState() ==="CT" value="CT") Connecticut
+              option(selected = contact.getState() ==="DE" value="DE") Delaware
+              option(selected = contact.getState() ==="DC" value="DC") District Of Columbia
+              option(selected = contact.getState() ==="FL" value="FL") Florida
+              option(selected = contact.getState() ==="GA" value="GA") Georgia
+              option(selected = contact.getState() ==="HI" value="HI") Hawaii
+              option(selected = contact.getState() ==="ID" value="ID") Idaho
+              option(selected = contact.getState() ==="IL" value="IL") Illinois
+              option(selected = contact.getState() ==="IN" value="IN") Indiana
+              option(selected = contact.getState() ==="IA" value="IA") Iowa
+              option(selected = contact.getState() ==="KS" value="KS") Kansas
+              option(selected = contact.getState() ==="KY" value="KY") Kentucky
+              option(selected = contact.getState() ==="LA" value="LA") Louisiana
+              option(selected = contact.getState() ==="ME" value="ME") Maine
+              option(selected = contact.getState() ==="MD" value="MD") Maryland
+              option(selected = contact.getState() ==="MA" value="MA") Massachusetts
+              option(selected = contact.getState() ==="MI" value="MI") Michigan
+              option(selected = contact.getState() ==="MN" value="MN") Minnesota
+              option(selected = contact.getState() ==="MS" value="MS") Mississippi
+              option(selected = contact.getState() ==="MO" value="MO") Missouri
+              option(selected = contact.getState() ==="MT" value="MT") Montana
+              option(selected = contact.getState() ==="NE" value="NE") Nebraska
+              option(selected = contact.getState() ==="NV" value="NV") Nevada
+              option(selected = contact.getState() ==="NH" value="NH") New Hampshire
+              option(selected = contact.getState() ==="NJ" value="NJ") New Jersey
+              option(selected = contact.getState() ==="NM" value="NM") New Mexico
+              option(selected = contact.getState() ==="NY" value="NY") New York
+              option(selected = contact.getState() ==="NC" value="NC") North Carolina
+              option(selected = contact.getState() ==="ND" value="ND") North Dakota
+              option(selected = contact.getState() ==="OH" value="OH") Ohio
+              option(selected = contact.getState() ==="OK" value="OK") Oklahoma
+              option(selected = contact.getState() ==="OR" value="OR") Oregon
+              option(selected = contact.getState() ==="PA" value="PA") Pennsylvania
+              option(selected = contact.getState() ==="RI" value="RI") Rhode Island
+              option(selected = contact.getState() ==="SC" value="SC") South Carolina
+              option(selected = contact.getState() ==="SD" value="SD") South Dakota
+              option(selected = contact.getState() ==="TN" value="TN") Tennessee
+              option(selected = contact.getState() ==="TX" value="TX") Texas
+              option(selected = contact.getState() ==="UT" value="UT") Utah
+              option(selected = contact.getState() ==="VT" value="VT") Vermont
+              option(selected = contact.getState() ==="VA" value="VA") Virginia
+              option(selected = contact.getState() ==="WA" value="WA") Washington
+              option(selected = contact.getState() ==="WV" value="WV") West Virginia
+              option(selected = contact.getState() ==="WI" value="WI") Wisconsin
+              option(selected = contact.getState() ==="WY" value="WY") Wyoming
+              option(selected = contact.getState() ==="AS" value="AS") American Samoa
+              option(selected = contact.getState() ==="GU" value="GU") Guam
+              option(selected = contact.getState() ==="MP" value="MP") Northern Mariana Islands
+              option(selected = contact.getState() ==="PR" value="PR") Puerto Rico
+              option(selected = contact.getState() ==="UM" value="UM") United States Minor Outlying Islands
+              option(selected = contact.getState() ==="VI" value="VI") Virgin Islands
+              option(selected = contact.getState() ==="AA" value="AA") Armed Forces Americas (AA)
+              option(selected = contact.getState() ==="AP" value="AP") Armed Forces Pacific (AP)
+              option(selected = contact.getState() ==="AE" value="AE") Armed Forces Others (AE)
+        dl.side-by-side
+          dt
+            label(for="zip_code") Zipcode:
+          dd
+            input(type="text" name="zip_code" id="zip_code" value=contact.getZipcode())
+        dl.side-by-side
+          dt 
+            label(for="country") Country: 
+          dd
+            input(type="text" name="country" id="country" value=contact.getCountry())
+      br
+      h3 Notes
+      br
+      textarea(wrap="soft" name="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getNotes()}  
+      br
+      input.unbutton.rebutton(type="submit" value="Save Contact")

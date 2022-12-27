@@ -4,6 +4,7 @@ html(lang="en-US")
   head
     title Connections
     meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="preconnect" href="https://fonts.googleapis.com")
     link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
     link(href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet")
@@ -12,45 +13,43 @@ html(lang="en-US")
     script(src="/javascripts/application.js")
 
   body
-    block overlay-bottom
-    div.body-padding
-      header
-        if signedIn 
-          nav#primary-nav.center-align-right.mb-1
-            ul
-              li(class=(activePage == 'home'? 'color-active' : ''))
-                a.center.unanchor(href="/home") Connections
-              li(class=(activePage == 'userHome'? 'color-active' : ''))
-                a.center.unanchor(href="/user/home") Home
-              li(class=(activePage == 'contacts'? 'color-active' : ''))
-                a.center.unanchor(href="/user/contacts") Contacts
-              li(class=(activePage == 'account'? 'color-active' : ''))
-                a.center.unanchor(href="/user/account") Account
-              li.login-logout
-                form(action="/logout" method="post") 
-                  input.center.unbutton(type="submit" value="Logout")
-        else
-          nav#primary-nav.center-align-right.mb-1
-            ul
-              li(class=(activePage == 'home'? 'color-active' : ''))
-                a.center.unanchor(href="/home") Home
-              li(class=(activePage == 'login'? 'color-active' : ''))
-                form(action="/login" method="get") 
-                  input.center.unbutton(type="submit" value="Login")
-
-        - let kinds = Object.keys(flash || {});
-        if kinds.length > 0
-          ul.mb-1
-            each kind in kinds
-              each message in flash[kind]
-                li(class=kind)= message
-        section.welcome
-          h1 Welcome to connections
-          h2 How is life, the universe, and everything?
-        block header
-
-      main
-        block main
+    //- block overlay-bottom
+    header.pb-1.clearfix
+      div#welcome
+        h1 Welcome to Connections
+        h2 How is life, the universe, and everything?
+        br
+      if signedIn 
+        nav#primary-nav
+          ul
+            li.first(class=(activePage == 'home'? 'active' : ''))
+              a.unanchor.nav-rebutton(href="/home") Connections
+            li.second(class=(activePage == 'userHome'? 'active' : ''))
+              a.unanchor.nav-rebutton(href="/user/home") Home
+            li.third(class=(activePage == 'contacts'? 'active' : ''))
+              a.unanchor.nav-rebutton(href="/user/contacts") Contacts
+            li.fourth(class=(activePage == 'account'? 'active' : ''))
+              a.unanchor.nav-rebutton(href="/user/account") Account
+            li.fifth
+              form(action="/logout" method="post") 
+                input.unbutton(type="submit" value="Logout")
+      else
+        nav#primary-nav
+          ul
+            li.first(class=(activePage == 'home'? 'active' : ''))
+              a.unanchor.nav-rebutton(href="/home") Home
+            li.fifth(class=(activePage == 'login'? 'active' : ''))
+              form(action="/login" method="get") 
+                input.unbutton(type="submit" value="Login")
+      - let kinds = Object.keys(flash || {});
+      if kinds.length > 0
+        ul
+          each kind in kinds
+            each message in flash[kind]
+              li(class=kind)= message
+      block header
+    main
+      block main
 
   footer
     block footer

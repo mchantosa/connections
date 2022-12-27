@@ -1,17 +1,17 @@
-extends ../account 
+extends ../layout
 
-block overlay-bottom
-  div.overlay
-block overlay-top
-  div.front-and-center.column-center.p-3
-    form.login-register.float-column-formatter.mb-1(action="/user/account/update-username" method="post")
-      fieldset.column-center
-        legend.mb-1 Update Username
-        dl.mb-a-half
+block main
+    form(action="/user/account/update-username" method="post")
+      div.account.flex-column-center
+        h2 Update Username
+        br
+        dl.side-by-side
           dt
             label(for="username") Username:  
           dd
             - let username = (userData.newUsername) ? userData.newUsername : userData.username
             input(type="text" name="username" id="username" value=username)
+      br
+      nav.flex-right
         input.unbutton.rebutton(type="submit" value="Update username")
-    a.unanchor.rebutton.center(href="/user/account") Cancel
+        a.unanchor.rebutton(href="/user/account") Cancel

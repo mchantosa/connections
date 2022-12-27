@@ -1,40 +1,30 @@
 extends ../../layout
 
 block header
- 
-block main
   -let objective = contact.objectives[0]
-  div.dilute-background
-    header.contact-view
-      h2 #{`${objective.getOccasion()} objective for ${contact.getName()}`}
-      nav.secondary-nav
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}`) Return to contact
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/edit`) Edit Objective
-        form.delete(action=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/delete` method="post")
-          input.unbutton.rebutton(type="submit" value="DELETE OBJECTIVE")
-    div.contact-main
-      div.column-center.p-2
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            h4 Occasion:
-          dd
-            p #{`${objective.getOccasion()}`}
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            h4 Occasion date:
-          dd
-            p #{`${objective.getOccasionDate()}`}
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            h4 Periodicity:
-          dd
-            p #{`${objective.getPeriodicity()}`}
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-            h4 Reminder:
-          dd
-            p #{`${objective.getReminder()}`}                
-      div.column-center 
-        h4.center Notes
-        textarea(wrap="soft" name="notes" disabled placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}
-        div.p-1
+  h2 #{`${objective.getOccasion()} objective for ${contact.getName()}`}
+  nav.flex-right
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/edit`) Edit Objective
+    form.delete(action=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/delete` method="post")
+      input.unbutton.rebutton(type="submit" value="DELETE OBJECTIVE")
+block main
+  div.contact.flex-column-center
+    br
+    div
+      dl.side-by-side
+        dt Occasion:
+        dd #{`${objective.getOccasion()}`}
+      dl.side-by-side
+        dt Occasion date:
+        dd #{`${objective.getOccasionDate()}`}
+      dl.side-by-side
+        dt Periodicity:
+        dd #{`${objective.getPeriodicity()}`}
+      dl.side-by-side
+        dt Reminder:
+        dd #{`${objective.getReminder()}`}
+    br                
+    h4 Notes
+    br
+    textarea(wrap="soft" name="notes" disabled placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}

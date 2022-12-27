@@ -5,10 +5,10 @@ block main
     h1 Greetings hooman!
     if !(userNames.first_name||userNames.last_name)
       div
-        a(href="/user/account") It looks like you have an incomplete profile, would you like to complete that now? It would facilitate an enhancement of my salutations.
+        a.unanchor.rebutton(href="/user/account") It looks like you have an incomplete profile, completing it would facilitate an enhancement of my salutations.
     if !existsContacts
       div 
-        a(href="/user/contacts") You don't currently have any contacts, would you like to create some?
+        a.unanchor.rebutton(href="/user/contacts") You don't currently have any contacts, would you like to create some?
     if connectionsEmpty
       h2 Congratulations, you have met your connection objectives for this week
       h3 If you feel unsatisfied with your connections interface this week...

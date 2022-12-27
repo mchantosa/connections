@@ -1,27 +1,31 @@
 extends layout
 
 block main
-  div.dilute-background.column-center
-      h1 Account Information 
-      dl.side-by-side.mb-a-half
-        dt Username: 
-        dd #{userData.username}
-        dd  
-          a.unanchor.rebutton.babybutton(href="/user/account/update-username") edit
-      dl.side-by-side.mb-a-half
-        dt Email: 
-        dd #{userData.email}
-        dd
-          a.unanchor.rebutton.babybutton(href="/user/account/update-email") edit
-      dl.side-by-side.mb-a-half
-        dd 
-          a.unanchor.rebutton.babybutton(href="/user/account/reset-password") Change Password 
-      h1 User Profile 
-      dl.side-by-side.mb-a-half
-        dt First Name:
-        dd #{userData.first_name}
-      dl.side-by-side.mb-a-half
-        dt Last Name:
-        dd #{userData.last_name}
-      a.unanchor.rebutton.center(href="/user/account/update-account-information") Update Profile Data
-  block overlay-top
+  div.account.flex-column-center
+    h2 Account Information 
+    br
+    dl.side-by-side 
+      dt Username: 
+      dd.flex-justified
+        span #{userData.username}
+        a.unanchor.rebutton.h-1(href="/user/account/update-username") edit
+    dl.side-by-side 
+      dt Email:
+      dd.flex-justified
+        span #{userData.email}
+        a.unanchor.rebutton.h-1(href="/user/account/update-email") edit
+    br
+    div
+      a.unanchor.rebutton(href="/user/account/reset-password") Change Password 
+    br
+    h2 User Profile 
+    br
+    dl.side-by-side 
+      dt First Name:
+      dd #{userData.first_name}
+    dl.side-by-side 
+      dt Last Name:
+      dd #{userData.last_name}
+    br
+    div
+      a.unanchor.rebutton(href="/user/account/update-account-information") Update Profile Data

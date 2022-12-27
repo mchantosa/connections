@@ -1,32 +1,29 @@
 extends ../../layout
 
 block header
+  -let objective = contact.objectives[0]
+  h2 #{`Edit ${objective.getOccasion()} for ${contact.getName()}`}
+  nav.flex-right
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
  
 block main
-  -let objective = contact.objectives[0]
-  div.dilute-background
-    header.contact-view
-      h2 #{`Edit ${objective.getOccasion()} for ${contact.getName()}`}
-      nav.secondary-nav
-        a.unanchor.rebutton.center(href=`/user/contacts/${contact.getId()}`) Return to contact
-        
-    form.contact-main(action=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/edit` method="post")
-      div.column-center.p-2
-        dl.side-by-side.center-justified.narrow-400
+  form(action=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}/edit` method="post")
+    div.contact.flex-column-center
+      div
+        dl.side-by-side
           dt
             label(for="occasion") Occasion:
           dd.required
             input(type="text" name="occasion" id="occasion" value = objective.getOccasion())
-        dl.side-by-side.center-justified.narrow-400
+        dl.side-by-side
           dt 
             label(for="date_occasion") Occasion date:
           dd.required
             input(type="text" name="date_occasion" id="date_occasion" placeholder = "YYYY-MM-DD" value = objective.getOccasionDate())
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-          dd
-            small Format: YYYY-MM-DD or MM-DD
-        dl.side-by-side.center-justified.narrow-400
+        dl.format
+          dt.skinny
+          dd.flex-right Format: YYYY-MM-DD or MM-DD
+        dl.side-by-side
           dt 
             label(for="periodicity") Periodicity:
           dd.required
@@ -35,11 +32,10 @@ block main
                 option(selected = !periods.includes(objective.getPeriodicity()) disabled) Please choose one
                 each period in periods
                   option(selected = period === objective.getPeriodicity() value = period) #{period}
-        dl.side-by-side.center-justified.narrow-400
-          dt 
-          dd
-            small How often does this occasion take place?
-        dl.side-by-side.center-justified.narrow-400
+        dl.format
+          dt.skinny
+          dd.flex-right How often does this occasion take place?
+        dl.side-by-side
           dt 
             label(for="reminder") Reminder:
           dd
@@ -48,8 +44,9 @@ block main
                 option(selected = !reminders.includes(objective.getReminder()) value = "") Please choose one
                 each reminder in reminders
                   option(selected = reminder === objective.getReminder() value = reminder) #{reminder}
-      div.column-center 
-        h3.center Notes
-        textarea(wrap="soft" name="notes" placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}
-        div.p-1
-          input.unbutton.rebutton(type="submit" value="Save")
+      br
+      h3 Notes
+      br
+      textarea(wrap="soft" name="notes" placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}
+      br
+      input.unbutton.rebutton(type="submit" value="Save")

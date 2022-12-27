@@ -1,20 +1,22 @@
-extends ../account 
+extends ../layout
 
-block overlay-bottom
-  div.overlay
-block overlay-top
-  form.front-and-center.login-register.p-3(action="/user/account/update-account-information" method="post")
-    fieldset.column-center
-      legend.mb-2 Update Account Information
-      dl.mb-1
+block main
+  form(action="/user/account/update-account-information" method="post")
+    div.account.flex-column-center
+      br
+      h2 Update Account Information
+      br
+      dl.side-by-side 
         dt
           label(for="first-name") First name:  
         dd
           input(type="text" name="first_name" id="first-name" value=userData.first_name)
-      dl.mb-1
+      dl.side-by-side 
         dt  
           label(for="last-name") Last name:  
         dd
           input(type="text" name="last_name" id="last-name" value=userData.last_name)
+      br
+    nav.flex-right
       input.unbutton.rebutton(type="submit" value="Update")
-      a.unanchor.rebutton.center(href="/user/account") Cancel
+      a.unanchor.rebutton(href="/user/account") Cancel
