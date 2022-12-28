@@ -64,7 +64,7 @@ app.use(flash());
 // Extract session info
 app.use((req, res, next) => {
   res.locals.flash = req.session.flash;
-  res.locals.username = req.session.username;
+  res.locals.user = req.session.user;
   res.locals.signedIn = req.session.signedIn;
   delete req.session.flash;
   next();
@@ -112,13 +112,13 @@ const requiresContactObjectiveValidation = catchError(async (req, res, next) => 
   }
 });
 
-const signIn = (req, username) => {
-  req.session.username = username;
+const signIn = (req, user) => {
+  req.session.user = user;
   req.session.signedIn = true;
 };
 
 const signOut = (req) => {
-  delete req.session.username;
+  delete req.session.user;
   delete req.session.signedIn;
 };
 
@@ -130,7 +130,7 @@ app.get(
   },
 );
 
-app.get(
+app.get(// done
   '/home',
   (req, res) => {
     res.locals.activePage = 'home';
@@ -138,14 +138,14 @@ app.get(
   },
 );
 
-app.get(
+app.get(// done
   '/home/how-it-works',
   (req, res) => {
     res.render('home/how-it-works');
   },
 );
 
-app.get(
+app.get(// done
   '/login',
   mootForAuthenticated,
   (req, res) => {
@@ -154,26 +154,26 @@ app.get(
   },
 );
 
-app.post(
+app.post(// done
   '/login',
   mootForAuthenticated,
   catchError(async (req, res) => {
-    const userId = req.body.userId.trim();
+    const userCredential = req.body.userCredential.trim();
     const password = req.body.password.trim();
-    res.locals.userId = userId;
+    res.locals.userCredential = userCredential;
 
-    const userCridentials = await res.locals.store.getUserCredentials(userId);
-    const username = (userCridentials) ? userCridentials.username : false;
-    const authenticated = await res.locals.store.authenticate(username, password);
+    const user = await res.locals.store.getUserCredentials(userCredential);
+    const id = (user) ? user.id : false;
+    const authenticated = await res.locals.store.authenticate(id, password);
 
-    if (!username || !authenticated) {
+    if (!id || !authenticated) {
       req.flash('error', 'Your credentials were invalid, please try again.');
       res.locals.activePage = 'login';
       res.render('login', {
         flash: req.flash(),
       });
     } else {
-      signIn(req, username);
+      signIn(req, user);
       res.redirect('/user/home');
     }
   }),
@@ -246,15 +246,18 @@ app.post(
         flash: req.flash(),
       });
     } else {
-      await res.locals.store.addUser(username, email, password);
-      signIn(req, username);
+      const user = { username, email, password };
+      const added = await res.locals.store.addUser(user);
+      if (added) {
+        signIn(req, user);
+      }
       res.locals.activePage = 'user_home';
       res.redirect('/user/home');
     }
   }),
 );
 
-app.post('/logout', (req, res) => {
+app.post('/logout', (req, res) => { // done
   signOut(req);
   req.flash('info', 'You have logged out of the application');
   res.redirect('/home');
@@ -385,7 +388,9 @@ app.post(
     } else {
       const updated = await res.locals.store.updateUsername(newUsername);
       if (updated) {
-        signIn(req, newUsername);
+        const { user } = session;
+        user.username = newUsername;
+        signIn(req, user);
         req.flash('info', 'Your username has been updated');
       }
       res.redirect('/user/account');
@@ -420,7 +425,7 @@ app.post(
   catchError(async (req, res) => {
     const { username } = req.session;
     const password = req.body.password.trim();
-    const newPassword = req.body.newPassword.trim();
+    const { newPassword } = req.body;
     const confirmPassword = req.body.confirmPassword.trim();
     const errors = validationResult(req);
     const passwordAuthenticated = await res.locals.store.authenticate(username, password);
