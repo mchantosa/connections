@@ -126,9 +126,8 @@ const signOut = (req) => {
 
 app.get(
   '/',
-  requiresAuthentication,
   (req, res) => {
-    res.redirect('/user/home');
+    res.redirect('/home');
   },
 );
 
