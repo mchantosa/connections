@@ -11,6 +11,7 @@ const { body, validationResult } = require('express-validator');
 const catchError = require('./lib/catch-error');// async error wrapped
 const ConnectionsDB = require('./lib/connections-db');
 const Objective = require('./lib/objective');
+const Connection = require('./lib/connection');
 const Contact = require('./lib/contact');
 
 const findNavVector = (page, endPage) => {
@@ -75,7 +76,8 @@ app.set('view engine', 'pug');
 
 const requiresAuthentication = (req, res, next) => {
   if (!res.locals.signedIn) {
-    res.redirect(302, '/home');
+    req.flash('error', 'You must be logged in to access that content');
+    res.redirect(302, `/login?redirect=${req.originalUrl}`);
   } else {
     next();
   }
@@ -150,6 +152,7 @@ app.get(// done
   mootForAuthenticated,
   (req, res) => {
     res.locals.activePage = 'login';
+    res.locals.redirect = req.query.redirect;
     res.render('login');
   },
 );
@@ -158,6 +161,7 @@ app.post(// done
   '/login',
   mootForAuthenticated,
   catchError(async (req, res) => {
+    const { redirect } = req.query;
     const userCredential = req.body.userCredential.trim();
     const password = req.body.password.trim();
     res.locals.userCredential = userCredential;
@@ -171,10 +175,15 @@ app.post(// done
       res.locals.activePage = 'login';
       res.render('login', {
         flash: req.flash(),
+        redirect,
       });
     } else {
       signIn(req, user);
-      res.redirect('/user/home');
+      if (redirect) {
+        res.redirect(redirect);
+      } else {
+        res.redirect('/user/home');
+      }
     }
   }),
 );
@@ -268,6 +277,8 @@ app.get(
   requiresAuthentication,
   catchError(async (req, res) => {
     res.locals.activePage = 'userHome';
+    res.locals.sunday = Connection.findSunday();
+    res.locals.saturday = Connection.findSaturday();
     res.locals.userNames = await res.locals.store.getUserNames();
     res.locals.existsContacts = await res.locals.store.existsContacts();
     res.render('user/home');
@@ -496,7 +507,7 @@ app.get(
     const endPage = Math.floor(totalContacts / ConnectionsDB.PAGINATE);
     const navVector = findNavVector(page, endPage);
 
-    if ((page < 0) || (page > endPage)) {
+    if (Number.isNaN(page) || (page < 0) || (page > endPage)) {
       req.flash('error', `Your query parameter must be a number between 0 and ${endPage}`);
       res.redirect('/user/contacts');
     } else {
@@ -630,7 +641,7 @@ app.get(
     const endPage = Math.floor(totalObjectives / ConnectionsDB.PAGINATE);
     const navVector = findNavVector(page, endPage);
 
-    if ((page < 0) || (page > endPage)) {
+    if (Number.isNaN(page) || (page < 0) || (page > endPage)) {
       req.flash('error', `Your query parameter must be a number between 0 and ${endPage}`);
       res.redirect(`/user/contacts/${contactId}`);
     } else {

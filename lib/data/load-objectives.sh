@@ -1,2 +1,2 @@
 #!/bin/bash
-psql -d connections < ./objectives.sql
+psql -d connections < ./lib/data/objectives.sql

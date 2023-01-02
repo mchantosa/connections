@@ -1,7 +1,8 @@
 extends layout
 
 block main
-  form(action="/login" method="post")
+  -let formAction = (redirect) ? `/login?redirect=${redirect}` : "/login"
+  form(action=formAction method="post")
     div.login.flex-column-center
       h2 Login to your account
       br

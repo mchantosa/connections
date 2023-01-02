@@ -1,2 +1,2 @@
 #!/bin/bash
-psql -d connections < ./contacts.sql
+psql -d connections < ./lib/data/contacts.sql
