@@ -65,7 +65,13 @@ nav > *{
 
 
 #welcome h1{
-  text-shadow: 2px 2px rgb(0,0,0,.6);
+  color:orange;
+}
+
+.line-break{
+  background-color: midnightblue;
+  height:2px;
+  width:100%
 }
 
 
@@ -249,16 +255,17 @@ dd.flex-right{
 }
 
 h1{
-  font-size: 2rem;
-  color:rgb(52, 152, 219);
+  font-size: 1.75rem;
+  color:orange;
 }
 
 h2{
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   color: rgb(1, 63, 109);
 }
 
 h3{
+  font-size: 1.25rem;
   color:rgb(84, 110, 122 );
 }
 

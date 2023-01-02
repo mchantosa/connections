@@ -25,14 +25,10 @@ This application is intended to help you stay connected to those you truly care 
 - How to install, configure, and run the application.
   1. Unzip
   2. Populate database
-      - Open terminal to contact-manager-main/lib/data
-      - Execute `./create-connections-db.sh`, this will delete any exiting connections database and create a new one.
-      - Execute `./load-users.sh`, this will load profile information for an admin, developer, and user account
-      - Execute `./load-contacts.sh`, this will load 100 contacts into your database
-      - Execute `./load-objectives.sh`, this will load 1000 objectives into your database
-  3. Install node modules
       - Navigate to contact-manager-main directory
       - Install node packages with `npm install`
+      - Run `npm test`, this will execute test code and populate a database as part of the test set up
+  3. Run server
       - Start server `npm start`, you should see a 'listening on port 3000 of localhost!' response in your terminal
   4. Go to application
       - In your browser go to localhost:3000/home, there will be some application information there and a link to a login page.
@@ -60,10 +56,8 @@ This application is intended to help you stay connected to those you truly care 
 - You can change your password
 - You can change your email, username, and profile information
 - While the connections page is incomplete, the contacts and objectives pages are sufficient to meet the requirements of this project.
+- Additional modifications requested from grader are tracked in the student-grader communication forum.
 
 ## Takeaways and moving forward
-I would love to completely redo the CSS for this. I initially was thinking I wanted something reminiscent of writing on a desk, something warm, like a coffee date between friends. Then I had to get fancy with opaque overlays in order to make the text pop from the background. Then I went even further and tried to make pop up windows for things like password resets thinking it looked fancy. But the pop up windows went over an opaque overlay that obscured access to the layer below which housed the data from the last page (think having a change your name popup menu over a profile page). This means to render the popup, you have to provide the information for the page below the transparent overlay as well as the top layer. Now you if you want to persist data over a failed validation thread and re-rendering in the top layer, I set that up using the same fields as the bottom layer. The result being, if you have a validation failure and rerender, in order to populate the top layer, you mutate the bottom layer. This gives the impression that your bad data was populated to the database (which it wasn't). I could fix it, but would rather do a redesign of that view, fixing it is not a good use of my time. The data is correct, but the appearance is misleading. It looks sloppy, and it is unnecessarily complicated.
-
-I created unit tests for complicated things that were not functioning well. I should have established a more robust testing infrastructure sooner. When I linted, it broke a lot of stuff. I had to retest everything, and most of it was not automated. The Postman testing was also VERY helpful for quickly confirming validation. I could have saved time by setting that up sooner. Additionally, the linter removed my `use strict` statements, I didn't forget them. It appears that they are not necessary for my setup.  
-
-I went back and forth initially with session tracking by username verses user id. I am not happy that is uses username, it makes the SQL calls unnecessarily cumbersome. 
+- I completely redid the CSS for this application, my objective was to make it more user friendly and more responsive. I designed everything to first look okay on a smaller phone screen, and then took into consideration that it didn't look bad on a larger screen. I haven't yet changed the views so that they optimize to a larger screen. That would be a next step.
+- I modified the session info to track a user object rather than a username. This made the code more concise, particularly the SQL queries. I've been building out test cases as I enhance the code base. This would be another next step moving forward. I incorporated the sample data population into the test SQL test sequence. But I only finished a few of the test cases in that section. When I redid the SQL queries post session tracking update, I broke several queries and had to find them all manually. This section would be better if it had more thorough test representation.

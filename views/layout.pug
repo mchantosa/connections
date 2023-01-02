@@ -17,6 +17,7 @@ html(lang="en-US")
     header.pb-1.clearfix
       div#welcome
         h1 Welcome to Connections
+        br
         h2 How is life, the universe, and everything?
         br
       if signedIn 
@@ -47,6 +48,9 @@ html(lang="en-US")
           each kind in kinds
             each message in flash[kind]
               li(class=kind)= message
+      br
+      p.line-break
+      br
       block header
     main
       block main

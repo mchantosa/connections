@@ -22,6 +22,7 @@ CREATE TABLE contacts (
   state_code varchar(50), 
   zip_code varchar(25),
   country varchar(25),
+  last_connection date DEFAULT '1000-01-01' NOT NULL,
   notes text
 );
 
@@ -31,8 +32,8 @@ CREATE TABLE objectives (
   occasion varchar(100),
   date_occasion date,
   periodicity text,
-  date_next_contact date,
-  date_last_contact date,
+  date_connection date, --if 2021-MM-DD < today, 2022-MM-DD
   reminder text,
+  date_reminder date, --
   notes text
 );

@@ -1,2 +1,2 @@
 #!/bin/bash
-psql -d connections < ./users.sql
+psql -d connections < ./lib/data/users.sql

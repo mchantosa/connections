@@ -1,14 +1,15 @@
 extends layout
 
+block header
+  h1 Greetings hooman!
+
 block main
-  div.dilute-background
-    h1 Greetings hooman!
-    if !(userNames.first_name||userNames.last_name)
-      div
-        a.unanchor.rebutton(href="/user/account") It looks like you have an incomplete profile, completing it would facilitate an enhancement of my salutations.
-    if !existsContacts
-      div 
-        a.unanchor.rebutton(href="/user/contacts") You don't currently have any contacts, would you like to create some?
-    if connectionsEmpty
-      h2 Congratulations, you have met your connection objectives for this week
-      h3 If you feel unsatisfied with your connections interface this week...
+  h2 Week of #{sunday} to #{saturday}
+  br
+
+  br
+  h3 Objectives 
+  br
+  
+  br
+  h3 Coming Up

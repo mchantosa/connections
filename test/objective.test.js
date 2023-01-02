@@ -94,7 +94,6 @@ describe('Test: Objective', () => {
     test('Test: Date object', () => {
       const objective = new Objective({ date_occasion: new Date('2022/02/20') });
       objective.sanitizeDateOccasion();
-      console.log(objective.date_occasion);
       expect(objective.date_occasion).toBe('2022-02-20');
     });
 
