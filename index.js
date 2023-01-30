@@ -1,6 +1,6 @@
 const express = require('express');
-const session = require('express-session');
-const store = require('connect-loki');
+const session = require('express-session');// cookies
+const store = require('connect-loki');// session store
 
 const app = express();
 const host = 'localhost';

@@ -59,5 +59,9 @@ This application is intended to help you stay connected to those you truly care 
 - Additional modifications requested from grader are tracked in the student-grader communication forum.
 
 ## Takeaways and moving forward
-- I completely redid the CSS for this application, my objective was to make it more user friendly and more responsive. I designed everything to first look okay on a smaller phone screen, and then took into consideration that it didn't look bad on a larger screen. I haven't yet changed the views so that they optimize to a larger screen. That would be a next step.
-- I modified the session info to track a user object rather than a username. This made the code more concise, particularly the SQL queries. I've been building out test cases as I enhance the code base. This would be another next step moving forward. I incorporated the sample data population into the test SQL test sequence. But I only finished a few of the test cases in that section. When I redid the SQL queries post session tracking update, I broke several queries and had to find them all manually. This section would be better if it had more thorough test representation.
+- Converted database from local postgres to supabase
+- Configured DB authorization to .env
+
+## Issues 
+- user enters bad username or email causes application to crash
+- Handler psql server crashing
