@@ -61,6 +61,7 @@ This application is intended to help you stay connected to those you truly care 
 ## Takeaways and moving forward
 - Converted database from local postgres to supabase
 - Configured DB authorization to .env
+- Containerize app [using docker](#https://nodejs.org/en/docs/guides/nodejs-docker-webapp/#creating-a-dockerfile)
 
 ## Issues 
 - user enters bad username or email causes application to crash

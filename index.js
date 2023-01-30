@@ -3,7 +3,7 @@ const session = require('express-session');// cookies
 const store = require('connect-loki');// session store
 
 const app = express();
-const host = 'localhost';
+const host = '0.0.0.0';
 const port = 3000;
 const LokiStore = store(session);
 const flash = require('express-flash');
