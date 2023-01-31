@@ -4,7 +4,7 @@ const store = require('connect-loki');// session store
 
 const app = express();
 const host = '0.0.0.0';
-const port = 3000;
+const port = (process.env.PORT || 3000);
 const LokiStore = store(session);
 const flash = require('express-flash');
 const { body, validationResult } = require('express-validator');
