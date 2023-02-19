@@ -1,217 +1,192 @@
 /* eslint-disable no-undef */
+const moment = require('moment');
 const Contact = require('../lib/contact');
 const Objective = require('../lib/objective');
 
-describe('Test: Contact', () => {
-  describe('Test: Contact.makeContact()', () => {
-    test('Test: Contact.makeContact() returns an empty contact with an empty objectives array', () => {
-      const contact = Contact.makeContact();
-      expect(contact instanceof Contact).toBe(true);
-      expect(contact.objectives).toEqual([]);
-      expect(contact.getEmailPretty()).toBe('none');
-    });
-
-    test('Test: Contact.makeContact(contactData, objectData) returns a contact with contact data and objectives containing objective data', () => {
-      const contactData = { notes: 'Shiva bit me' };
-      const objectiveData = [
-        new Objective({ sillyData: 'I love my cat' }),
-        new Objective({
-          id: 1, // int
-          contact_id: 1, // int
-          occasion: 'birthday', // varchar(25)
-          date_occasion: '1100-02-20', // date
-          periodicity: 'weekly', // text
-          date_next_contact: new Date(), // date
-          date_last_contact: new Date('2022/11/03'), // date
-          reminder: 'month', // text
-        }),
-      ];
-      const contact = Contact.makeContact(contactData, objectiveData);
-      expect(contact instanceof Contact).toBe(true);
-      expect(contact.objectives[0] instanceof Objective).toBe(true);
-      expect(contact.objectives[0].contact_id).toBe(contact.id);
-      expect(contact.objectives[1].contact_id).toBe(contact.id);
-      delete contact.objectives[0].contact_id;
-      delete contact.objectives[1].contact_id;
-      delete objectiveData[0].contact_id;
-      delete objectiveData[1].contact_id;
-      expect(contact.objectives).toEqual(objectiveData);
-      expect(contact.getEmailPretty()).toBe('none');
-      expect(contact.objectives[1].getOccasionDate()).toBe('02-20');
-    });
+describe('Contact', () => {
+  test('getPhonePattern() returns Contact.PHONE_PATTERN', () => {
+    expect(Contact.getPhonePattern()).toBe(Contact.PHONE_PATTERN);
   });
 
-  test('Test: Contact.makeContact(contactData, objectData) propagates contact.id to contact objective,contact_id', () => {
-    const contact = new Contact({ id: 5, notes: 'Shiva bit me' });
-    const objectiveData = [
-      new Objective({ sillyData: 'I love my cat' }),
-      new Objective({
-        id: 1, // int
-        contact_id: 1, // int
-        occasion: 'birthday', // varchar(25)
-        date_occasion: '1100-02-20', // date
-        periodicity: 'weekly', // text
-        date_next_contact: new Date(), // date
-        date_last_contact: new Date('2022/11/03'), // date
-        reminder: 'month', // text
-      }),
-    ];
-    contact.objectives = objectiveData;
-    contact.mountObjectives();
-    expect(contact instanceof Contact).toBe(true);
-    expect(contact.objectives[0] instanceof Objective).toBe(true);
-    expect(contact.objectives[0].contact_id).toBe(contact.id);
-    expect(contact.objectives[1].contact_id).toBe(contact.id);
-    delete contact.objectives[0].contact_id;
-    delete contact.objectives[1].contact_id;
-    delete objectiveData[0].contact_id;
-    delete objectiveData[1].contact_id;
-    expect(contact.objectives).toEqual(objectiveData);
-    expect(contact.getEmailPretty()).toBe('none');
-    expect(contact.objectives[1].getOccasionDate()).toBe('02-20');
+  test('getPlaceholderNotes() returns Contact.PLACEHOLDER_NOTES', () => {
+    expect(Contact.getPlaceholderNotes()).toBe(Contact.PLACEHOLDER_NOTES);
   });
 });
 
-describe('Test Initialization', () => {
-  test('Test: Falsy parameter initialization', () => {
-    const contact = new Contact();
-    expect(contact.mount).toBeDefined();
-    expect(contact.mountObjectives).toBeDefined();
-    expect(contact instanceof Contact).toBe(true);
-    expect(contact.objectives).toEqual([]);
-  });
-
-  test('Test: Random parameter initialization', () => {
-    const contact = new Contact({
-      0: false,
-      key1: '1',
-      key2: 2,
-      date: new Date('2000/02/03'),
-      sum: (a, b) => a + b,
+describe('Contact.prototype', () => {
+  describe('Initialization', () => {
+    describe('Null input', () => {
+      const contact = new Contact();
+      test('Returns an instance of Contact', () => {
+        expect(contact).toBeInstanceOf(Contact);
+      });
     });
-    expect(contact[0]).toBe(false);
-    expect(contact.key1).toBe('1');
-    expect(contact.key2).toBe(2);
-    expect(contact.date instanceof Date).toBe(true);
-    expect(contact.sum(1, 'a')).toBe('1a');
-  });
-
-  test('Test: contactData parameter initialization', () => {
-    const contact = new Contact({
-      first_name: 'Shiva',
-    });
-    expect(contact.getName()).toBe('Shiva');
-  });
-});
-
-describe('Test: mount(contactData) ', () => {
-  test('Test: contact.mount(contactData) adds contactData fields to contact', () => {
-    const contact = new Contact();
-    const contactData = { notes: 'Shiva bit me' };
-    contact.mount(contactData);
-    expect(contact.notes).toBe('Shiva bit me');
-  });
-
-  test('Test: contact.mount(contactData), contactData is accessible to contact methods', () => {
-    const contact = new Contact();
-    const contactData = { notes: 'Shiva bit me' };
-    contact.mount(contactData);
-    expect(contact.getNotes()).toBe('Shiva bit me');
-  });
-});
-
-describe('Test: mountObjectives(objectiveData) ', () => {
-  test('Test: contact.mountObjectives() links a contact.id to objective.contact_id', () => {
-    const contact = new Contact({
-      id: 5,
-    });
-    contact.mountObjectives([{ test: 1 }, { Shiva: 'is naughty' }]);
-    contact.objectives.forEach((objective) => {
-      expect(objective.contact_id).toBe(5);
+    describe('Object input', () => {
+      const obj = {
+        id: 1,
+        user_id: 2,
+        first_name: 'shiva',
+        last_name: 'baby',
+        preferred_medium: 'chicken',
+        phone_number: '123-456-7890',
+        email: 'shivababy@gmail.com',
+        street_address_1: 'a pretty street',
+        street_address_2: 'a cute apt',
+        city: 'Reston',
+        state_code: 'VA',
+        zip_code: '98765',
+        country: 'United States',
+        last_connection: '1000-01-01',
+        notes: 'tuna also works',
+      };
+      const contact = new Contact(obj);
+      test('Returns an instance of Contact', () => {
+        expect(contact).toBeInstanceOf(Contact);
+      });
+      test('key value pairs are represented as fields in returned contact', () => {
+        Object.keys(obj).forEach((key) => {
+          expect(contact[key]).toBe(obj[key]);
+        });
+      });
     });
   });
 
-  test('Test: contact.mountObjectives(), if objectives are undefined, sets objectives to []', () => {
-    const contact = new Contact();
-    delete contact.objectives;
-    contact.mountObjectives();
-    expect(contact.objectives).toEqual([]);
+  describe('Getters', () => {
+    const obj = {
+      id: 1,
+      user_id: 2,
+      first_name: 'shiva',
+      last_name: 'baby',
+      preferred_medium: 'chicken',
+      phone_number: '123-456-7890',
+      email: 'shivababy@gmail.com',
+      street_address_1: 'a pretty street',
+      street_address_2: 'a cute apt',
+      city: 'Reston',
+      state_code: 'VA',
+      zip_code: '98765',
+      country: 'United States',
+      last_connection: '1000-01-01',
+      notes: 'tuna also works',
+    };
+    const contact = new Contact(obj);
+    const objective = new Objective();
+    contact.setObjective(objective);
+
+    const minimalContact = new Contact({ first_name: 'shiva' });
+
+    test('getId() returns contact.id', () => {
+      expect(contact.getId()).toBe(1);
+    });
+
+    test('getObjective() returns a copy of objective', () => {
+      const returnedObjective = contact.getObjective();
+      expect(returnedObjective !== contact.objective).toBeTruthy();
+      expect(returnedObjective).toEqual(contact.objective);
+      expect(returnedObjective).toBeInstanceOf(Objective);
+    });
+
+    test('minimalContact getObjective() returns undefined', () => {
+      const returnedObjective = minimalContact.getObjective();
+      expect(returnedObjective).toBeUndefined();
+    });
+
+    test('getName() returns join of contact.first_name and contact.last_name', () => {
+      expect(contact.getName()).toBe('shiva baby');
+    });
+
+    test('getFirstName() returns contact.first_name', () => {
+      expect(contact.getFirstName()).toBe('shiva');
+    });
+
+    test('getLastName() returns contact.last_name', () => {
+      expect(contact.getLastName()).toBe('baby');
+    });
+
+    test('getPreferredMedium() returns contact.preferredMedium', () => {
+      expect(contact.getPreferredMedium()).toBe('chicken');
+    });
+
+    test('getPhoneNumber()', () => {
+      expect(contact.getPhoneNumber()).toBe('123-456-7890');
+    });
+
+    test('getPhonePattern() returns Contact.PHONE_PATTERN', () => {
+      expect(contact.getPhonePattern()).toBe(Contact.PHONE_PATTERN);
+    });
+
+    test('getEmail() returns contact.email', () => {
+      expect(contact.getEmail()).toBe('shivababy@gmail.com');
+    });
+
+    test('getStreetAddress1() returns contact.street_address_1', () => {
+      expect(contact.getStreetAddress1()).toBe(contact.street_address_1);
+    });
+
+    test('getStreetAddress2() returns contact.street_address_2', () => {
+      expect(contact.getStreetAddress2()).toBe(contact.street_address_2);
+    });
+
+    test('getCity() returns contact.city', () => {
+      expect(contact.getCity()).toBe('Reston');
+    });
+
+    test('getState() returns contact.state_code', () => {
+      expect(contact.getState()).toBe('VA');
+    });
+
+    test('getZipcode() returns contact.zip_code', () => {
+      expect(contact.getZipcode()).toBe('98765');
+    });
+
+    test('getCountry() returns contact.country', () => {
+      expect(contact.getCountry()).toBe('United States');
+    });
+
+    test('getNotes() returns contact.notes', () => {
+      expect(contact.getNotes()).toBe('tuna also works');
+    });
+
+    test('getLastConnection() returns contact.last_connection', () => {
+      expect(contact.getLastConnection()).toBe('1000-01-01');
+    });
+
+    test('getPlaceholderNotes() returns Contact.PLACEHOLDER_NOTES', () => {
+      expect(contact.getPlaceholderNotes()).toBe(Contact.PLACEHOLDER_NOTES);
+    });
+
+    // getFirstNamePretty()
+
+    // getLastNamePretty()
+
+    // getPreferredMediumPretty()
+
+    // getPhoneNumberPretty()
+
+    // getEmailPretty()
+
+    // getAddressPretty()
   });
 
-  test('Test: contact.mountObjectives() if objectives are defined, transforms objectiveData objectives into Objective objectives', () => {
-    const contact = new Contact();
-    delete contact.objectives;
-    contact.objectives = [
-      { sillyData: 'I love my cat' },
-      {
-        id: 1, // int
-        contact_id: 1, // int
-        occasion: 'birthday', // varchar(25)
-        date_occasion: '1100-02-20', // date
-        periodicity: 'weekly', // text
-        date_next_contact: new Date(), // date
-        date_last_contact: new Date('2022/11/03'), // date
-        reminder: 'month', // text
-      },
-    ];
-    contact.mountObjectives();
-    const objectivesClassMatcher = [];
-    contact.objectives.forEach((objective) => {
-      objectivesClassMatcher.push(objective instanceof Objective);
+  describe('Setters', () => {
+    test('setObjective(objective) sets contact.objective to reference objective', () => {
+      const contact = new Contact();
+      const objective = new Objective();
+      contact.setObjective(objective);
+      expect(contact.objective === objective).toBeTruthy();
     });
-    expect(objectivesClassMatcher).toEqual([true, true]);
   });
 
-  test('Test: contact.mountObjectives(objectiveData) transforms an array of objectiveData into an array of Objectives and then sets objectives to it', () => {
-    const objectiveData = [
-      { sillyData: 'I love my cat' },
-      {
-        id: 1, // int
-        contact_id: 1, // int
-        occasion: 'birthday', // varchar(25)
-        date_occasion: '1100-02-20', // date
-        periodicity: 'weekly', // text
-        date_next_contact: new Date(), // date
-        date_last_contact: new Date('2022/11/03'), // date
-        reminder: 'month', // text
-      },
-    ];
+  describe('Format dates', () => {
+    const obj = {
+      first_name: 'shiva',
+      last_connection: moment('2023-02-03').utc(),
+    };
+    const contact = new Contact(obj);
 
-    const contact = new Contact();
-    delete contact.objectives;
-    contact.mountObjectives(objectiveData);
-
-    const objectivesClassMatcher = [];
-    contact.objectives.forEach((objective) => {
-      objectivesClassMatcher.push(objective instanceof Objective);
+    test('Given a last_connection not formatted to YYYY-MM-DD, formatLastConnection sets format to YYYY-MM-DD', () => {
+      contact.formatLastConnection();
+      expect(contact.getLastConnection()).toBe('2023-02-03');
     });
-    expect(objectivesClassMatcher).toEqual([true, true]);
-  });
-
-  test('Test: contact.mountObjectives(objectives) results in contact.objectives having objectives derived from objectives parameter', () => {
-    const objectiveData = [
-      new Objective({ sillyData: 'I love my cat' }),
-      new Objective({
-        id: 1, // int
-        contact_id: 1, // int
-        occasion: 'birthday', // varchar(25)
-        date_occasion: '1100-02-20', // date
-        periodicity: 'weekly', // text
-        date_next_contact: new Date(), // date
-        date_last_contact: new Date('2022/11/03'), // date
-        reminder: 'month', // text
-      }),
-    ];
-
-    const contact = new Contact();
-    delete contact.objectives;
-    contact.mountObjectives(objectiveData);
-
-    const objectivesClassMatcher = [];
-    contact.objectives.forEach((objective) => {
-      objectivesClassMatcher.push(objective instanceof Objective);
-    });
-    expect(contact.objectives[0].sillyData).toBe('I love my cat');
-    expect(contact.objectives[1].getOccasionDate()).toBe('02-20');
   });
 });

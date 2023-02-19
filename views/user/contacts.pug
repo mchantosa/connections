@@ -4,18 +4,24 @@ block header
   h2 Contacts
   nav.flex-right
     a.unanchor.rebutton(href="/user/contacts/create-contact") Create Contact
+  nav.flex-right
+    a.unanchor.rebutton(href="#") Alphabetical
+    a.unanchor.rebutton(href="#") Most recent
+    a.unanchor.rebutton(href="#") Least recent
  
 block main
   if contacts.length > 0
-    each contactData in contacts
-      -contactVehicle.mount(contactData)
-      -let contact = contactVehicle
-      div.alternate.hover
+    each contact in contacts
+      div.bordered_tb.solid_hover
         -let hrefAddress = `/user/contacts/${contact.getId()}`
-          a.unanchor(href=hrefAddress)
-            p #[strong Name:] #{contactVehicle.getName()}
-            p #[strong Preferred Medium:] #{contactVehicle.getPreferredMediumPretty()}
-            p #[strong Objectives:] #{contactVehicle.objectivesCount}
+        -const objective = contact.getObjective()
+          a.unanchor(href=hrefAddress data-test-id="contact")
+            p(data-test-id="name") #[strong Name:] #{contact.getName()}
+            p(data-test-id="preferred-medium") #[strong Preferred Medium:] #{contact.getPreferredMediumPretty()}
+            if(objective)
+              p(data-test-id="communication-objective") #[strong Communication Objective:] #{objective.getPeriod()}
+            else
+              p(data-test-id="communication-objective") #[strong Communication Objective:] none
     br
     br
     div.flex-center
@@ -30,4 +36,5 @@ block main
               a.unanchor(href=`/user/contacts?page=${n}`) #{n}
         span.end
           a.unanchor(rel="next" href=`/user/contacts?page=${endPage}`) End
-          
+  else 
+    h3(data-test-id="contact") You currently have no contacts

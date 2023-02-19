@@ -29,11 +29,13 @@ CREATE TABLE contacts (
 CREATE TABLE objectives (
   id serial PRIMARY KEY ,
   contact_id integer NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
-  occasion varchar(100),
-  date_occasion date,
-  periodicity text,
-  date_connection date, --if 2021-MM-DD < today, 2022-MM-DD
-  reminder text,
-  date_reminder date, --
+  periodicity text NOT NULL CHECK (
+    periodicity = 'Weekly'
+    OR periodicity = 'Biweekly'
+    OR periodicity = 'Monthly'
+    OR periodicity = 'Quarterly'
+  ),
+  next_contact_date date NOT NULL,
+  last_contact_date date,
   notes text
 );

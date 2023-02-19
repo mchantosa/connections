@@ -10,56 +10,35 @@ block header
 block main  
   div.contact.flex-column-center
     h2 Name 
-    p #{contact.getName()}
+    p(data-test-id="name") #{contact.getName()}
     br
     h2 Contact Information
     br
     div
-      dl.side-by-side 
-        dt Preferred medium:
-        dd #{contact.getPreferredMediumPretty()}
-      dl.side-by-side 
-        dt Phone:
-        dd #{contact.getPhoneNumberPretty()}
-      dl.side-by-side 
-        dt Email:
-        dd #{contact.getEmailPretty()}
+      p(data-test-id="preferred-medium") #[strong Preferred medium:&nbsp;&nbsp;]#{contact.getPreferredMediumPretty()}
+      p(data-test-id="phone-number") #[strong Phone:&nbsp;&nbsp;]#{contact.getPhoneNumberPretty()}
+      p(data-test-id="email") #[strong Email:&nbsp;&nbsp;]#{contact.getEmailPretty()}
     br
     h2 Address: 
     br
-    p #{contact.getAddressPretty()}
+    p(data-test-id="address") #{contact.getAddressPretty()}
     br
-    h2 Objectives
+    h2 Communication Objective
     br
     div
-      if contact.countObjectives() > 0
-        each objective in contact.objectives
-          div.alternate.hover
-            a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/${objective.getId()}` )
-              p Occasion #{`${objective.getOccasion()}`}
-              p Date #{`${objective.getOccasionDate()}`}
-              p Periodicity #{`${objective.getPeriodicity()}`}
-              p Reminder #{`${objective.getReminder()}`}   
-        br
-        div.flex-center
-          nav.pagination
-            span.end
-              a(rel="prev" href=`/user/contacts/${contact.getId()}?page=${0}`) Start
-            each n in navVector
-              if n === page
-                span.page.active #{n}
-              else
-                span.page
-                  a(href=`/user/contacts/${contact.getId()}?page=${n}`) #{n}
-            span.end
-              a(rel="next" href=`/user/contacts/${contact.getId()}?page=${endPage}`) End
+      if contact.getObjective()
+        -let objective = contact.getObjective()
+        a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/periodic` data-test-id="objective")
+          p #[strong Period:&nbsp;&nbsp;] #{`${objective.getPeriod()}`}
+          p #[strong Date of next contact:&nbsp;&nbsp;] #{`${objective.getNextContactDate()}`}
+          p #[strong Date of last contact:&nbsp;&nbsp;] #{`${objective.getLastContactDatePretty()}`}   
       else 
-        h2 This contact currently has no objectives
-      br
-      div
-        a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
+        p(data-test-id="objective") No periodic Objective
+        br
+        div
+          a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
     br
-    h2 Notes
+    h2 Contact Notes
     br
     div
-      textarea(wrap="soft" name="notes" readonly placeholder = `${contact.getPlaceholderNotes()}`) #{contact.getNotes()}
+      textarea(wrap="soft" name="notes" id="notes" disabled) #{contact.getNotes()}

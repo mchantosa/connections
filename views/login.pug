@@ -2,7 +2,7 @@ extends layout
 
 block main
   -let formAction = (redirect) ? `/login?redirect=${redirect}` : "/login"
-  form(action=formAction method="post")
+  form.login(action=formAction method="post")
     div.login.flex-column-center
       h2 Login to your account
       br
@@ -23,7 +23,7 @@ block main
       a.disable(href="/login") Forgot Password (coming soon)
   br
   br
-  form(action="/register" method="post")
+  form.register(action="/register" method="post")
     div.account.flex-column-center
       h2 Register for an account
       br

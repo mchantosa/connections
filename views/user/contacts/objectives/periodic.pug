@@ -1,0 +1,28 @@
+extends ../../layout
+
+block header
+  -let objective = contact.getObjective()
+  h2 #{`Periodic objective for ${contact.getName()}`}
+  nav.flex-right
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/edit`) Edit Objective
+    form.delete(action=`/user/contacts/${contact.getId()}/objectives/periodic/delete` method="post")
+      input.unbutton.rebutton(type="submit" value="DELETE OBJECTIVE")
+block main
+  form(action=`/user/contacts/${contact.getId()}/objectives/create-objective` method="post")
+    div.objective.flex-column-center
+      div.flex-justified
+        span #[strong Period:]
+        span #{objective.getPeriod()}
+      br
+      div.flex-justified
+        span #[strong Next connection date:&nbsp;&nbsp;] 
+        span #{objective.getNextContactDate()}
+      br
+      div.flex-justified 
+        span #[strong Last connection date:&nbsp;&nbsp;] 
+        span #{objective.getLastContactDatePretty()}
+      br
+      h3.flex-center Periodic Objective   Notes
+      br
+      textarea(wrap="soft" name="notes" disabled) #{objective.getNotes()}

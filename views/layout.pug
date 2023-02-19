@@ -15,11 +15,11 @@ html(lang="en-US")
   body
     //- block overlay-bottom
     header.pb-1.clearfix
-      div#welcome
-        h1 Welcome to Connections
-        br
-        h2 How is life, the universe, and everything?
-        br
+      div.welcome.flex-left
+        img.logo(src="/images/connections-logo.png" alt="Connections logo")
+        div.welcome-text
+          h1 Welcome to Connections
+      //- h2.welcome How is life, the universe, and everything?
       if signedIn 
         nav#primary-nav
           ul

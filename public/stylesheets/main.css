@@ -9,6 +9,11 @@ body{
   margin: 2rem 1.5rem 4rem 1.5rem;
 }
 
+.logo{
+  height: 125px;
+  width: 125px;
+}
+
 nav#primary-nav{
   /* float:right; */
   /* display: flex;*/
@@ -64,8 +69,14 @@ nav > *{
 }
 
 
-#welcome h1{
+.welcome h1{
+  font-size: 2rem;
   color:orange;
+}
+
+h2.welcome {
+  font-size: 1rem;
+  color: rgb(1, 63, 109);
 }
 
 .line-break{
@@ -90,17 +101,26 @@ nav > *{
 .contact dl{
   padding-bottom: .5rem;
 }
+
 .account > h2, 
 .login > h2, 
 .contact > h2{
   text-align: center;
 }
+
 .account dd > input, 
 .login dd > input, 
-.contact dd,
 .contact dd > input,
 .contact dd > select{
   width: 18rem;
+}
+
+.objective > *{
+  width: 345px;
+}
+
+.objective select{
+  width: 12rem;
 }
 
 textarea{
@@ -122,6 +142,12 @@ textarea{
 .flex-right{
   display: flex;
   justify-content:right;
+}
+
+.flex-left{
+  display: flex;
+  justify-content:left;
+  align-items: center;
 }
 
 dl.format{
@@ -233,13 +259,30 @@ dl.format dd{
   text-overflow: ellipsis;
 }
 
-.alternate:nth-child(even){
-  background-color:rgb(179, 229, 252 );
+.bordered_tb{
+  padding: 8px 0 8px 0;
+  border-width: 0 0 .5px 0;
+  border-color: rgb(200, 200, 200);
+  border-style: solid;
 }
 
-.alternate:nth-child(n){
-  margin:4px; 
+.bordered_tb:first-child{
+  border-width: .5px 0 .5px 0;
+  border-color: rgb(200, 200, 200);
+  border-style: solid;
 }
+
+.bordered_tb p{
+  margin: 0 16px 0 16px;
+}
+
+.solid_hover:hover{
+  background-color: rgb(230, 235, 240);
+}
+
+.solid_hover:hover p{
+  color: black;
+ }
 
 dd.flex-right{
   display: inline-flex;

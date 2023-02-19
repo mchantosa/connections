@@ -4,10 +4,11 @@ const store = require('connect-loki');// session store
 
 const app = express();
 const host = '0.0.0.0';
-const port = (process.env.PORT || 3000);
+const port = process.env.PORT || 3000;
 const LokiStore = store(session);
 const flash = require('express-flash');
 const { body, validationResult } = require('express-validator');
+const { deleteAllContactsHandler, createContactHandler } = require('./admin-routes');
 const catchError = require('./lib/catch-error');// async error wrapped
 const ConnectionsDB = require('./lib/connections-db');
 const Objective = require('./lib/objective');
@@ -102,18 +103,6 @@ const requiresUserContactValidation = catchError(async (req, res, next) => {
   }
 });
 
-const requiresContactObjectiveValidation = catchError(async (req, res, next) => {
-  const contactId = req.params.contact_id;
-  const objectiveId = req.params.objective_id;
-  const authenticated = await res.locals.store.contactOwnsObjective(+contactId, +objectiveId);
-  if (!authenticated) {
-    req.flash('error', 'Error loading objective');// don't want to verify objective existence
-    res.redirect(302, `/user/contacts/${contactId}`);
-  } else {
-    next();
-  }
-});
-
 const signIn = (req, user) => {
   req.session.user = user;
   req.session.signedIn = true;
@@ -124,6 +113,10 @@ const signOut = (req) => {
   delete req.session.signedIn;
 };
 
+deleteAllContactsHandler(app);
+
+createContactHandler(app);
+
 app.get(
   '/',
   (req, res) => {
@@ -131,7 +124,7 @@ app.get(
   },
 );
 
-app.get(// done
+app.get(
   '/home',
   (req, res) => {
     res.locals.activePage = 'home';
@@ -139,14 +132,14 @@ app.get(// done
   },
 );
 
-app.get(// done
+app.get(
   '/home/how-it-works',
   (req, res) => {
     res.render('home/how-it-works');
   },
 );
 
-app.get(// done
+app.get(
   '/login',
   mootForAuthenticated,
   (req, res) => {
@@ -156,7 +149,7 @@ app.get(// done
   },
 );
 
-app.post(// done
+app.post(
   '/login',
   mootForAuthenticated,
   catchError(async (req, res) => {
@@ -265,11 +258,22 @@ app.post(
   }),
 );
 
-app.post('/logout', (req, res) => { // done
-  signOut(req);
-  req.flash('info', 'You have logged out of the application');
-  res.redirect('/home');
-});
+app.post(
+  '/logout',
+  (req, res) => {
+    signOut(req);
+    req.flash('info', 'You have logged out of the application');
+    res.redirect('/home');
+  },
+);
+
+app.get(
+  '/user',
+  requiresAuthentication,
+  (req, res) => {
+    res.redirect('/user/home');
+  },
+);
 
 app.get(
   '/user/home',
@@ -514,7 +518,6 @@ app.get(
       res.locals.page = page;
       res.locals.endPage = endPage;
       res.locals.navVector = navVector;
-      res.locals.contactVehicle = new Contact();
       res.locals.contacts = await res.locals.store.getContacts(page);
       res.render('user/contacts');
     }
@@ -525,7 +528,7 @@ app.get(
   '/user/contacts/create-contact',
   requiresAuthentication,
   catchError(async (req, res) => {
-    res.locals.contact = Contact.makeContact();
+    res.locals.contact = new Contact();
     res.render('user/contacts/create-contact');
   }),
 );
@@ -591,23 +594,21 @@ app.post(
   ],
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const contact = Contact.makeContact(
-      {
-        id: contactId,
-        first_name: req.body.first_name,
-        last_name: req.body.last_name,
-        preferred_medium: req.body.preferred_medium,
-        phone_number: req.body.phone_number,
-        email: req.body.email,
-        street_address_1: req.body.street_address_1,
-        street_address_2: req.body.street_address_2,
-        city: req.body.city,
-        state_code: req.body.state_code,
-        zip_code: req.body.zip_code,
-        country: req.body.country,
-        notes: req.body.notes,
-      },
-    );
+    const contact = new Contact({
+      id: contactId,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      preferred_medium: req.body.preferred_medium,
+      phone_number: req.body.phone_number,
+      email: req.body.email,
+      street_address_1: req.body.street_address_1,
+      street_address_2: req.body.street_address_2,
+      city: req.body.city,
+      state_code: req.body.state_code,
+      zip_code: req.body.zip_code,
+      country: req.body.country,
+      notes: req.body.notes,
+    });
     const errors = validationResult(req);
     const errorsCustom = [];
 
@@ -622,9 +623,14 @@ app.post(
         flash: req.flash(),
       });
     } else {
-      res.locals.store.createContact(contact);
-      req.flash('info', `${contact.getName()} was created`);
-      res.redirect('/user/contacts');
+      const updated = await res.locals.store.createContact(contact);
+      if (updated) {
+        req.flash('info', `${contact.getName()} was created`);
+        res.redirect('/user/contacts');
+      } else {
+        req.flash('error', 'Your input passed validation, but something went wrong, your contact was not created');
+        res.redirect('/user/contacts');
+      }
     }
   }),
 );
@@ -635,23 +641,8 @@ app.get(
   requiresUserContactValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const page = (req.query.page) ? +req.query.page : 0;
-    const totalObjectives = await res.locals.store.getObjectivesCount(+contactId);
-    const endPage = Math.floor(totalObjectives / ConnectionsDB.PAGINATE);
-    const navVector = findNavVector(page, endPage);
-
-    if (Number.isNaN(page) || (page < 0) || (page > endPage)) {
-      req.flash('error', `Your query parameter must be a number between 0 and ${endPage}`);
-      res.redirect(`/user/contacts/${contactId}`);
-    } else {
-      res.locals.page = page;
-      res.locals.endPage = endPage;
-      res.locals.navVector = navVector;
-      res.locals.contact = Contact.makeContact(
-        await res.locals.store.getContact(+contactId, +page),
-      );
-      res.render('user/contacts/contact-id');
-    }
+    res.locals.contact = await res.locals.store.getContact(+contactId);
+    res.render('user/contacts/contact-id');
   }),
 );
 
@@ -661,9 +652,7 @@ app.get(
   requiresUserContactValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    res.locals.contact = Contact.makeContact(
-      await res.locals.store.getContact(+contactId),
-    );
+    res.locals.contact = await res.locals.store.getContact(+contactId);
     res.render('user/contacts/edit');
   }),
 );
@@ -730,7 +719,7 @@ app.post(
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
 
-    const contact = Contact.makeContact(
+    const contact = new Contact(
       {
         id: contactId,
         first_name: req.body.first_name,
@@ -746,8 +735,8 @@ app.post(
         country: req.body.country,
         notes: req.body.notes,
       },
-      await res.locals.store.getObjectives(+contactId),
     );
+
     const errors = validationResult(req);
     const errorsCustom = [];
 
@@ -762,9 +751,14 @@ app.post(
         flash: req.flash(),
       });
     } else {
-      res.locals.store.updateContact(contact);
-      req.flash('info', `${contact.getName()} changes were saved`);
-      res.redirect(`/user/contacts/${contactId}`);
+      const updated = await res.locals.store.updateContact(contact);
+      if (updated) {
+        req.flash('info', `${contact.getName()} changes were saved`);
+        res.redirect(`/user/contacts/${contactId}`);
+      } else {
+        req.flash('error', 'Something went wrong, your input passed validation, but your changes were not updated');
+        res.redirect('/user/contacts');
+      }
     }
   }),
 );
@@ -775,11 +769,18 @@ app.post(
   requiresUserContactValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const contactVehicle = new Contact();
-    contactVehicle.mount(await res.locals.store.getContact(+contactId));
-    const contactName = contactVehicle.getName();
-    res.locals.contact = await res.locals.store.deleteContact(+contactId);
-    req.flash('info', `Contact ${contactName} has been deleted`);
+    let contactName;
+    let deleted;
+    const contact = await res.locals.store.getContact(+contactId);
+    if (contact) {
+      contactName = contact.getName();
+      deleted = await res.locals.store.deleteContact(+contactId);
+    }
+    if (deleted) {
+      req.flash('info', `${contactName} has been deleted`);
+    } else {
+      req.flash('error', `Something went wrong, we were unable to delete contact ${contactId}`);
+    }
     res.redirect('/user/contacts');
   }),
 );
@@ -790,9 +791,10 @@ app.get(
   requiresUserContactValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const contactNames = await res.locals.store.getContactName(+contactId);
-
-    const contact = Contact.makeContact(contactNames, [new Objective()]);
+    const contact = await res.locals.store.getContact(+contactId);
+    if (!contact.getObjective()) {
+      contact.setObjective(new Objective());
+    }
     res.locals.contact = contact;
     res.render('user/contacts/objectives/create-objective');
   }),
@@ -803,171 +805,109 @@ app.post(
   requiresAuthentication,
   requiresUserContactValidation,
   [
-    body('occasion')
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage('An occasion is required')
-      .isLength({ max: 100 })
-      .withMessage('Occasion cannot exceed 100 characters'),
-    body('date_occasion')
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage('An occasion date is required'),
     body('periodicity')
       .trim()
       .isLength({ min: 1 })
-      .withMessage('Periodicity is required')
+      .withMessage('Period is required')
       .isIn(Objective.getPeriods())
-      .withMessage('Periodicity must be Weekly, Biweekly, Monthly, Quarterly, or Annual'),
-    body('reminder')
-      .trim()
-      .isIn([undefined, '', ...Objective.getReminders()])
-      .withMessage('If you have a reminder, it must be 1 Week, 2 Weeks, 1 Month, or 2 Months'),
+      .withMessage('Periodicity must be Weekly, Biweekly, Monthly, Quarterly'),
   ],
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const contactNames = await res.locals.store.getContactName(+contactId);
-    const contact = Contact.makeContact(contactNames, [new Objective(
+    const contact = await res.locals.store.getContact(contactId);
+    contact.setObjective(new Objective(
       {
-        occasion: req.body.occasion,
-        date_occasion: req.body.date_occasion,
+        contact_id: contactId,
         periodicity: req.body.periodicity,
-        reminder: req.body.reminder,
         notes: req.body.notes,
       },
-    )]);
-    const objective = contact.objectives[0];
+    ));
 
     const errors = validationResult(req);
-    const errorsCustom = [];
 
-    objective.sanitizeDateOccasion();
-    if (objective.getOccasionDate() === 'Invalid date') {
-      errorsCustom.push('Not a valid date, please try again');
-    }
-    if (!errors.isEmpty() || errorsCustom.length) {
+    if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
-      errorsCustom.forEach((message) => req.flash('error', message));
       res.locals.contact = contact;
       res.render('user/contacts/objectives/create-objective', {
         flash: req.flash(),
       });
     } else {
-      res.locals.store.createObjective(objective, +contactId);
-      req.flash('info', 'Objective was added');
+      const created = await res.locals.store.createObjective(contact.getObjective(), +contactId);
+      if (created) req.flash('info', 'Objective was added');
+      else req.flash('error', 'Something went wrong, your input passed validation, but your objective was not created');
       res.redirect(`/user/contacts/${contactId}`);
     }
   }),
 );
 
 app.get(
-  '/user/contacts/:contact_id/objectives/:objective_id',
+  '/user/contacts/:contact_id/objectives/periodic',
   requiresAuthentication,
   requiresUserContactValidation,
-  requiresContactObjectiveValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const objectiveId = req.params.objective_id;
-
-    const contactNames = await res.locals.store.getContactName(+contactId);
-    const objectiveData = await res.locals.store.getObjective(+objectiveId);
-    const contact = Contact.makeContact(contactNames, [new Objective(objectiveData)]);
+    const contact = await res.locals.store.getContact(+contactId);
     res.locals.contact = contact;
-    res.render('user/contacts/objectives/objective-id');
+    res.render('user/contacts/objectives/periodic');
   }),
 );
 
 app.get(
-  '/user/contacts/:contact_id/objectives/:objective_id/edit',
+  '/user/contacts/:contact_id/objectives/periodic/edit',
   requiresAuthentication,
   requiresUserContactValidation,
-  requiresContactObjectiveValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const objectiveId = req.params.objective_id;
-
-    const contactNames = await res.locals.store.getContactName(+contactId);
-    const objectiveData = await res.locals.store.getObjective(+objectiveId);
-    const contact = Contact.makeContact(contactNames, [new Objective(objectiveData)]);
+    const contact = await res.locals.store.getContact(+contactId);
     res.locals.contact = contact;
     res.render('user/contacts/objectives/edit');
   }),
 );
 
 app.post(
-  '/user/contacts/:contact_id/objectives/:objective_id/edit',
+  '/user/contacts/:contact_id/objectives/periodic/edit',
   requiresAuthentication,
   requiresUserContactValidation,
-  requiresContactObjectiveValidation,
   [
-    body('occasion')
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage('An occasion is required')
-      .isLength({ max: 100 })
-      .withMessage('Occasion cannot exceed 100 characters'),
-    body('date_occasion')
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage('An occasion date is required'),
     body('periodicity')
       .trim()
       .isLength({ min: 1 })
       .withMessage('Periodicity is required')
       .isIn(Objective.getPeriods())
       .withMessage('Periodicity must be Weekly, Biweekly, Monthly, Quarterly, or Annual'),
-    body('reminder')
-      .trim().isIn([undefined, '', ...Objective.getReminders()])
-      .withMessage('If you have a reminder, it must be 1 Week, 2 Weeks, 1 Month, or 2 Months'),
   ],
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const objectiveId = req.params.objective_id;
-    const contactNames = await res.locals.store.getContactName(+contactId);
-    const contact = Contact.makeContact(contactNames, [new Objective(
-      {
-        id: objectiveId,
-        occasion: req.body.occasion,
-        date_occasion: req.body.date_occasion,
-        periodicity: req.body.periodicity,
-        reminder: req.body.reminder,
-        notes: req.body.notes,
-      },
-    )]);
-    const objective = contact.objectives[0];
+    const contact = await res.locals.store.getContact(+contactId);
+    contact.getObjective().setPeriod(req.body.periodicity);
+    contact.getObjective().setNotes(req.body.notes);
 
     const errors = validationResult(req);
-    const errorsCustom = [];
-
-    objective.sanitizeDateOccasion();
-    if (objective.getOccasionDate() === 'Invalid date') {
-      errorsCustom.push('Not a valid date, please try again');
-    }
-    if (!errors.isEmpty() || errorsCustom.length) {
+    if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
-      errorsCustom.forEach((message) => req.flash('error', message));
       res.locals.contact = contact;
-      res.render('user/contacts/objectives/edit', {
+      res.render('user/contacts/objectives/periodic/edit', {
         flash: req.flash(),
       });
     } else {
-      res.locals.store.updateObjective(objective);
-      req.flash('info', 'Objective updated');
+      const updated = await res.locals.store.updateObjective(contact.getObjective());
+      if (updated) req.flash('info', 'Objective updated');
+      else req.flash('error', 'Something went wrong, your updates passed validation, but your objective failed to update.');
       res.redirect(`/user/contacts/${contactId}/`);
     }
   }),
 );
 
 app.post(
-  '/user/contacts/:contact_id/objectives/:objective_id/delete',
+  '/user/contacts/:contact_id/objectives/periodic/delete',
   requiresAuthentication,
   requiresUserContactValidation,
-  requiresContactObjectiveValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const objectiveId = req.params.objective_id;
-    res.locals.store.deleteObjective(+objectiveId);
-    req.flash('info', 'Objective has been deleted');
+    const objective = await res.locals.store.getObjectiveByContactId(+contactId);
+    const deleted = await res.locals.store.deleteObjective(objective.id);
+    if (deleted) req.flash('info', 'Objective has been deleted');
+    else req.flash('error', 'Something went wrong, objective could not be deleted');
     res.redirect(`/user/contacts/${contactId}`);
   }),
 );

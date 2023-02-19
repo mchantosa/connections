@@ -69,3 +69,5 @@ This application is intended to help you stay connected to those you truly care 
 - Handler psql server crashing
 - Add health check
 - Containerize postgres
+- Better Error Handling
+- Add google analytics
