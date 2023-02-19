@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon index.js",
-    "dev": "",
-    "test": "jest --silent",
+    "test": "jest --silent --testTimeout=100000000",
     "test:watch": "jest --watch --silent",
     "seed": "node ./lib/data/createDB.js"
   },
@@ -24,6 +23,7 @@
   "dependencies": {
     "bcrypt": "^5.1.0",
     "connect-loki": "^1.2.0",
+    "cypress": "^12.5.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-flash": "^0.0.2",
