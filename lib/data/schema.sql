@@ -25,6 +25,7 @@ CREATE TABLE contacts (
   last_connection date DEFAULT '1000-01-01' NOT NULL,
   notes text
 );
+-- contacts.id, contacts.user_id, contacts.first_name, contacts.last_name, contacts.preferred_medium, contacts.phone_number, contacts.email, contacts.street_address_1, contacts.street_address_2, contacts.city, contacts.state_code, contacts.zip_code, contacts.country, contacts.last_connection, contacts.notes
 
 CREATE TABLE objectives (
   id serial PRIMARY KEY ,
@@ -39,3 +40,5 @@ CREATE TABLE objectives (
   last_contact_date date,
   notes text
 );
+
+-- objectives.id AS objectives_id, objectives.contact_id AS objectives_contact_id, objectives.periodicity AS objectives_periodicity, objectives.next_contact_date AS objectives_next_contact_date, objectives.last_contact_date AS objectives_last_contact_date, objectives.notes AS objectives_notes

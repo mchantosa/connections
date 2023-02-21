@@ -9,7 +9,7 @@ block main
           dt
             label(for="username") Username:  
           dd
-            - let username = (userData.newUsername) ? userData.newUsername : userData.username
+            - let username = (user.newUsername) ? user.newUsername : user.username
             input(type="text" name="username" id="username" value=username)
       br
       nav.flex-right

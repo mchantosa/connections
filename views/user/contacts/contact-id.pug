@@ -28,7 +28,7 @@ block main
     div
       if contact.getObjective()
         -let objective = contact.getObjective()
-        a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/periodic` data-test-id="objective")
+        a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/periodic/${objective.getId()}` data-test-id="objective")
           p #[strong Period:&nbsp;&nbsp;] #{`${objective.getPeriod()}`}
           p #[strong Date of next contact:&nbsp;&nbsp;] #{`${objective.getNextContactDate()}`}
           p #[strong Date of last contact:&nbsp;&nbsp;] #{`${objective.getLastContactDatePretty()}`}   
@@ -36,7 +36,7 @@ block main
         p(data-test-id="objective") No periodic Objective
         br
         div
-          a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/create-objective`) Create an objective
+          a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/create-objective`) Create an objective
     br
     h2 Contact Notes
     br

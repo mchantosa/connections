@@ -10,12 +10,12 @@ block main
         dt
           label(for="first-name") First name:  
         dd
-          input(type="text" name="first_name" id="first-name" value=userData.first_name)
+          input(type="text" name="first_name" id="first-name" value=user.first_name)
       dl.side-by-side 
         dt  
           label(for="last-name") Last name:  
         dd
-          input(type="text" name="last_name" id="last-name" value=userData.last_name)
+          input(type="text" name="last_name" id="last-name" value=user.last_name)
       br
     nav.flex-right
       input.unbutton.rebutton(type="submit" value="Update")

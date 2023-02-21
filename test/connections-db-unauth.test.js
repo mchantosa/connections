@@ -49,16 +49,16 @@ describe('Query security', () => {
         .toThrow('A session is required to access  getUserNames');
     });
 
-    test('getUserData() throws error', async () => {
-      await expect(connections.getUserData())
+    test('getUser() throws error', async () => {
+      await expect(connections.getUser())
         .rejects
-        .toThrow('A session is required to access  getUserData');
+        .toThrow('A session is required to access  getUser');
     });
 
-    test('updateUserData(firstName, lastName) throws error', async () => {
-      await expect(connections.updateUserData('firstName', 'lastName'))
+    test('updateUser(firstName, lastName) throws error', async () => {
+      await expect(connections.updateUser('firstName', 'lastName'))
         .rejects
-        .toThrow('A session is required to access  updateUserData');
+        .toThrow('A session is required to access  updateUser');
     });
 
     test('updateUserPassword(newPassword) throws error', async () => {

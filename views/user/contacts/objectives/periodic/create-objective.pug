@@ -1,4 +1,4 @@
-extends ../../layout
+extends ../../../layout
 
 block header
   -let objective = contact.getObjective()
@@ -7,7 +7,7 @@ block header
     a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
         
 block main
-  form(action=`/user/contacts/${contact.getId()}/objectives/create-objective` method="post")
+  form(action=`/user/contacts/${contact.getId()}/objectives/periodic/create-objective` method="post")
     div.objective.flex-column-center
       div.flex-justified
         div #[label(for="periodicity") #[strong Period:]]
