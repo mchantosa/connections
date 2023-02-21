@@ -7,12 +7,12 @@ block main
     dl.side-by-side 
       dt Username: 
       dd.flex-justified
-        span #{userData.username}
+        span #{user.username}
         a.unanchor.rebutton.h-1(href="/user/account/update-username") edit
     dl.side-by-side 
       dt Email:
       dd.flex-justified
-        span #{userData.email}
+        span #{user.email}
         a.unanchor.rebutton.h-1(href="/user/account/update-email") edit
     br
     div
@@ -22,10 +22,10 @@ block main
     br
     dl.side-by-side 
       dt First Name:
-      dd #{userData.first_name}
+      dd #{user.first_name}
     dl.side-by-side 
       dt Last Name:
-      dd #{userData.last_name}
+      dd #{user.last_name}
     br
     div
       a.unanchor.rebutton(href="/user/account/update-account-information") Update Profile Data

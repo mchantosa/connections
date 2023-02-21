@@ -3,10 +3,24 @@ const moment = require('moment');
 const Objective = require('../lib/objective');
 
 describe('Objective', () => {
+  describe('Objective.createEmptyObjective(objectiveData)', () => {
+    test('Create an empty objective without default behavior', () => {
+      const objective = Objective.createEmptyObjective({ id: 2000 });
+      objective.setContactId(2);
+      expect(objective).toEqual({ id: 2000, contact_id: 2 });
+    });
+    test('Create an empty objective without default behavior', () => {
+      const objective = Objective.createEmptyObjective();
+      expect(objective).toEqual({});
+      expect(objective.getNextContactDate()).toBeUndefined();
+    });
+  });
+
   test('When getPeriods() is called, a copy of Objective.PERIODS is returned', () => {
     expect(Objective.getPeriods()).toEqual(Objective.PERIODS);
     expect(Objective.getPeriods() === Objective.PERIODS).toBeFalsy();
   });
+
   test('When getPlaceholderNotes() is called, Objective.PLACEHOLDER_NOTES is returned', () => {
     expect(Objective.getPlaceholderNotes()).toBe(Objective.PLACEHOLDER_NOTES);
   });
@@ -20,6 +34,144 @@ describe('Objective', () => {
     test('When getPeriodTime(period) is called, with a period not referenced by Objective.PERIOD_TIMES, undefined is returned', () => {
       expect(Objective.getPeriodTime('Annual')).toBeUndefined();
       expect(Objective.getPeriodTime()).toBeUndefined();
+    });
+  });
+
+  describe('Objective.getLastSundayPretty()', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('Given today is not Sunday, getLastSundayPretty() returns a the last calendar Sunday from today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+      expect(Objective.getLastSundayPretty()).toBe('Feb-12');
+    });
+
+    test('Given today is Sunday, getLastSundayPretty() returns today Sunday', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+      expect(Objective.getLastSundayPretty()).toBe('Feb-19');
+    });
+  });
+
+  describe('Objective.getThisSaturdayPretty()', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('Given today is not Saturday, getThisSaturdayPretty() returns a the next calendar Saturday from today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+      expect(Objective.getThisSaturdayPretty()).toBe('Feb-25');
+    });
+
+    test('Given today is Saturday, getThisSaturdayPretty() returns today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+      expect(Objective.getThisSaturdayPretty()).toBe('Feb-18');
+    });
+  });
+
+  describe('Objective.getLastSunday()', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('Given today is not Sunday, getLastSunday() returns a the last calendar Sunday from today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+      expect(Objective.getLastSunday()).toBe('2023-02-12');
+    });
+
+    test('Given today is Sunday, getLastSunday() returns today Sunday', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+      expect(Objective.getLastSunday()).toBe('2023-02-19');
+    });
+  });
+
+  describe('Objective.getThisSaturday()', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('Given today is not Saturday, getThisSaturday() returns a the next calendar Saturday from today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+      expect(Objective.getThisSaturday()).toBe('2023-02-25');
+    });
+
+    test('Given today is Saturday, getThisSaturday() returns today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+      expect(Objective.getThisSaturday()).toBe('2023-02-18');
+    });
+  });
+
+  describe('Objective.getNextSunday()', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    test('Given today is not Sunday, getNextSunday() returns a the next calendar Sunday from today', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-09T00:00:00Z'));
+      expect(Objective.getNextSunday()).toBe('2023-02-12');
+    });
+
+    test('Given today is Sunday, getNextSunday() returns next Sunday', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-12T00:00:00Z'));
+      expect(Objective.getNextSunday()).toBe('2023-02-19');
+    });
+  });
+
+  describe('Objective.getNextNextContactDate(period)', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+    test('Objective.getNextNextContactDate() returns last Sunday incremented by objective.periodTime', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-02T00:00:00Z'));
+      expect(Objective.getNextNextContactDate('Weekly')).toBe('2023-02-05');
+    });
+    test('Objective.getNextNextContactDate() returns a lastSunday incremented by objective.periodTime', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-05T00:00:00Z'));
+      expect(Objective.getNextNextContactDate('Monthly')).toBe('2023-03-05');
+    });
+  });
+
+  describe('Objective.getMoment()', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+    test('Objective.getMoment() gets now in utc formatted to YYYY-MM-DD', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+      expect(Objective.getMomentDate()).toBe('2023-02-19');
+    });
+  });
+
+  describe('Objective.getSnoozeDate(date)', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+    test('Objective.getSnoozeDate() returns this.getNextSunday()', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-03-09T00:00:00Z'));
+      expect(Objective.getSnoozeDate()).toBe('2023-03-12');
+    });
+    test('Objective.getSnoozeDate() returns this.getNextSunday()', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-20T00:00:00Z'));
+      expect(Objective.getSnoozeDate()).toBe('2023-02-26');
+    });
+    test('Objective.getSnoozeDate(date) returns this.getNextSunday()', () => {
+      jest.useFakeTimers();
+      jest.setSystemTime(new Date('2023-02-20T00:00:00Z'));
+      expect(Objective.getSnoozeDate('2022-05-15')).toBe('2022-05-22');
     });
   });
 });
@@ -99,6 +251,7 @@ describe('Objective.prototype', () => {
     test('objective.getLastContactDate() returns objective.lastContactDate', () => {
       expect(objective.getLastContactDate()).toBe('2023-02-01');
     });
+
     describe('getLastContactDatePretty()', () => {
       test('Given objective with truthy lastContactDate, returns objective.lastContactDate', () => {
         expect(objective.getLastContactDatePretty()).toBe('2023-02-01');
@@ -139,11 +292,143 @@ describe('Objective.prototype', () => {
         expect(objective.getNextSunday()).toBe('2023-02-19');
       });
     });
+
+    describe('getLastSundayPretty()', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      test('Given today is not Sunday, getLastSundayPretty() returns a the last calendar Sunday from today', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+        expect(objective.getLastSundayPretty()).toBe('Feb-12');
+      });
+
+      test('Given today is Sunday, getLastSundayPretty() returns today Sunday', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+        expect(objective.getLastSundayPretty()).toBe('Feb-19');
+      });
+    });
+
+    describe('getThisSaturdayPretty()', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      test('Given today is not Saturday, getThisSaturdayPretty() returns a the next calendar Saturday from today', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+        expect(objective.getThisSaturdayPretty()).toBe('Feb-25');
+      });
+
+      test('Given today is Saturday, getThisSaturdayPretty() returns today', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+        expect(objective.getThisSaturdayPretty()).toBe('Feb-18');
+      });
+    });
+
+    describe('getLastSunday()', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      test('Given today is not Sunday, getLastSunday() returns a the last calendar Sunday from today', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+        expect(objective.getLastSunday()).toBe('2023-02-12');
+      });
+
+      test('Given today is Sunday, getLastSunday() returns today Sunday', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+        expect(objective.getLastSunday()).toBe('2023-02-19');
+      });
+    });
+
+    describe('getThisSaturday()', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      test('Given today is not Saturday, getThisSaturday() returns a the next calendar Saturday from today', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+        expect(objective.getThisSaturday()).toBe('2023-02-25');
+      });
+
+      test('Given today is Saturday, getThisSaturday() returns today', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-18T00:00:00Z'));
+        expect(objective.getThisSaturday()).toBe('2023-02-18');
+      });
+    });
+
+    describe('getSnoozeDate(date)', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+      test('getSnoozeDate() returns this.getNextSunday()', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-03-09T00:00:00Z'));
+        expect(objective.getSnoozeDate()).toBe('2023-03-12');
+      });
+      test('getSnoozeDate() returns this.getNextSunday()', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-20T00:00:00Z'));
+        expect(objective.getSnoozeDate()).toBe('2023-02-26');
+      });
+      test('getSnoozeDate(date) returns this.getNextSunday()', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-20T00:00:00Z'));
+        expect(objective.getSnoozeDate('2022-05-15')).toBe('2022-05-22');
+      });
+    });
+
+    describe('getNextNextContactDate()', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+      test('getNextNextContactDate() returns last Sunday incremented by objective.periodTime', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-02T00:00:00Z'));
+        expect(objective.getNextNextContactDate()).toBe('2023-02-05');
+      });
+      test('getNextNextContactDate() returns a lastSunday incremented by objective.periodTime', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-05T00:00:00Z'));
+        expect(objective.getNextNextContactDate()).toBe('2023-02-12');
+      });
+    });
+
+    describe('getMoment()', () => {
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+      test('Objective.getMoment() gets now in utc formatted to YYYY-MM-DD', () => {
+        jest.useFakeTimers();
+        jest.setSystemTime(new Date('2023-02-19T00:00:00Z'));
+        expect(objective.getMomentDate()).toBe('2023-02-19');
+      });
+    });
   });
 
   describe('Setters', () => {
     afterEach(() => {
       jest.useRealTimers();
+    });
+
+    test('setId(id) objective.id is set', () => {
+      const objective = new Objective();
+      objective.setId(1);
+      expect(objective.getId()).toBe(1);
+    });
+
+    test('setContactId(contactId) objective.contactId is set', () => {
+      const objective = new Objective();
+      objective.setContactId(2000);
+      expect(objective.getContactId()).toBe(2000);
     });
 
     describe('setNextContactDate()', () => {
@@ -161,7 +446,7 @@ describe('Objective.prototype', () => {
         expect(objective.getNextContactDate()).toBe('2023-02-12');
       });
 
-      test('When nextContactDate is defined, setNextContactDate() increments nextContactDate with periodTime ', () => {
+      test('When nextContactDate is defined, setNextContactDate() sets next contact date to last Sunday + periodTime', () => {
         jest.useFakeTimers();
         jest.setSystemTime(new Date('2023-02-09T00:00:00Z'));
 
@@ -174,14 +459,14 @@ describe('Objective.prototype', () => {
         };
         const objective = new Objective(obj);
         objective.setNextContactDate();
-        expect(objective.getNextContactDate()).toBe('2023-03-12');
+        expect(objective.getNextContactDate()).toBe('2023-03-05');
       });
     });
 
     test('When setLastContactDate() is invoked, lastContactDate is set to now in format YYYY-MM-DD', () => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2023-02-09T00:00:00Z'));
-      const objective = new Objective();
+      const objective = new Objective({});
       expect(objective.getLastContactDate()).toBeUndefined();
       objective.setLastContactDate();
       expect(objective.getLastContactDate()).toBe('2023-02-09');
@@ -200,18 +485,33 @@ describe('Objective.prototype', () => {
     });
   });
 
-  describe('addPeriodTimeToNextContactDate()', () => {
-    test('addPeriodTimeToNextContactDate() returns a objective.nextContactDate incremented by objective.periodTime reference (in weeks)', () => {
-      const obj = {
-        id: 1,
-        contact_id: 2,
-        periodicity: 'Monthly',
-        next_contact_date: '2023-02-03',
-        last_contact_date: '2023-02-01',
-        notes: 'I love Shiva',
-      };
-      const objective = new Objective(obj);
-      expect(objective.addPeriodTimeToNextContactDate()).toBe('2023-03-03');
+  describe('nextContactDateIsBefore(date)', () => {
+    test('given date after nextContactDate, nextContactDateIsBefore(date) returns false', () => {
+      const objective = new Objective({ next_contact_date: '2023-02-18' });
+      expect(objective.nextContactDateIsBefore('2023-02-19')).toBeTruthy();
+    });
+    test('given date equal to nextContactDate, nextContactDateIsBefore(date) returns false', () => {
+      const objective = new Objective({ next_contact_date: '2023-02-18' });
+      expect(objective.nextContactDateIsBefore('2023-02-18')).toBeFalsy();
+    });
+    test('given date before to nextContactDate, nextContactDateIsBefore(date) returns false', () => {
+      const objective = new Objective({ next_contact_date: '2023-02-18' });
+      expect(objective.nextContactDateIsBefore('2023-02-17')).toBeFalsy();
+    });
+  });
+
+  describe('nextContactDateIsAfter(date)', () => {
+    test('given date after nextContactDate, nextContactDateIsAfter(date) returns true', () => {
+      const objective = new Objective({ next_contact_date: '2023-02-18' });
+      expect(objective.nextContactDateIsAfter('2023-02-19')).toBeFalsy();
+    });
+    test('given date equal to nextContactDate, nextContactDateIsAfter(date) returns false', () => {
+      const objective = new Objective({ next_contact_date: '2023-02-18' });
+      expect(objective.nextContactDateIsAfter('2023-02-18')).toBeFalsy();
+    });
+    test('given date before to nextContactDate, nextContactDateIsAfter(date) returns false', () => {
+      const objective = new Objective({ next_contact_date: '2023-02-18' });
+      expect(objective.nextContactDateIsAfter('2023-02-17')).toBeTruthy();
     });
   });
 

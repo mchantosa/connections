@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');// cookies
 const store = require('connect-loki');// session store
+// const bodyParser = require("body-parser");
 
 const app = express();
 const host = '0.0.0.0';
@@ -8,11 +9,13 @@ const port = process.env.PORT || 3000;
 const LokiStore = store(session);
 const flash = require('express-flash');
 const { body, validationResult } = require('express-validator');
+const moment = require('moment');
 const { deleteAllContactsHandler, createContactHandler } = require('./admin-routes');
+const api = require('./api');
 const catchError = require('./lib/catch-error');// async error wrapped
 const ConnectionsDB = require('./lib/connections-db');
 const Objective = require('./lib/objective');
-const Connection = require('./lib/connection');
+// const Connection = require('./lib/connection');
 const Contact = require('./lib/contact');
 
 const findNavVector = (page, endPage) => {
@@ -116,6 +119,14 @@ const signOut = (req) => {
 deleteAllContactsHandler(app);
 
 createContactHandler(app);
+
+api.updatePeriodicObjective(app, requiresAuthentication, requiresUserContactValidation);
+
+api.snoozePeriodicObjective(app, requiresAuthentication, requiresUserContactValidation);
+
+api.completePeriodicObjective(app, requiresAuthentication, requiresUserContactValidation);
+
+api.pullPeriodicObjective(app, requiresAuthentication, requiresUserContactValidation);
 
 app.get(
   '/',
@@ -280,10 +291,13 @@ app.get(
   requiresAuthentication,
   catchError(async (req, res) => {
     res.locals.activePage = 'userHome';
-    res.locals.sunday = Connection.findSunday();
-    res.locals.saturday = Connection.findSaturday();
-    res.locals.userNames = await res.locals.store.getUserNames();
-    res.locals.existsContacts = await res.locals.store.existsContacts();
+    res.locals.lastSunday = Objective.getLastSundayPretty();
+    res.locals.thisSaturday = Objective.getThisSaturdayPretty();
+    res.locals.user = await res.locals.store.getUser();
+    const delta = 28; // days
+    const date = moment(Objective.getThisSaturday()).utc().add(delta, 'days').format('YYYY-MM-DD');
+    const contacts = await res.locals.store.getContactsAll(date);
+    res.locals.contacts = contacts;
     res.render('user/home');
   }),
 );
@@ -293,7 +307,7 @@ app.get(
   requiresAuthentication,
   catchError(async (req, res) => {
     res.locals.activePage = 'account';
-    res.locals.userData = await res.locals.store.getUserData();
+    res.locals.user = await res.locals.store.getUser();
     res.render('user/account');
   }),
 );
@@ -302,7 +316,7 @@ app.get(
   '/user/account/update-email',
   requiresAuthentication,
   catchError(async (req, res) => {
-    res.locals.userData = await res.locals.store.getUserData();
+    res.locals.user = await res.locals.store.getUser();
     res.render('user/account/update-email');
   }),
 );
@@ -330,8 +344,8 @@ app.post(
 
     if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
-      res.locals.userData = await res.locals.store.getUserData();
-      res.locals.userData.newEmail = newEmail;
+      res.locals.user = await res.locals.store.getUser();
+      res.locals.user.newEmail = newEmail;
       res.render('user/account/update-email', {
         flash: req.flash(),
       });
@@ -340,8 +354,8 @@ app.post(
       res.redirect('/user/account');
     } else if (existsEmail) {
       req.flash('error', 'This email is already associated with an account');
-      res.locals.userData = await res.locals.store.getUserData();
-      res.locals.userData.newEmail = newEmail;
+      res.locals.user = await res.locals.store.getUser();
+      res.locals.user.newEmail = newEmail;
       res.render('user/account/update-email', {
         flash: req.flash(),
       });
@@ -359,7 +373,7 @@ app.get(
   '/user/account/update-username',
   requiresAuthentication,
   catchError(async (req, res) => {
-    res.locals.userData = await res.locals.store.getUserData();
+    res.locals.user = await res.locals.store.getUser();
     res.render('user/account/update-username');
   }),
 );
@@ -387,15 +401,15 @@ app.post(
       res.redirect('/user/account');
     } else if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
-      res.locals.userData = await res.locals.store.getUserData();
-      res.locals.userData.newUsername = newUsername;
+      res.locals.user = await res.locals.store.getUser();
+      res.locals.user.newUsername = newUsername;
       res.render('user/account/update-username', {
         flash: req.flash(),
       });
     } else if (existsUsername) {
       req.flash('error', 'This username unavailable');
-      res.locals.userData = await res.locals.store.getUserData();
-      res.locals.userData.newUsername = newUsername;
+      res.locals.user = await res.locals.store.getUser();
+      res.locals.user.newUsername = newUsername;
       res.render('user/account/update-username', {
         flash: req.flash(),
       });
@@ -416,7 +430,7 @@ app.get(
   '/user/account/reset-password',
   requiresAuthentication,
   catchError(async (req, res) => {
-    res.locals.userData = await res.locals.store.getUserData();
+    res.locals.user = await res.locals.store.getUser();
     res.render('user/account/reset-password');
   }),
 );
@@ -464,7 +478,7 @@ app.get(
   '/user/account/update-account-information',
   requiresAuthentication,
   catchError(async (req, res) => {
-    res.locals.userData = await res.locals.store.getUserData();
+    res.locals.user = await res.locals.store.getUser();
     res.render('user/account/update-account-information');
   }),
 );
@@ -488,14 +502,14 @@ app.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
-      res.locals.userData = await res.locals.store.getUserData();
-      res.locals.userData.first_name = firstName;
-      res.locals.userData.last_name = lastName;
+      res.locals.user = await res.locals.store.getUser();
+      res.locals.user.first_name = firstName;
+      res.locals.user.last_name = lastName;
       res.render('user/account/update-account-information', {
         flash: req.flash(),
       });
     } else {
-      await res.locals.store.updateUserData(firstName, lastName);
+      await res.locals.store.updateUser(firstName, lastName);
       res.redirect('/user/account');
     }
   }),
@@ -786,7 +800,7 @@ app.post(
 );
 
 app.get(
-  '/user/contacts/:contact_id/objectives/create-objective',
+  '/user/contacts/:contact_id/objectives/periodic/create-objective',
   requiresAuthentication,
   requiresUserContactValidation,
   catchError(async (req, res) => {
@@ -796,12 +810,12 @@ app.get(
       contact.setObjective(new Objective());
     }
     res.locals.contact = contact;
-    res.render('user/contacts/objectives/create-objective');
+    res.render('user/contacts/objectives/periodic/create-objective');
   }),
 );
 
 app.post(
-  '/user/contacts/:contact_id/objectives/create-objective',
+  '/user/contacts/:contact_id/objectives/periodic/create-objective',
   requiresAuthentication,
   requiresUserContactValidation,
   [
@@ -828,7 +842,7 @@ app.post(
     if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
       res.locals.contact = contact;
-      res.render('user/contacts/objectives/create-objective', {
+      res.render('user/contacts/objectives/periodic/create-objective', {
         flash: req.flash(),
       });
     } else {
@@ -841,33 +855,34 @@ app.post(
 );
 
 app.get(
-  '/user/contacts/:contact_id/objectives/periodic',
+  '/user/contacts/:contact_id/objectives/periodic/:objective_id',
   requiresAuthentication,
   requiresUserContactValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
     const contact = await res.locals.store.getContact(+contactId);
     res.locals.contact = contact;
-    res.render('user/contacts/objectives/periodic');
+    res.render('user/contacts/objectives/periodic/periodic');
   }),
 );
 
 app.get(
-  '/user/contacts/:contact_id/objectives/periodic/edit',
+  '/user/contacts/:contact_id/objectives/periodic/:objective_id/edit',
   requiresAuthentication,
   requiresUserContactValidation,
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
     const contact = await res.locals.store.getContact(+contactId);
     res.locals.contact = contact;
-    res.render('user/contacts/objectives/edit');
+    res.render('user/contacts/objectives/periodic/edit');
   }),
 );
 
 app.post(
-  '/user/contacts/:contact_id/objectives/periodic/edit',
+  '/user/contacts/:contact_id/objectives/periodic/:objective_id/edit',
   requiresAuthentication,
   requiresUserContactValidation,
+  // maybe add a contact_id to objective_id validation
   [
     body('periodicity')
       .trim()
@@ -878,19 +893,22 @@ app.post(
   ],
   catchError(async (req, res) => {
     const contactId = req.params.contact_id;
-    const contact = await res.locals.store.getContact(+contactId);
-    contact.getObjective().setPeriod(req.body.periodicity);
-    contact.getObjective().setNotes(req.body.notes);
-
+    const objectiveId = req.params.objective_id;
+    const objective = Objective.createEmptyObjective({ id: objectiveId });
+    objective.setPeriod(req.body.periodicity);
+    objective.setNotes(req.body.notes);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       errors.array().forEach((message) => req.flash('error', message.msg));
+      const contact = await res.locals.store.getContact(contactId);
+      contact.getObjective().setNotes(req.body.notes);
+      contact.getObjective().setPeriod(req.body.periodicity);
       res.locals.contact = contact;
       res.render('user/contacts/objectives/periodic/edit', {
         flash: req.flash(),
       });
     } else {
-      const updated = await res.locals.store.updateObjective(contact.getObjective());
+      const updated = await res.locals.store.updateObjective(objective);
       if (updated) req.flash('info', 'Objective updated');
       else req.flash('error', 'Something went wrong, your updates passed validation, but your objective failed to update.');
       res.redirect(`/user/contacts/${contactId}/`);

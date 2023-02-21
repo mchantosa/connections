@@ -9,7 +9,7 @@ block main
         dt
           label(for="email") Email:  
         dd
-          -let email = (userData.newEmail) ? userData.newEmail : userData.email
+          -let email = (user.newEmail) ? user.newEmail : user.email
           input(type="email" name="email" id="email" value=email)
     br
     nav.flex-right

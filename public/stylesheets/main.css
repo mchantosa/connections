@@ -85,6 +85,19 @@ h2.welcome {
   width:100%
 }
 
+.connection{
+  width: 300px; 
+  padding: 16px;
+  margin:8px;
+  border-width:.5px;
+  border-color: rgb(200, 200, 200);
+  border-style: solid;
+}
+
+.connection-buttons{
+  width: 300px;
+}
+
 
 /* .clearfix::after {
   content: "";
@@ -148,6 +161,14 @@ textarea{
   display: flex;
   justify-content:left;
   align-items: center;
+}
+
+.flex-left-wrap{
+  display: flex;
+  justify-content:left;
+  align-items: center;
+  /* max-width: 90%; */
+  flex-wrap: wrap;
 }
 
 dl.format{
@@ -295,6 +316,10 @@ dd.flex-right{
 
 .pb-1{
   padding-bottom: 1rem;
+}
+
+.mr-1{
+  margin-right:4px;
 }
 
 h1{

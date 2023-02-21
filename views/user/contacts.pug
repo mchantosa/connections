@@ -4,10 +4,10 @@ block header
   h2 Contacts
   nav.flex-right
     a.unanchor.rebutton(href="/user/contacts/create-contact") Create Contact
-  nav.flex-right
-    a.unanchor.rebutton(href="#") Alphabetical
-    a.unanchor.rebutton(href="#") Most recent
-    a.unanchor.rebutton(href="#") Least recent
+  //- nav.flex-right
+  //-   a.unanchor.rebutton(href="#") Alphabetical
+  //-   a.unanchor.rebutton(href="#") Most recent
+  //-   a.unanchor.rebutton(href="#") Least recent
  
 block main
   if contacts.length > 0
@@ -17,11 +17,11 @@ block main
         -const objective = contact.getObjective()
           a.unanchor(href=hrefAddress data-test-id="contact")
             p(data-test-id="name") #[strong Name:] #{contact.getName()}
-            p(data-test-id="preferred-medium") #[strong Preferred Medium:] #{contact.getPreferredMediumPretty()}
+            p(data-test-id="preferred-medium") #[strong Preferred Medium:&nbsp;&nbsp;] #{contact.getPreferredMediumPretty()}
             if(objective)
-              p(data-test-id="communication-objective") #[strong Communication Objective:] #{objective.getPeriod()}
+              p(data-test-id="communication-objective") #[strong Communication Objective:&nbsp;&nbsp;] #{objective.getPeriod()}
             else
-              p(data-test-id="communication-objective") #[strong Communication Objective:] none
+              p(data-test-id="communication-objective") #[strong Communication Objective:&nbsp;&nbsp;] none
     br
     br
     div.flex-center
