@@ -40,14 +40,13 @@ html(lang="en-US")
             li.first(class=(activePage == 'home'? 'active' : ''))
               a.unanchor.nav-rebutton(href="/home") Home
             li.fifth(class=(activePage == 'login'? 'active' : ''))
-              form(action="/login" method="get") 
-                input.unbutton(type="submit" value="Login")
+              a.unanchor.nav-rebutton(href="/login") Login
       - let kinds = Object.keys(flash || {});
       if kinds.length > 0
         ul
           each kind in kinds
             each message in flash[kind]
-              li(class=kind)= message
+              li.message(class=kind)= message
       br
       p.line-break
       br
@@ -57,3 +56,9 @@ html(lang="en-US")
 
   footer
     block footer
+    div.flex-column-center
+      br
+      br
+      br
+      span Copyright &#169; 2023
+      a(href="/home/privacy" data-test-id="privacy") Privacy Statement

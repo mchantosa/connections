@@ -10,7 +10,7 @@ const LokiStore = store(session);
 const flash = require('express-flash');
 const { body, validationResult } = require('express-validator');
 const moment = require('moment');
-const { deleteAllContactsHandler, createContactHandler } = require('./admin-routes');
+const adminApi = require('./admin-routes');
 const api = require('./api');
 const catchError = require('./lib/catch-error');// async error wrapped
 const ConnectionsDB = require('./lib/connections-db');
@@ -116,9 +116,11 @@ const signOut = (req) => {
   delete req.session.signedIn;
 };
 
-deleteAllContactsHandler(app);
+adminApi.deleteUserHandler(app);
 
-createContactHandler(app);
+adminApi.deleteAllContactsHandler(app);
+
+// createContactHandler(app);
 
 api.updatePeriodicObjective(app, requiresAuthentication, requiresUserContactValidation);
 
@@ -151,6 +153,13 @@ app.get(
 );
 
 app.get(
+  '/home/privacy',
+  (req, res) => {
+    res.render('home/privacy');
+  },
+);
+
+app.get(
   '/login',
   mootForAuthenticated,
   (req, res) => {
@@ -170,22 +179,28 @@ app.post(
     res.locals.userCredential = userCredential;
 
     const user = await res.locals.store.getUserCredentials(userCredential);
-    const id = (user) ? user.id : false;
-    const authenticated = await res.locals.store.authenticate(id, password);
-
-    if (!id || !authenticated) {
-      req.flash('error', 'Your credentials were invalid, please try again.');
+    if (!user) {
+      req.flash('error', 'That username or email is not recognized, please try again.');
       res.locals.activePage = 'login';
       res.render('login', {
         flash: req.flash(),
-        redirect,
       });
     } else {
-      signIn(req, user);
-      if (redirect) {
-        res.redirect(redirect);
+      const authenticated = await res.locals.store.authenticate(user.id, password);
+      if (!authenticated) {
+        req.flash('error', 'Your credentials were invalid, please try again.');
+        res.locals.activePage = 'login';
+        res.render('login', {
+          flash: req.flash(),
+          redirect,
+        });
       } else {
-        res.redirect('/user/home');
+        signIn(req, user);
+        if (redirect) {
+          res.redirect(redirect);
+        } else {
+          res.redirect('/user/home');
+        }
       }
     }
   }),
@@ -261,10 +276,11 @@ app.post(
       const user = { username, email, password };
       const added = await res.locals.store.addUser(user);
       if (added) {
-        signIn(req, user);
+        req.flash('info', 'Your account has been created, please login');
+      } else {
+        req.flash('error', 'Something bad happened, your account was not added, please contact the administrator');
       }
-      res.locals.activePage = 'user_home';
-      res.redirect('/user/home');
+      res.redirect('login');
     }
   }),
 );
@@ -335,10 +351,10 @@ app.post(
       .withMessage('Invalid Email'),
   ],
   catchError(async (req, res) => {
-    const { username } = req.session;
+    const { user } = req.session;
     const newEmail = req.body.email.trim();
-    const userCredentials = await res.locals.store.getUserCredentials(username);
-    const { email } = userCredentials;
+    // const user = await res.locals.store.getUserCredentials(userCredential);
+    const { email } = user;
     const existsEmail = await res.locals.store.existsEmail(newEmail);
     const errors = validationResult(req);
 
@@ -363,6 +379,7 @@ app.post(
       const updated = await res.locals.store.updateUserEmail(newEmail);
       if (updated) {
         req.flash('info', 'Your email has been updated');
+        req.session.user.email = newEmail;
       }
       res.redirect('/user/account');
     }
@@ -392,11 +409,11 @@ app.post(
       .withMessage('Username cannot contain an @ symbol'),
   ],
   catchError(async (req, res) => {
-    const { username } = req.session;
+    const { user } = req.session;
     const newUsername = req.body.username.trim();
     const existsUsername = await res.locals.store.existsUsername(newUsername);
     const errors = validationResult(req);
-    if (username === newUsername) {
+    if (user.username === newUsername) {
       req.flash('info', 'Your updated username matched your existing username, your username was not updated');
       res.redirect('/user/account');
     } else if (!errors.isEmpty()) {
@@ -416,7 +433,7 @@ app.post(
     } else {
       const updated = await res.locals.store.updateUsername(newUsername);
       if (updated) {
-        const { user } = session;
+        const { user } = req.session;
         user.username = newUsername;
         signIn(req, user);
         req.flash('info', 'Your username has been updated');
@@ -451,12 +468,12 @@ app.post(
       .withMessage('Password requires a special character: *.!@$%^&(){}[]~'),
   ],
   catchError(async (req, res) => {
-    const { username } = req.session;
+    const { id } = req.session.user;
     const password = req.body.password.trim();
     const { newPassword } = req.body;
     const confirmPassword = req.body.confirmPassword.trim();
     const errors = validationResult(req);
-    const passwordAuthenticated = await res.locals.store.authenticate(username, password);
+    const passwordAuthenticated = await res.locals.store.authenticate(id, password);
     if (!passwordAuthenticated) {
       req.flash('error', 'Your password does not match our records');
       res.redirect('/user/account/reset-password');
@@ -510,6 +527,7 @@ app.post(
       });
     } else {
       await res.locals.store.updateUser(firstName, lastName);
+      req.flash('info', 'Your account information has been updated');
       res.redirect('/user/account');
     }
   }),
@@ -543,6 +561,7 @@ app.get(
   requiresAuthentication,
   catchError(async (req, res) => {
     res.locals.contact = new Contact();
+    res.locals.contact.setObjective(new Objective());
     res.render('user/contacts/create-contact');
   }),
 );
@@ -605,11 +624,15 @@ app.post(
       .trim()
       .isLength({ max: 25 })
       .withMessage('Country cannot exceed 25 characters'),
+    body('periodicity')
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage('Period is required')
+      .isIn(Objective.getPeriods())
+      .withMessage('Periodicity must be Weekly, Biweekly, Monthly, Quarterly'),
   ],
   catchError(async (req, res) => {
-    const contactId = req.params.contact_id;
     const contact = new Contact({
-      id: contactId,
       first_name: req.body.first_name,
       last_name: req.body.last_name,
       preferred_medium: req.body.preferred_medium,
@@ -623,6 +646,10 @@ app.post(
       country: req.body.country,
       notes: req.body.notes,
     });
+    const objective = new Objective({
+      periodicity: req.body.periodicity,
+    });
+
     const errors = validationResult(req);
     const errorsCustom = [];
 
@@ -633,13 +660,19 @@ app.post(
       errors.array().forEach((message) => req.flash('error', message.msg));
       errorsCustom.forEach((message) => req.flash('error', message));
       res.locals.contact = contact;
+      res.locals.contact.setObjective(objective);
       res.render('user/contacts/create-contact', {
         flash: req.flash(),
       });
     } else {
-      const updated = await res.locals.store.createContact(contact);
-      if (updated) {
+      const contactId = await res.locals.store.createContact(contact);
+      let objectiveId;
+      if (contactId) {
+        objectiveId = await res.locals.store.createObjective(objective, contactId);
+      }
+      if (contactId) {
         req.flash('info', `${contact.getName()} was created`);
+        if (objectiveId) req.flash('info', `objective for ${contact.getName()} was created`);
         res.redirect('/user/contacts');
       } else {
         req.flash('error', 'Your input passed validation, but something went wrong, your contact was not created');

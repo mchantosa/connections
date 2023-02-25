@@ -4,52 +4,58 @@ block header
   h1 Greetings hooman!
 
 block main
-  -
-    const currentObjectives = contacts.filter(contact=>{
-      const objective = contact.getObjective();
-      return objective.nextContactDateIsBefore(objective.getNextSunday());
-    })
-    const futureObjectives = contacts.filter(contact=>{
-      const objective = contact.getObjective();
-      return objective.nextContactDateIsAfter(objective.getThisSaturday());
-    })
-  h2 Week of #{lastSunday} to #{thisSaturday}
-  br
-  br
-  h3 Objectives 
-  br
-  div.flex-left-wrap
-    each contact in currentObjectives
-      -
-        const hrefAddress = `/user/contacts/${contact.getId()}`
-        const objective = contact.getObjective()
-
-      if objective
-        div.connection.solid_hover
-          a.unanchor(href=hrefAddress data-test-id="contact")
-            p #[strong Name:&nbsp;&nbsp;]#{contact.getName()}
-            p #[strong Periodic Objective:&nbsp;&nbsp;]#{objective.getPeriod()}
-            p #[strong Next Contact Date:&nbsp;&nbsp;]#{objective.getNextContactDate()}
-            p #[strong Last Contact Date:&nbsp;&nbsp;]#{objective.getLastContactDate()}
-            div.connection-buttons
-              button.snooze.mr-1(data-contact-id=contact.getId() data-objective-id=objective.getId()) snooze
-              button.completed(data-contact-id=contact.getId() data-objective-id=objective.getId() data-objective-periodicity=objective.getPeriod()) completed
+  if(!contacts[0])
+    div
+      h3 It looks like you don't have any contacts. To populate this page, please create a contact.
+      br
+      a.unanchor.rebutton(href="/user/contacts/create-contact") Create Contact
+  else
+    -
+      const currentObjectives = contacts.filter(contact=>{
+        const objective = contact.getObjective();
+        return objective.nextContactDateIsBefore(objective.getNextSunday());
+      })
+      const futureObjectives = contacts.filter(contact=>{
+        const objective = contact.getObjective();
+        return objective.nextContactDateIsAfter(objective.getThisSaturday());
+      })
+    h2 Week of #{lastSunday} to #{thisSaturday}
     br
-  h3 Coming Up
-  br
-  div.flex-left-wrap
-    each contact in futureObjectives
-      -
-        const hrefAddress = `/user/contacts/${contact.getId()}`
-        const objective = contact.getObjective()
-    
-      if objective
-        a.unanchor(href=hrefAddress data-test-id="contact")
+    br
+    h3 Objectives 
+    br
+    div.flex-left-wrap
+      each contact in currentObjectives
+        -
+          const hrefAddress = `/user/contacts/${contact.getId()}`
+          const objective = contact.getObjective()
+
+        if objective
           div.connection.solid_hover
-            p #[strong Name:&nbsp;&nbsp;]#{contact.getName()}
-            p #[strong Periodic Objective:&nbsp;&nbsp;]#{objective.getPeriod()}
-            p #[strong Next Contact Date:&nbsp;&nbsp;]#{objective.getNextContactDate()}
-            p #[strong Last Contact Date:&nbsp;&nbsp;]#{objective.getLastContactDatePretty()}
-            div.connection-buttons
-              button.snooze.mr-1(data-contact-id=contact.getId() data-objective-id=objective.getId() data-objective-next-contact-date=objective.getNextContactDate()) snooze
-              button.pull(data-contact-id=contact.getId() data-objective-id=objective.getId()) pull
+            a.unanchor(href=hrefAddress data-test-id="contact")
+              p #[strong Name:&nbsp;&nbsp;]#{contact.getName()}
+              p #[strong Periodic Objective:&nbsp;&nbsp;]#{objective.getPeriod()}
+              p #[strong Next Contact Date:&nbsp;&nbsp;]#{objective.getNextContactDate()}
+              p #[strong Last Contact Date:&nbsp;&nbsp;]#{objective.getLastContactDate()}
+              div.connection-buttons
+                button.snooze.mr-1(data-contact-id=contact.getId() data-objective-id=objective.getId()) snooze
+                button.completed(data-contact-id=contact.getId() data-objective-id=objective.getId() data-objective-periodicity=objective.getPeriod()) completed
+      br
+    h3 Coming Up
+    br
+    div.flex-left-wrap
+      each contact in futureObjectives
+        -
+          const hrefAddress = `/user/contacts/${contact.getId()}`
+          const objective = contact.getObjective()
+      
+        if objective
+          a.unanchor(href=hrefAddress data-test-id="contact")
+            div.connection.solid_hover
+              p #[strong Name:&nbsp;&nbsp;]#{contact.getName()}
+              p #[strong Periodic Objective:&nbsp;&nbsp;]#{objective.getPeriod()}
+              p #[strong Next Contact Date:&nbsp;&nbsp;]#{objective.getNextContactDate()}
+              p #[strong Last Contact Date:&nbsp;&nbsp;]#{objective.getLastContactDatePretty()}
+              div.connection-buttons
+                button.snooze.mr-1(data-contact-id=contact.getId() data-objective-id=objective.getId() data-objective-next-contact-date=objective.getNextContactDate()) snooze
+                button.pull(data-contact-id=contact.getId() data-objective-id=objective.getId()) pull

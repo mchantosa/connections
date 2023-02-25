@@ -12,10 +12,10 @@ const loginGoTo = (user, path) => {
 describe('Edit a contact', () => {
   const user = {
     id: 2,
-    userName: 'developer',
-    email: 'developer@domain.com',
-    password: 'developerPass',
-    userCred: 'developer',
+    userName: 'testDeveloper',
+    email: 'testdeveloper@domain.com',
+    password: 'developerPa22!',
+    userCred: 'testDeveloper',
   };
 
   let path;
