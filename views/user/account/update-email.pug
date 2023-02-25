@@ -1,7 +1,7 @@
 extends ../layout
 
 block main
-  form(action="/user/account/update-email" method="post")
+  form(action="/user/account/update-email" method="post" data-test-id="update")
     div.account.flex-column-center
       h2 Update Email
       br
@@ -14,4 +14,4 @@ block main
     br
     nav.flex-right
       input.unbutton.rebutton(type="submit" value="Update email")
-      a.unanchor.rebutton(href="/user/account") Cancel
+      a.unanchor.rebutton(href="/user/account" data-test-id="cancel") Cancel

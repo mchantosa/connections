@@ -9,22 +9,22 @@ const connectionsAdmin = new ConnectionsDBAdmin();
 describe('Query security', () => {
   describe('Unauthenticated queries', () => {
     test('getUserCredentials(usernameOrEmail) will return a valid query result', async () => {
-      const user = await connections.getUserCredentials('admin');
+      const user = await connections.getUserCredentials('testAdmin');
       expect(user.id).toBe(1);
     });
 
     test('authenticate(id, password) will return a valid query result', async () => {
-      const authenticated = await connections.authenticate(1, 'adminPass');
+      const authenticated = await connections.authenticate(1, 'adminPa22!');
       expect(authenticated).toBe(true);
     });
 
     test('existsUsername(username) will return a valid query result', async () => {
-      const exists = await connections.existsUsername('admin');
+      const exists = await connections.existsUsername('testAdmin');
       expect(exists).toBe(true);
     });
 
     test('existsEmail(email) will return a valid query result', async () => {
-      const exists = await connections.existsEmail('admin@domain.com');
+      const exists = await connections.existsEmail('testadmin@domain.com');
       expect(exists).toBe(true);
     });
 

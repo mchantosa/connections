@@ -10,8 +10,8 @@ const connectionsAdmin = new ConnectionsDBAdmin();
 
 connections.user = {
   id: 2,
-  username: 'developer',
-  email: 'developer@domain.com',
+  username: 'testDeveloper',
+  email: 'testdeveloper@domain.com',
 };
 
 describe('Contacts', () => {
@@ -339,7 +339,7 @@ describe('Contacts', () => {
   describe('Given a userId and a page number, can get a paginated list of contacts', () => {
     test('get null page for a list shorter than pagination constant', async () => {
       // constant 10, developer has no contacts
-      await connectionsAdmin.deleteAllContactsFromUser('developer');
+      await connectionsAdmin.deleteAllContactsFromUser('testDeveloper');
       await connections.createContact(new Contact({ first_name: 'shiva' }));
       await connections.createContact(new Contact({ last_name: 'baby' }));
       const contacts = await connections.getContacts();
@@ -348,7 +348,7 @@ describe('Contacts', () => {
       expect(contacts[0]).toBeInstanceOf(Contact);
       expect(contacts[1]).toBeInstanceOf(Contact);
 
-      await connectionsAdmin.deleteAllContactsFromUser('developer');
+      await connectionsAdmin.deleteAllContactsFromUser('testDeveloper');
     });
   });
 });

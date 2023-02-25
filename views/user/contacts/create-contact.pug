@@ -6,3 +6,20 @@ block header
 block main
   form(action=`/user/contacts/create-contact` method="post" data-test-id='create-contact')
     +contact-details
+    br
+    div.contact.flex-column-center
+      -let objective = contact.getObjective();
+      h3 Objective
+      br
+      div
+        dl.side-by-side
+          dt #[label(for="periodicity") #[strong Period:]]
+          dd.required
+            -let periods = objective.getPeriods();
+            select(name="periodicity"  id="periodicity")
+              option(selected = !periods.includes(objective.getPeriod()) disabled) Please choose one
+              each period in periods
+                option(selected = period === objective.getPeriod() value = period) #{period}
+    br
+    div.contact.flex-column-center
+      input.unbutton.rebutton(type="submit" value="Save Contact")

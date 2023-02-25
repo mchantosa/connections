@@ -9,3 +9,6 @@ block header
 block main
   form(action=`/user/contacts/${contact.getId()}/edit` method="post")
     +contact-details
+    br
+    div.contact.flex-column-center
+      input.unbutton.rebutton(type="submit" value="Save Contact")

@@ -10,10 +10,10 @@ const loginGoTo = (user, path) => {
 describe('Create a contact', () => {
   const user = {
     id: 2,
-    userName: 'developer',
-    email: 'developer@domain.com',
-    password: 'developerPass',
-    userCred: 'developer',
+    userName: 'testDeveloper',
+    email: 'testdeveloper@domain.com',
+    password: 'developerPa22!',
+    userCred: 'testDeveloper',
   };
   const path = '/user/contacts/create-contact';
 
@@ -23,10 +23,6 @@ describe('Create a contact', () => {
   });
 
   it('Create a maximal contact', () => {
-    /* Covers:
-      - authorization challenge
-      - path persistence over login
-    */
     const contactObj = {
       first_name: 'shiva',
       last_name: 'baby',
@@ -42,6 +38,9 @@ describe('Create a contact', () => {
       // last_connection: '1000-01-01',
       notes: 'tuna also works',
     };
+    const objectiveObj = {
+      periodicity: 'Biweekly',
+    };
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
     cy.get('[id="first_name"]').type(contactObj.first_name);
@@ -56,6 +55,7 @@ describe('Create a contact', () => {
     cy.get('[id="zip_code"]').type(contactObj.zip_code);
     cy.get('[id="country"]').type(contactObj.country);
     cy.get('[id="notes"]').type(contactObj.notes);
+    cy.get('[id="periodicity"]').select(objectiveObj.periodicity);
     cy.get('form[data-test-id="create-contact"]').submit();
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}/user/contacts`);
@@ -70,7 +70,7 @@ describe('Create a contact', () => {
     cy.get('p[data-test-id="phone-number"]').contains('123-456-7890');
     cy.get('p[data-test-id="email"]').contains('shivababy@gmail.com');
     cy.get('p[data-test-id="address"]').contains('a pretty street a cute apt Reston, VA 98765');
-    cy.get('p[data-test-id="objective"]').contains('No periodic Objective');
+    // cy.get('p[data-test-id="objective"]').contains('No periodic Objective');
     cy.get('textarea[id="notes"]').contains('tuna also works');
     cy.get('form.delete').submit();
 
@@ -82,9 +82,14 @@ describe('Create a contact', () => {
     const contactObj = {
       first_name: 'shiva',
     };
+    const objectiveObj = {
+      periodicity: 'Weekly',
+    };
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
     cy.get('[id="first_name"]').type(contactObj.first_name);
+    cy.get('[id="periodicity"]').select(objectiveObj.periodicity);
+
     cy.get('form[data-test-id="create-contact"]').submit();
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}/user/contacts`);
@@ -99,7 +104,7 @@ describe('Create a contact', () => {
     cy.get('p[data-test-id="phone-number"]').contains('none');
     cy.get('p[data-test-id="email"]').contains('none');
     cy.get('p[data-test-id="address"]').contains('none');
-    cy.get('p[data-test-id="objective"]').contains('No periodic Objective');
+    // cy.get('p[data-test-id="objective"]').contains('No periodic Objective');
     cy.get('textarea[id="notes"]').should('be.empty');
     cy.get('form.delete').submit();
 

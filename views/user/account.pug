@@ -7,25 +7,25 @@ block main
     dl.side-by-side 
       dt Username: 
       dd.flex-justified
-        span #{user.username}
-        a.unanchor.rebutton.h-1(href="/user/account/update-username") edit
+        span(data-test-id="username") #{user.username}
+        a.unanchor.rebutton.h-1(href="/user/account/update-username" data-test-id="update-username") edit
     dl.side-by-side 
       dt Email:
       dd.flex-justified
-        span #{user.email}
-        a.unanchor.rebutton.h-1(href="/user/account/update-email") edit
+        span(data-test-id="email") #{user.email}
+        a.unanchor.rebutton.h-1(href="/user/account/update-email" data-test-id="update-email") edit
     br
     div
-      a.unanchor.rebutton(href="/user/account/reset-password") Change Password 
+      a.unanchor.rebutton(href="/user/account/reset-password" data-test-id="reset-password") Change Password 
     br
     h2 User Profile 
     br
     dl.side-by-side 
       dt First Name:
-      dd #{user.first_name}
+      dd(data-test-id="first-name") #{user.first_name || "None"}
     dl.side-by-side 
       dt Last Name:
-      dd #{user.last_name}
+      dd(data-test-id="last-name") #{user.last_name || "None"}
     br
     div
-      a.unanchor.rebutton(href="/user/account/update-account-information") Update Profile Data
+      a.unanchor.rebutton(href="/user/account/update-account-information" data-test-id="update-account-information") Update Profile Data
