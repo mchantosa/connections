@@ -11,6 +11,12 @@ html(lang="en-US")
     link(rel="stylesheet" href="/stylesheets/whitespace-reset.css")
     link(rel="stylesheet" href="/stylesheets/main.css")
     script(src="/javascripts/application.js")
+    script(async src="https://www.googletagmanager.com/gtag/js?id=G-GKZCZE7VP0")
+    script.
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-GKZCZE7VP0');
 
   body
     //- block overlay-bottom
