@@ -2,9 +2,9 @@ extends ../../../layout
 
 block header
   -let objective = contact.getObjective()
-  h2 #{`Create objective for ${contact.getName()}`}
+  h2(data-test-id="page-title") #{`Create objective for ${contact.getName()}`}
   nav.flex-right
-    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}` data-test-id="contact") #{contact.getName()}
         
 block main
   form(action=`/user/contacts/${contact.getId()}/objectives/periodic/create-objective` method="post")

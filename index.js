@@ -26,7 +26,7 @@ const findNavVector = (page, endPage) => {
     if (page + index <= endPage) {
       navVector.push(page + index);
     } else fails += 1;
-    if (page - index >= 0) {
+    if (page - index > 0) {
       navVector.unshift(page - index);
     } else fails += 1;
     if (fails === 2) break;
@@ -537,20 +537,20 @@ app.get(
   '/user/contacts',
   requiresAuthentication,
   catchError(async (req, res) => {
-    const page = (req.query.page) ? +req.query.page : 0;
+    const page = (req.query.page) ? +req.query.page : 1;
     const totalContacts = await res.locals.store.getContactsCount();
-    const endPage = Math.floor(totalContacts / ConnectionsDB.PAGINATE);
+    const endPage = Math.floor(totalContacts / ConnectionsDB.PAGINATE + 1);
     const navVector = findNavVector(page, endPage);
 
-    if (Number.isNaN(page) || (page < 0) || (page > endPage)) {
-      req.flash('error', `Your query parameter must be a number between 0 and ${endPage}`);
+    if (Number.isNaN(page) || (page < 1) || (page > endPage)) {
+      req.flash('error', `Your query parameter must be a number between 1 and ${endPage}`);
       res.redirect('/user/contacts');
     } else {
       res.locals.activePage = 'contacts';
       res.locals.page = page;
       res.locals.endPage = endPage;
       res.locals.navVector = navVector;
-      res.locals.contacts = await res.locals.store.getContacts(page);
+      res.locals.contacts = await res.locals.store.getContacts(page - 1);
       res.render('user/contacts');
     }
   }),

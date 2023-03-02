@@ -1,13 +1,13 @@
-extends ../../layout
+extends ../../../layout
 
 block header
   -let objective = contact.getObjective()
   h2 #{`Edit periodic objective for ${contact.getName()}`}
   nav.flex-right
-    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}` data-test-id="contact") #{contact.getName()}
  
 block main
-  form(action=`/user/contacts/${contact.getId()}/objectives/create-objective` method="post")
+  form(action=`/user/contacts/${contact.getId()}/objectives/periodic/1/edit` method="post" data-test-id="save-objective")
     div.objective.flex-column-center
       div.flex-justified
         div #[label(for="periodicity") #[strong Period:]]
@@ -20,14 +20,14 @@ block main
       br
       div.flex-justified
         span #[strong Next connection date:&nbsp;&nbsp;] 
-        span #{objective.getNextContactDate()}
+        span(data-test-id="next-contact-date") #{objective.getNextContactDate()}
       br
       div.flex-justified 
         span #[strong Last connection date:&nbsp;&nbsp;] 
-        span #{objective.getLastContactDatePretty()}
+        span(data-test-id="last-contact-date") #{objective.getLastContactDatePretty()}
       br
       h3.flex-center Periodic Objective Notes
       br
       textarea(wrap="soft" name="notes" placeholder = objective.getPlaceholderNotes()) #{objective.getNotes()}
       br
-      input.unbutton.rebutton(type="submit" value="Create Objective")
+      input.unbutton.rebutton(type="submit" value="Save Objective")

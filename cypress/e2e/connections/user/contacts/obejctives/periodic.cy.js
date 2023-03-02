@@ -1,12 +1,5 @@
 /// <reference types="Cypress" />
-
-const path = '/user/account';
-const user = {
-  id: 2,
-  username: 'testDeveloper',
-  email: 'testdeveloper@domain.com',
-  password: 'developerPa22!',
-};
+const Objective = require('../../../../../../lib/objective');
 
 const loginGoTo = (user, path) => {
   cy.visit(path);
@@ -14,6 +7,15 @@ const loginGoTo = (user, path) => {
   cy.get('form.login dd [id="password"]').type(user.password);
   cy.get('form.login').submit();
 };
+const user = {
+  id: 1,
+  username: 'testAdmin',
+  email: 'testadmin@domain.com',
+  password: 'adminPa22!',
+};
+const contactId = 1;
+
+const path = `/user/contacts/${contactId}/objectives/periodic/1`;
 
 describe('account page navigation', () => {
   it('header, nav, home', () => {
@@ -43,7 +45,7 @@ describe('account page navigation', () => {
   it('header, nav, account', () => {
     loginGoTo(user, path);
     cy.get('.fourth a').click();
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/user/account`);
     cy.get('.active').contains('Account');
     cy.visit(path);
     cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
@@ -64,46 +66,61 @@ describe('account page navigation', () => {
     cy.visit(path);
     cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
   });
-  it('update-username', () => {
+  it('edit objective', () => {
     loginGoTo(user, path);
-    cy.get('[data-test-id="update-username"]').click();
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}/update-username`);
+    cy.get('[data-test-id="edit"]').click();
+    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}/edit`);
     cy.get('.active').should('not.exist');
     cy.visit(path);
     cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
   });
-  it('update-email', () => {
+  it('go to contact', () => {
     loginGoTo(user, path);
-    cy.get('[data-test-id="update-email"]').click();
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}/update-email`);
-    cy.get('.active').should('not.exist');
-    cy.visit(path);
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
-  });
-  it('reset-password', () => {
-    loginGoTo(user, path);
-    cy.get('[data-test-id="reset-password"]').click();
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}/reset-password`);
-    cy.get('.active').should('not.exist');
-    cy.visit(path);
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
-  });
-  it('update-account-information', () => {
-    loginGoTo(user, path);
-    cy.get('[data-test-id="update-account-information"]').click();
-    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}/update-account-information`);
+    cy.get('[data-test-id="contact"]').click();
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/user/contacts/1`);
     cy.get('.active').should('not.exist');
     cy.visit(path);
     cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
   });
 });
 
-describe('account page content', () => {
-  it('page content with no name out of box developer', () => {
+describe('page info is accurate', () => {
+  it('objective 1 data reflects accurately', () => {
     loginGoTo(user, path);
-    cy.get('[data-test-id="username"]').contains(user.username);
-    cy.get('[data-test-id="email"]').contains(user.email);
-    cy.get('[data-test-id="first-name"]').contains('None');
-    cy.get('[data-test-id="last-name"]').contains('None');
+    cy.url().should('include', `${Cypress.config('baseUrl')}${path}`);
+    cy.get('[data-test-id="periodicity"]').contains('Biweekly');
+    cy.get('[data-test-id="next-contact-date"]').contains(Objective.getLastSunday());
+    cy.get('[data-test-id="last-contact-date"]').contains('2023-02-15');
+    cy.get('textarea').should('be.empty');
+    cy.get('textarea').should('be.disabled');
+  });
+});
+
+describe('delete objective', () => {
+  const contactObj = {
+    first_name: 'Haku',
+  };
+  const objectiveObj = {
+    periodicity: 'Weekly',
+  };
+  before(() => {
+    // create a contact to delete
+    loginGoTo(user, '/user/contacts/create-contact');
+    cy.get('[id="first_name"]').type(contactObj.first_name);
+    cy.get('[id="periodicity"]').select(objectiveObj.periodicity);
+    cy.get('form[data-test-id="create-contact"] input[type="submit"]').click();
+  });
+
+  after(() => {
+    cy.get('form.delete input[type="submit"]').click();
+  });
+
+  it('', () => {
+    // confirm and delete contact
+    cy.get('p[data-test-id="name"]').contains('Haku').click();
+    cy.get('[data-test-id="objective"]').click();
+    cy.get('form.delete input[type="submit"]').click();
+    cy.get('p[data-test-id="name"]').contains('Haku');
+    cy.get('[data-test-id="create-objective"]').should('exist');
   });
 });

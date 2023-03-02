@@ -4,8 +4,8 @@ block header
   -let objective = contact.getObjective()
   h2 #{`Periodic objective for ${contact.getName()}`}
   nav.flex-right
-    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}`) #{contact.getName()}
-    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/edit`) Edit Objective
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}` data-test-id="contact") #{contact.getName()}
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/${objective.getId()}/edit` data-test-id="edit") Edit Objective
     form.delete(action=`/user/contacts/${contact.getId()}/objectives/periodic/delete` method="post")
       input.unbutton.rebutton(type="submit" value="DELETE OBJECTIVE")
 block main
@@ -13,15 +13,15 @@ block main
     div.objective.flex-column-center
       div.flex-justified
         span #[strong Period:]
-        span #{objective.getPeriod()}
+        span(data-test-id="periodicity") #{objective.getPeriod()}
       br
       div.flex-justified
         span #[strong Next connection date:&nbsp;&nbsp;] 
-        span #{objective.getNextContactDate()}
+        span(data-test-id="next-contact-date") #{objective.getNextContactDate()}
       br
       div.flex-justified 
         span #[strong Last connection date:&nbsp;&nbsp;] 
-        span #{objective.getLastContactDatePretty()}
+        span(data-test-id="last-contact-date") #{objective.getLastContactDatePretty()}
       br
       h3.flex-center Periodic Objective   Notes
       br

@@ -3,11 +3,12 @@ extends ../layout
 block header
   h2 #{`Contact edit page for ${contact.getName()}`}
   nav.flex-right
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}` data-test-id="cancel") Cancel
     form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
       input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
  
 block main
-  form(action=`/user/contacts/${contact.getId()}/edit` method="post")
+  form(action=`/user/contacts/${contact.getId()}/edit` method="post" data-test-id="save-contact")
     +contact-details
     br
     div.contact.flex-column-center
