@@ -90,11 +90,19 @@ describe('Contact.prototype', () => {
       const returnedObjective = minimalContact.getObjective();
       expect(returnedObjective).toBeUndefined();
     });
-
-    test('getName() returns join of contact.first_name and contact.last_name', () => {
-      expect(contact.getName()).toBe('shiva baby');
+    describe('getName()', () => {
+      test('getName() returns join of contact.first_name and contact.last_name', () => {
+        expect(contact.getName()).toBe('baby, shiva');
+      });
+      test('getName() contact.first_name if no contact.last_name', () => {
+        firstNameContact = new Contact({ first_name: 'shiva' });
+        expect(firstNameContact.getName()).toBe('shiva');
+      });
+      test('getName() returns contact.last_name if no first name', () => {
+        lastNameContact = new Contact({ last_name: 'shiva' });
+        expect(lastNameContact.getName()).toBe('shiva');
+      });
     });
-
     test('getFirstName() returns contact.first_name', () => {
       expect(contact.getFirstName()).toBe('shiva');
     });

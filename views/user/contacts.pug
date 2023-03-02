@@ -3,7 +3,7 @@ extends layout
 block header
   h2 Contacts
   nav.flex-right
-    a.unanchor.rebutton(href="/user/contacts/create-contact") Create Contact
+    a.unanchor.rebutton(href="/user/contacts/create-contact" data-test-id="create-contact") Create Contact
   //- nav.flex-right
   //-   a.unanchor.rebutton(href="#") Alphabetical
   //-   a.unanchor.rebutton(href="#") Most recent
@@ -12,7 +12,7 @@ block header
 block main
   if contacts.length > 0
     each contact in contacts
-      div.bordered_tb.solid_hover
+      div.bordered-tb.solid-hover
         -let hrefAddress = `/user/contacts/${contact.getId()}`
         -const objective = contact.getObjective()
           a.unanchor(href=hrefAddress data-test-id="contact")
@@ -27,14 +27,14 @@ block main
     div.flex-center
       nav.pagination
         span.end
-          a.unanchor(rel="prev" href=`/user/contacts?page=${0}`) Start
+          a.unanchor(rel="prev" href=`/user/contacts?page=${1}` data-test-id="start") Start
         each n in navVector
           if n === page
-            span.page.active #{n}
+            span.page.active(data-test-id="page") #{n}
           else
             span.page
-              a.unanchor(href=`/user/contacts?page=${n}`) #{n}
+              a.unanchor(href=`/user/contacts?page=${n}` data-test-id="page") #{n}
         span.end
-          a.unanchor(rel="next" href=`/user/contacts?page=${endPage}`) End
+          a.unanchor(rel="next" href=`/user/contacts?page=${endPage}` data-test-id="end") End
   else 
     h3(data-test-id="contact") You currently have no contacts

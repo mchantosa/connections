@@ -52,7 +52,7 @@ describe('account page navigation', () => {
     loginGoTo(user, path);
     cy.get('.fifth form').submit();
     cy.url().should('equal', `${Cypress.config('baseUrl')}/home`);
-    cy.get('.active').contains('Home');
+    cy.get('.active').contains('Connections');
     cy.visit(path);
     cy.url().should('equal', `${Cypress.config('baseUrl')}/login?redirect=${path}`);
   });

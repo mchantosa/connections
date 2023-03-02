@@ -3,7 +3,7 @@ extends ../layout
 block header
   h2 #{`Contact information for ${contact.getName()}`}
   nav.flex-right
-    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/edit`) Edit Contact
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/edit` data-test-id="edit") Edit Contact
     form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
       input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
  
@@ -28,15 +28,16 @@ block main
     div
       if contact.getObjective()
         -let objective = contact.getObjective()
-        a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/periodic/${objective.getId()}` data-test-id="objective")
-          p #[strong Period:&nbsp;&nbsp;] #{`${objective.getPeriod()}`}
-          p #[strong Date of next contact:&nbsp;&nbsp;] #{`${objective.getNextContactDate()}`}
-          p #[strong Date of last contact:&nbsp;&nbsp;] #{`${objective.getLastContactDatePretty()}`}   
+        div.bordered-tb.solid-hover
+          a.unanchor(href=`/user/contacts/${contact.getId()}/objectives/periodic/${objective.getId()}` data-test-id="objective")
+            p(data-test-id="objective-period") #[strong Period:&nbsp;&nbsp;] #{`${objective.getPeriod()}`}
+            p(data-test-id="objective-next-contact-date") #[strong Date of next contact:&nbsp;&nbsp;] #{`${objective.getNextContactDate()}`}
+            p(data-test-id="objective-last-contact-date") #[strong Date of last contact:&nbsp;&nbsp;] #{`${objective.getLastContactDatePretty()}`}   
       else 
         p(data-test-id="objective") No periodic Objective
         br
         div
-          a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/create-objective`) Create an objective
+          a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/create-objective` data-test-id="create-objective") Create an objective
     br
     h2 Contact Notes
     br

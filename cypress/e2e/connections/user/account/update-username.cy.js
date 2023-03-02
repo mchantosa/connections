@@ -1,6 +1,6 @@
 /// <reference types="Cypress" />
 
-const path = '/user/account/update-account-information';
+const path = '/user/account/update-username';
 const user = {
   id: 2,
   username: 'testDeveloper',
@@ -52,7 +52,7 @@ describe('account page navigation', () => {
     loginGoTo(user, path);
     cy.get('.fifth form').submit();
     cy.url().should('equal', `${Cypress.config('baseUrl')}/home`);
-    cy.get('.active').contains('Home');
+    cy.get('.active').contains('Connections');
     cy.visit(path);
     cy.url().should('equal', `${Cypress.config('baseUrl')}/login?redirect=${path}`);
   });
@@ -77,32 +77,81 @@ describe('account page navigation', () => {
 describe('Password reset, given knowledge of existing password:', () => {
   const updatedUser = {
     id: 2,
-    // username: 'testDeveloper!',
+    username: 'testDeveloperBoom',
     // email: 'testdeveloper@gmail.com',
     // password: '12qw!@QW',
-    first_name: 'shiva',
-    last_name: 'the developer',
+    // first_name: 'shiva',
+    // last_name: 'the developer',
   };
 
   after(() => {
     // restore testDeveloper original configuration
     cy.visit(path);
-    cy.get('[id="first-name"]').clear().type(' ');
-    cy.get('[id="last-name"]').clear().type(' ');
+    cy.get('[id="username"]').clear().type(user.username);
     cy.get('[data-test-id="update"]').submit();
   });
 
-  it('login, update fields, submit form', () => {
+  it('login, update username short username, submit form', () => {
     loginGoTo(user, path);
-    // Cypress.log('asdf');
-    cy.get('[id="first-name"]').clear().type(updatedUser.first_name);
-    cy.get('[id="last-name"]').clear().type(updatedUser.last_name);
+    cy.get('[id="username"]').clear().type('dev');
+    cy.get('[data-test-id="update"]').submit();
+
+    // confirm successful redirect and messaging
+    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
+    cy.get('li.message.error').contains('Username must have a minimum of 8 characters');
+    cy.get('[id="username"]').should('have.value', 'dev');
+  });
+
+  it('login, update username with @, submit form', () => {
+    loginGoTo(user, path);
+    cy.get('[id="username"]').clear().type('testdeveloper@domain.com');
+    cy.get('[data-test-id="update"]').submit();
+
+    // confirm successful redirect and messaging
+    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
+    cy.get('li.message.error').contains('Username cannot contain an @ symbol');
+    cy.get('[id="username"]').should('have.value', 'testdeveloper@domain.com');
+  });
+
+  it('login, update with same username, submit form', () => {
+    loginGoTo(user, path);
+    cy.get('[id="username"]').clear().type(user.username);
     cy.get('[data-test-id="update"]').submit();
 
     // confirm successful redirect and messaging
     cy.url().should('equal', `${Cypress.config('baseUrl')}/user/account`);
-    cy.get('li.message.info').contains('Your account information has been updated');
-    cy.get('[data-test-id="first-name"]').contains(updatedUser.first_name);
-    cy.get('[data-test-id="last-name"]').contains(updatedUser.last_name);
+    cy.get('li.message.info').contains('Your updated username matched your existing username, your username was not updated');
+    cy.get('[data-test-id="username"]').contains(user.username);
+  });
+
+  it('login, update with in use username, submit form', () => {
+    loginGoTo(user, path);
+    cy.get('[id="username"]').clear().type('testAdmin');
+    cy.get('[data-test-id="update"]').submit();
+
+    // confirm successful redirect and messaging
+    cy.url().should('equal', `${Cypress.config('baseUrl')}${path}`);
+    cy.get('li.message.error').contains('This username unavailable');
+    cy.get('[id="username"]').should('have.value', 'testAdmin');
+  });
+
+  it('login, update fields, submit form', () => {
+    loginGoTo(user, path);
+    cy.get('[id="username"]').clear().type(updatedUser.username);
+    cy.get('[data-test-id="update"]').submit();
+
+    // confirm successful redirect and messaging
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/user/account`);
+    cy.get('li.message.info').contains('Your username has been updated');
+    cy.get('[data-test-id="username"]').contains(updatedUser.username);
+
+    // logout, confirm you can login with new password
+    cy.get('.fifth form').submit();
+    loginGoTo({
+      username: updatedUser.username,
+      password: user.password,
+    }, '/user/account');
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/user/account`);
+    cy.get('[data-test-id="username"]').contains(updatedUser.username);
   });
 });

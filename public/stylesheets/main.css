@@ -69,14 +69,20 @@ nav > *{
 }
 
 
-.welcome h1{
+h1{
   font-size: 2rem;
   color:orange;
 }
 
-h2.welcome {
-  font-size: 1rem;
+h2 {
+  font-size: 1.5rem;
   color: rgb(1, 63, 109);
+}
+
+.account > h2, 
+.login > h2, 
+.contact > h2{
+  text-align: center;
 }
 
 .line-break{
@@ -98,28 +104,13 @@ h2.welcome {
   width: 300px;
 }
 
-
-/* .clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
-} */
-
-#home > h2, #home > h3{
-  text-align: center;
-}
-
 .account dl, 
 .login dl, 
 .contact dl{
   padding-bottom: .5rem;
 }
 
-.account > h2, 
-.login > h2, 
-.contact > h2{
-  text-align: center;
-}
+
 
 .account dd > input, 
 .login dd > input, 
@@ -163,9 +154,9 @@ textarea{
   align-items: center;
 }
 
-.flex-left-wrap{
+.flex-center-wrap{
   display: flex;
-  justify-content:left;
+  justify-content:center;
   align-items: center;
   /* max-width: 90%; */
   flex-wrap: wrap;
@@ -280,28 +271,28 @@ dl.format dd{
   text-overflow: ellipsis;
 }
 
-.bordered_tb{
+.bordered-tb{
   padding: 8px 0 8px 0;
   border-width: 0 0 .5px 0;
   border-color: rgb(200, 200, 200);
   border-style: solid;
 }
 
-.bordered_tb:first-child{
+.bordered-tb:first-child{
   border-width: .5px 0 .5px 0;
   border-color: rgb(200, 200, 200);
   border-style: solid;
 }
 
-.bordered_tb p{
+.bordered-tb p{
   margin: 0 16px 0 16px;
 }
 
-.solid_hover:hover{
+.solid-hover:hover{
   background-color: rgb(230, 235, 240);
 }
 
-.solid_hover:hover p{
+.solid-hover:hover p{
   color: black;
  }
 
@@ -322,19 +313,9 @@ dd.flex-right{
   margin-right:4px;
 }
 
-h1{
-  font-size: 1.75rem;
-  color:orange;
-}
-
-h2{
-  font-size: 1.5rem;
-  color: rgb(1, 63, 109);
-}
-
 h3{
   font-size: 1.25rem;
-  color:rgb(84, 110, 122 );
+  color:rgb(52, 152, 219);
 }
 
 p{
