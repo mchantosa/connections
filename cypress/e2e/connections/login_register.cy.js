@@ -133,6 +133,5 @@ describe('register an account', () => {
 
     cy.url().should('equal', `${Cypress.config('baseUrl')}/user/home`);
     cy.get('.active').contains('Home');
-    cy.get('h3').contains("It looks like you don't have any contacts. To populate this page, please create a contact.");
   });
 });

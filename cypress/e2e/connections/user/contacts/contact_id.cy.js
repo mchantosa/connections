@@ -96,7 +96,7 @@ describe('create objective', () => {
     cy.get('form.delete input[type="submit"]').click();
   });
 
-  it('', () => {
+  it('Haku renders correctly with no objective', () => {
     // confirm and delete contact
     cy.get('p[data-test-id="name"]').contains('Haku').click();
     cy.get('[data-test-id="objective"]').click();

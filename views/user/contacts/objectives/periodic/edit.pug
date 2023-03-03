@@ -7,7 +7,7 @@ block header
     a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}` data-test-id="contact") #{contact.getName()}
  
 block main
-  form(action=`/user/contacts/${contact.getId()}/objectives/periodic/1/edit` method="post" data-test-id="save-objective")
+  form(action=`/user/contacts/${contact.getId()}/objectives/periodic/${objective.getId()}/edit` method="post" data-test-id="save-objective")
     div.objective.flex-column-center
       div.flex-justified
         div #[label(for="periodicity") #[strong Period:]]
