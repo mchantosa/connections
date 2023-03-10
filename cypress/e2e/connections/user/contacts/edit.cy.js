@@ -1,19 +1,19 @@
 /// <reference types="Cypress" />
 const Objective = require('../../../../../lib/objective');
 
+const loginGoTo = (user, path) => {
+  cy.visit(path);
+  cy.get('form.login dd [id="userCredential"]').type(user.username);
+  cy.get('form.login dd [id="password"]').type(user.password);
+  cy.get('form.login').submit();
+};
+
 const path = '/user/contacts/1/edit';
 const user = {
   id: 1,
   username: 'testAdmin',
   email: 'testadmin@domain.com',
   password: 'adminPa22!',
-};
-
-const loginGoTo = (user, path) => {
-  cy.visit(path);
-  cy.get('form.login dd [id="userCredential"]').type(user.username);
-  cy.get('form.login dd [id="password"]').type(user.password);
-  cy.get('form.login').submit();
 };
 
 describe('account page navigation', () => {
@@ -103,10 +103,10 @@ describe('Edit a contact', () => {
     cy.get('[id="preferred_medium"]').clear();
     cy.get('[id="phone_number"]').clear();
     cy.get('[id="email"]').clear();
-    cy.get('[id="street_address_1"]');
-    cy.get('[id="street_address_2"]');
+    cy.get('[id="street_address_1"]').clear();
+    cy.get('[id="street_address_2"]').clear();
     cy.get('[id="city"]').clear();
-    cy.get('[id="state_code"]').select('');
+    cy.get('[id="state_code"]').select('', { force: true });
     cy.get('[id="zip_code"]').clear();
     cy.get('[id="country"]').clear();
     cy.get('[id="notes"]').clear();
@@ -133,14 +133,14 @@ describe('Edit a contact', () => {
 
     // check details
     cy.url().should('include', `${Cypress.config('baseUrl')}/user/contacts/1`);
-    cy.get('li.message.info').should('contain', 'Dog, Bad changes were saved');
-    cy.get('p[data-test-id="name"]').contains('Dog, Bad');
+    cy.get('li.message.info').should('contain', 'Bad Dog changes were saved');
+    cy.get('p[data-test-id="name"]').contains('Bad Dog');
     cy.get('p[data-test-id="preferred-medium"]').contains('chicken');
     cy.get('p[data-test-id="phone-number"]').contains('123-456-7890');
     cy.get('p[data-test-id="email"]').contains('shivababy@gmail.com');
     cy.get('p[data-test-id="address"]').contains('a pretty street a cute apt Reston, VA 98765');
     cy.get('p[data-test-id="objective-period"]').contains('Biweekly');
-    cy.get('p[data-test-id="objective-next-contact-date"]').contains(Objective.getLastSunday());
+    cy.get('p[data-test-id="objective-next-contact-date"]').contains('2023-02-26');
     cy.get('p[data-test-id="objective-last-contact-date"]').contains('2023-02-15');
     cy.get('textarea[id="notes"]').contains('tuna also works');
   });

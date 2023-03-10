@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon index.js",
+    "cypress": "cypress run --spec 'cypress/e2e/connections/**/*.cy.js'",
     "test": "jest --silent --testTimeout=100000000",
     "test:watch": "jest --watch --silent",
     "seed": "node ./lib/data/createDB.js"

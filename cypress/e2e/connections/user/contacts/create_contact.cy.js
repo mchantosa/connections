@@ -7,6 +7,7 @@ const loginGoTo = (user, path) => {
   cy.get('form.login dd [id="password"]').type(user.password);
   cy.get('form.login').submit();
 };
+
 const user = {
   id: 2,
   username: 'testDeveloper',
@@ -139,16 +140,16 @@ describe('Create a contact', () => {
 
     // check contacts
     cy.url().should('equal', `${Cypress.config('baseUrl')}/user/contacts`);
-    cy.get('li.message.info').should('contain', 'baby, shiva was created')
-      .and('contain', 'objective for baby, shiva was created');
-    cy.get('p[data-test-id="name"]').contains('Name: baby, shiva');
+    cy.get('li.message.info').should('contain', 'shiva baby was created')
+      .and('contain', 'objective for shiva baby was created');
+    cy.get('p[data-test-id="name"]').contains('Name: shiva baby');
     cy.get('p[data-test-id="preferred-medium"]').contains('Preferred Medium: chicken');
     cy.get('p[data-test-id="communication-objective"]').contains('Communication Objective: Biweekly');
     cy.get('a[data-test-id="contact"]').click();
 
     // check details
     cy.url().should('include', `${Cypress.config('baseUrl')}/user/contacts/`);
-    cy.get('p[data-test-id="name"]').contains('baby, shiva');
+    cy.get('p[data-test-id="name"]').contains('shiva baby');
     cy.get('p[data-test-id="preferred-medium"]').contains('chicken');
     cy.get('p[data-test-id="phone-number"]').contains('123-456-7890');
     cy.get('p[data-test-id="email"]').contains('shivababy@gmail.com');

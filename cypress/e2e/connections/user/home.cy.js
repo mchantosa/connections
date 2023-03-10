@@ -2,6 +2,13 @@
 const moment = require('moment');
 const Objective = require('../../../../lib/objective');
 
+const loginGoTo = (user, path) => {
+  cy.visit(path);
+  cy.get('form.login dd [id="userCredential"]').type(user.username);
+  cy.get('form.login dd [id="password"]').type(user.password);
+  cy.get('form.login').submit();
+};
+
 const path = '/user/home';
 const user = {
   id: 2,
@@ -30,13 +37,6 @@ const contacts = [
   { first_name: 'shiva', periodicity: 'Weekly' },
   { last_name: 'baby', periodicity: 'Weekly' },
 ];
-
-const loginGoTo = (user, path) => {
-  cy.visit(path);
-  cy.get('form.login dd [id="userCredential"]').type(user.username);
-  cy.get('form.login dd [id="password"]').type(user.password);
-  cy.get('form.login').submit();
-};
 
 describe('account page navigation', () => {
   it('header, nav, home', () => {
@@ -155,7 +155,7 @@ describe('move connections', () => {
     it('pull first 5 alphabetical elements', () => {
       loginGoTo(user, path);
       // pull first 5 connections
-      for (let index = 0; index < 5; index += 1) {
+      for (let index = 0; index < 6; index += 1) {
         cy.get('[data-test-id="future-objective"]')
           .first()
           .children()
@@ -164,13 +164,14 @@ describe('move connections', () => {
         cy.reload();
       }
       // confirm first 5 are current connections in the proper order with a modified date
-      cy.get('[data-test-id="current-objective"]').should('have.length', 5);
+      cy.get('[data-test-id="current-objective"]').should('have.length', 6);
       const names = [
         'Name:\u00a0\u00a0baby',
-        'Name:\u00a0\u00a0baby 10, shiva',
-        'Name:\u00a0\u00a0baby 11, shiva',
-        'Name:\u00a0\u00a0baby 12, shiva',
-        'Name:\u00a0\u00a0baby 13, shiva',
+        'Name:\u00a0\u00a0shiva',
+        'Name:\u00a0\u00a0shiva baby 1',
+        'Name:\u00a0\u00a0shiva baby 10',
+        'Name:\u00a0\u00a0shiva baby 11',
+        'Name:\u00a0\u00a0shiva baby 12',
       ];
       cy.get('[data-test-id="current-objective"]').each((el, index) => {
         const children = cy.wrap(el).children();
@@ -186,13 +187,14 @@ describe('move connections', () => {
           .should('have.text', `Next Contact Date:\u00a0\u00a0${Objective.getLastSunday()}`);
       });
       // pulled objectives aren't in future objectives
-      cy.get('[data-test-id="future-objective"]').should('have.length', 13);
+      cy.get('[data-test-id="future-objective"]').should('have.length', 12);
       cy.get('[data-test-id="future-objective"]').each((el) => {
         cy.wrap(el).children().first().should('not.have.text', names[0])
           .and('not.have.text', names[1])
           .and('not.have.text', names[2])
           .and('not.have.text', names[3])
-          .and('not.have.text', names[4]);
+          .and('not.have.text', names[4])
+          .and('not.have.text', names[5]);
       });
     });
   });
@@ -237,26 +239,26 @@ describe('move connections', () => {
   describe('Complete', () => {
     it('Complete adds a period to next contact date and sets last contact date', () => {
       loginGoTo(user, path);
-      cy.get('[data-test-id="current-objective"]').should('have.length', 4);
+      cy.get('[data-test-id="current-objective"]').should('have.length', 5);
+      cy.get('[data-test-id="future-objective"]').should('have.length', 13);
+      cy.get('[data-test-id="current-objective"]').last().find('button.completed').click();
+      cy.reload();
+      cy.get('[data-test-id="current-objective"]').last().find('button.completed').click();
+      cy.reload();
+      cy.get('[data-test-id="current-objective"]').should('have.length', 3);
       cy.get('[data-test-id="future-objective"]').should('have.length', 14);
-      cy.get('[data-test-id="current-objective"]').last().find('button.completed').click();
-      cy.reload();
-      cy.get('[data-test-id="current-objective"]').last().find('button.completed').click();
-      cy.reload();
-      cy.get('[data-test-id="current-objective"]').should('have.length', 2);
-      cy.get('[data-test-id="future-objective"]').should('have.length', 15);
     });
     it('Complete sets last contact date', () => {
       loginGoTo(user, path);
       cy.get('[data-test-id="future-objective"]')
-        .first()
+        .last()
         .find('[data-test-id="last-contact-date"]')
         .should('have.text', `Last Contact Date:\u00a0\u00a0${Objective.getMomentDate()}`);
     });
     it('Sorts by next contact over last contact over name', () => {
       loginGoTo(user, path);
       cy.get('[data-test-id="future-objective"]').each((el, index) => {
-        if (index === 13) {
+        if (index === 5) {
           cy.wrap(el).find('button.pull').click();
           cy.reload();
         }
@@ -266,12 +268,12 @@ describe('move connections', () => {
         .find('button.completed')
         .click();
       cy.get('[data-test-id="future-objective"]').each((el, index) => {
-        if (index === 0) {
-          cy.wrap(el).children().first().should('have.text', 'Name:\u00a0\u00a0baby 13, shiva');
-        } else if (index === 1) {
-          cy.wrap(el).children().first().should('have.text', 'Name:\u00a0\u00a0shiva');
-        } else if (index === 2) {
-          cy.wrap(el).children().first().should('have.text', 'Name:\u00a0\u00a0baby 14, shiva');
+        if (index === 11) {
+          cy.wrap(el).children().first().should('have.text', 'Name:\u00a0\u00a0baby');
+        } else if (index === 12) {
+          cy.wrap(el).children().first().should('have.text', 'Name:\u00a0\u00a0shiva baby 11');
+        } else if (index === 13) {
+          cy.wrap(el).children().first().should('have.text', 'Name:\u00a0\u00a0shiva baby 3');
         }
       });
     });

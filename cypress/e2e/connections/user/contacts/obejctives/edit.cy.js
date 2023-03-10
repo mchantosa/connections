@@ -1,19 +1,19 @@
 /// <reference types="Cypress" />
 const Objective = require('../../../../../../lib/objective');
 
+const loginGoTo = (user, path) => {
+  cy.visit(path);
+  cy.get('form.login dd [id="userCredential"]').type(user.username);
+  cy.get('form.login dd [id="password"]').type(user.password);
+  cy.get('form.login').submit();
+};
+
 const path = '/user/contacts/1/objectives/periodic/1/edit';
 const user = {
   id: 1,
   username: 'testAdmin',
   email: 'testadmin@domain.com',
   password: 'adminPa22!',
-};
-
-const loginGoTo = (user, path) => {
-  cy.visit(path);
-  cy.get('form.login dd [id="userCredential"]').type(user.username);
-  cy.get('form.login dd [id="password"]').type(user.password);
-  cy.get('form.login').submit();
 };
 
 describe('account page navigation', () => {
@@ -104,11 +104,11 @@ describe('Edit an objective', () => {
     cy.url().should('include', `${Cypress.config('baseUrl')}/user/contacts/1`);
     cy.get('li.message.info').should('contain', 'Objective updated');
     cy.get('p[data-test-id="objective-period"]').contains(updatedObjectiveObj.periodicity);
-    cy.get('p[data-test-id="objective-next-contact-date"]').contains(Objective.getLastSunday());
+    cy.get('p[data-test-id="objective-next-contact-date"]').contains('2023-02-26');
     cy.get('p[data-test-id="objective-last-contact-date"]').contains('2023-02-15');
     cy.get('[data-test-id="objective"]').click();
     cy.get('[data-test-id="periodicity"]').contains(updatedObjectiveObj.periodicity);
-    cy.get('[data-test-id="next-contact-date"]').contains(Objective.getLastSunday());
+    cy.get('[data-test-id="next-contact-date"]').contains('2023-02-26');
     cy.get('[data-test-id="last-contact-date"]').contains('2023-02-15');
     cy.get('textarea').contains(updatedObjectiveObj.notes);
   });

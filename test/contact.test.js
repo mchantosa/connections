@@ -92,7 +92,7 @@ describe('Contact.prototype', () => {
     });
     describe('getName()', () => {
       test('getName() returns join of contact.first_name and contact.last_name', () => {
-        expect(contact.getName()).toBe('baby, shiva');
+        expect(contact.getName()).toBe('shiva baby');
       });
       test('getName() contact.first_name if no contact.last_name', () => {
         firstNameContact = new Contact({ first_name: 'shiva' });

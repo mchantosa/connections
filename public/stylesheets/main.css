@@ -41,7 +41,7 @@ nav#primary-nav{
 #primary-nav a:hover,
 #primary-nav input:hover,
 nav a:hover,
-nav input:hover,
+/* nav input:hover, */
 .hover:hover {
   box-shadow: 3px 3px 1px rgba(0,0,0,.6);
 }
@@ -52,6 +52,12 @@ nav input:hover,
 
 nav > *{
   margin: 2px;
+}
+
+input.search{
+  height: 27px;
+  /* padding:0 1rem; */
+  border-radius: 3px;
 }
 
 .page,.page a{
@@ -321,4 +327,65 @@ h3{
 p{
   line-height: 1.5;
   color:rgb(96, 125, 139);
+}
+
+.autocomplete-wrapper {
+  position: relative;
+}
+
+.autocomplete-wrapper input {
+  position: relative;
+  z-index: 10;
+  background: transparent;
+}
+
+.autocomplete-ui {
+  position: absolute;
+  z-index: 1;
+  list-style: none;
+  padding: 0px;
+  margin-top: 0;
+  width: 200px;
+  box-shadow: 0 1px 2px grey;
+}
+
+.autocomplete-ui-choice {
+  padding: 5px;
+  border-bottom: solid 1px #ddd;
+}
+
+.autocomplete-ui-choice:hover {
+  background: #eee;
+  cursor: pointer;
+}
+
+.autocomplete-ui-choice.selected {
+  background: lightblue;
+}
+
+.autocomplete-ui-choice:last-of-type {
+  border-bottom: 0;
+}
+
+/* .autocomplete-ui-choice p {
+  margin: 0;
+} */
+
+/* .autocomplete-overlay {
+  position: absolute;
+  top: .35em;
+  left: .14em;
+  z-index: 1;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+} */
+
+/* .autocomplete-overlay:empty {
+  display: none;
+} */
+
+input.search {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 16px;
 }

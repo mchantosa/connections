@@ -1,4 +1,5 @@
 const Objective = require('./lib/objective');
+const Contact = require('./lib/contact');
 
 module.exports = {
   updatePeriodicObjective: (app, requiresAuthentication, requiresUserContactValidation) => {
@@ -66,6 +67,30 @@ module.exports = {
         });
         const updated = await res.locals.store.updateObjective(objective);
         res.json({ updated });
+      },
+    );
+  },
+  queryContacts: (app, requiresAuthentication) => {
+    app.get(
+      '/api/contacts/contacts-names',
+      requiresAuthentication,
+      async (req, res) => {
+        const query = req.query.matching.toLowerCase() || '';
+        const contactsNames = await res.locals.store.getContactsNames(query);
+        res.json(contactsNames);
+      },
+    );
+  },
+
+  getContactId: (app, requiresAuthentication) => {
+    app.get(
+      '/api/contacts/get-contact-id',
+      requiresAuthentication,
+      async (req, res) => {
+        const contactName = req.query.contact_name || '';
+        const contactId = await res.locals.store.getContactId(contactName);
+        if (!contactId)res.json({ id: contactId });
+        else res.json(contactId);
       },
     );
   },

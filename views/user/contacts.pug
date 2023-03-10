@@ -1,14 +1,11 @@
 extends layout
 
 block header
+  
   h2 Contacts
   nav.flex-right
     a.unanchor.rebutton(href="/user/contacts/create-contact" data-test-id="create-contact") Create Contact
-  //- nav.flex-right
-  //-   a.unanchor.rebutton(href="#") Alphabetical
-  //-   a.unanchor.rebutton(href="#") Most recent
-  //-   a.unanchor.rebutton(href="#") Least recent
- 
+  
 block main
   if contacts.length > 0
     each contact in contacts

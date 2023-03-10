@@ -130,6 +130,10 @@ api.completePeriodicObjective(app, requiresAuthentication, requiresUserContactVa
 
 api.pullPeriodicObjective(app, requiresAuthentication, requiresUserContactValidation);
 
+api.queryContacts(app, requiresAuthentication);
+
+api.getContactId(app, requiresAuthentication);
+
 app.get(
   '/',
   (req, res) => {

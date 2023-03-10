@@ -1,18 +1,18 @@
 /// <reference types="Cypress" />
 
+const loginGoTo = (user, path) => {
+  cy.visit(path);
+  cy.get('form.login dd [id="userCredential"]').type(user.email);
+  cy.get('form.login dd [id="password"]').type(user.password);
+  cy.get('form.login').submit();
+};
+
 const path = '/user/account/update-email';
 const user = {
   id: 2,
   username: 'testDeveloper',
   email: 'testdeveloper@domain.com',
   password: 'developerPa22!',
-};
-
-const loginGoTo = (user, path) => {
-  cy.visit(path);
-  cy.get('form.login dd [id="userCredential"]').type(user.email);
-  cy.get('form.login dd [id="password"]').type(user.password);
-  cy.get('form.login').submit();
 };
 
 describe('account page navigation', () => {

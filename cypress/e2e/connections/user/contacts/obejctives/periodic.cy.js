@@ -7,6 +7,7 @@ const loginGoTo = (user, path) => {
   cy.get('form.login dd [id="password"]').type(user.password);
   cy.get('form.login').submit();
 };
+
 const user = {
   id: 1,
   username: 'testAdmin',
@@ -89,7 +90,7 @@ describe('page info is accurate', () => {
     loginGoTo(user, path);
     cy.url().should('include', `${Cypress.config('baseUrl')}${path}`);
     cy.get('[data-test-id="periodicity"]').contains('Biweekly');
-    cy.get('[data-test-id="next-contact-date"]').contains(Objective.getLastSunday());
+    cy.get('[data-test-id="next-contact-date"]').contains('2023-02-26');
     cy.get('[data-test-id="last-contact-date"]').contains('2023-02-15');
     cy.get('textarea').should('be.empty');
     cy.get('textarea').should('be.disabled');

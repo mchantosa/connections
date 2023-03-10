@@ -96,6 +96,17 @@ describe('Query security', () => {
         .rejects
         .toThrow('A session is required to access  getContactsCount');
     });
+    test('getContactsNames(query) throws error', async () => {
+      await expect(connections.getContactsNames('a'))
+        .rejects
+        .toThrow('A session is required to access  getContactsNames');
+    });
+
+    test('getContactId(contactName) throws error', async () => {
+      await expect(connections.getContactId('haku'))
+        .rejects
+        .toThrow('A session is required to access  getContactId');
+    });
 
     test('getObjective(objectiveId) throws error', async () => {
       await expect(connections.getObjective(50))

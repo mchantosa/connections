@@ -1,8 +1,12 @@
 extends layout
 block header
   script(src='/javascripts/user/home.js')
+  script(type="module" src="/javascripts/autocomplete-contacts.js")
   //- h1 Greetings hooman!
   h2 Week of #{lastSunday} to #{thisSaturday}
+  nav.flex-right
+    div
+      input.search(id='autocomplete-contact')
 
 block main
   div.home

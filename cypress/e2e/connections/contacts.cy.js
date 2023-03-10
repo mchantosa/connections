@@ -1,5 +1,12 @@
 /// <reference types="Cypress" />
 
+const loginGoTo = (user, path) => {
+  cy.visit(path);
+  cy.get('form.login dd [id="userCredential"]').type(user.username);
+  cy.get('form.login dd [id="password"]').type(user.password);
+  cy.get('form.login').submit();
+};
+
 const path = '/user/contacts';
 const user = {
   id: 2,
@@ -28,13 +35,6 @@ const contacts = [
   { first_name: 'shiva', periodicity: 'Weekly' },
   { last_name: 'baby', periodicity: 'Weekly' },
 ];
-
-const loginGoTo = (user, path) => {
-  cy.visit(path);
-  cy.get('form.login dd [id="userCredential"]').type(user.username);
-  cy.get('form.login dd [id="password"]').type(user.password);
-  cy.get('form.login').submit();
-};
 
 describe('account page navigation', () => {
   it('header, nav, home', () => {
@@ -127,7 +127,7 @@ describe('Page composition and function', () => {
     it('Page with > 10 contacts displays correctly', () => {
       cy.get('[data-test-id="contact"]').should('have.length', 10);
       cy.get('[data-test-id="name"]').first().contains('Name: baby');
-      cy.get('[data-test-id="name"]').last().contains('Name: baby 2, shiva');
+      cy.get('[data-test-id="name"]').last().contains('Name: shiva baby 16');
     });
 
     it('Pagination works', () => {

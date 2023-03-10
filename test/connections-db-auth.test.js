@@ -351,6 +351,52 @@ describe('Contacts', () => {
       await connectionsAdmin.deleteAllContactsFromUser('testDeveloper');
     });
   });
+  describe('getContactsNames:', () => {
+    beforeEach(async () => {
+      await connectionsAdmin.deleteAllContactsFromUser('testDeveloper');
+    });
+    test('For a user with contacts, getContactsNames returns id, firstName, lastName for all user contacts', async () => {
+      const objs = [
+        { first_name: 'shiva', last_name: 'baby' },
+        { first_name: 'birdie1' },
+        { last_name: 'Birdie2' },
+        { first_name: 'haku' },
+        { last_name: 'Momo' },
+      ];
+      await Promise.all(objs.map((obj) => connections.createContact(new Contact(obj))));
+      const contactsNames = await connections.getContactsNames('i');
+      expect(contactsNames.length).toBe(3);
+      expect(contactsNames.map((contact) => contact.name)
+        .join(' | '))
+        .toBe('birdie1 | Birdie2 | shiva baby');
+      contactsNames.forEach((contact) => {
+        expect(typeof contact.id).toBe('number');
+      });
+    });
+    test('For a user with no contacts, getContactsNames returns false', async () => {
+      const contactsNames = await connections.getContactsNames();
+      expect(contactsNames).toBeFalsy();
+    });
+  });
+  describe('getContactId:', () => {
+    beforeEach(async () => {
+      await connectionsAdmin.deleteAllContactsFromUser('testDeveloper');
+    });
+    test('getContactsID(name) returns contact.id for contact of name name', async () => {
+      const id = await connections.createContact({ first_name: 'shiva', last_name: 'baby' });
+      const contactId = await connections.getContactId('shiva baby');
+      expect(contactId.id).toBe(id);
+    });
+    test('getContactsID(name) returns contact.id for contact of name name', async () => {
+      const id = await connections.createContact({ last_name: 'Haku' });
+      const contactId = await connections.getContactId('Haku');
+      expect(contactId.id).toBe(id);
+    });
+    test('getContactsID(name) returns false for non existent name', async () => {
+      const contactId = await connections.getContactId('sup, yo!');
+      expect(contactId).toBeFalsy();
+    });
+  });
 });
 
 describe('Objectives', () => {

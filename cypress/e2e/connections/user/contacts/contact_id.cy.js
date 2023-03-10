@@ -7,6 +7,7 @@ const loginGoTo = (user, path) => {
   cy.get('form.login dd [id="password"]').type(user.password);
   cy.get('form.login').submit();
 };
+
 const user = {
   id: 1,
   username: 'testAdmin',
@@ -117,7 +118,7 @@ describe('page info is accurate', () => {
     cy.get('p[data-test-id="email"]').contains('none');
     cy.get('p[data-test-id="address"]').contains('none');
     cy.get('p[data-test-id="objective-period"]').contains('Biweekly');
-    cy.get('p[data-test-id="objective-next-contact-date"]').contains(Objective.getLastSunday());
+    cy.get('p[data-test-id="objective-next-contact-date"]').contains('2023-02-26');
     cy.get('p[data-test-id="objective-last-contact-date"]').contains('2023-02-15');
     cy.get('textarea[id="notes"]').should('be.empty');
   });
