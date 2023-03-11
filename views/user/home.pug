@@ -59,7 +59,7 @@ block main
                 p(data-test-id="name") #[strong Name:&nbsp;&nbsp;]#{contact.getName()}
                 p(data-test-id="period") #[strong Periodic Objective:&nbsp;&nbsp;]#{objective.getPeriod()}
                 p(data-test-id="next-contact-date") #[strong Next Contact Date:&nbsp;&nbsp;]#{objective.getNextContactDate()}
-                p(data-test-id="last-contact-date") #[strong Last Contact Date:&nbsp;&nbsp;]#{objective.getLastContactDate()}
+                p(data-test-id="last-contact-date") #[strong Last Contact Date:&nbsp;&nbsp;]#{objective.getLastContactDatePretty()}
                 div.connection-buttons
                   button.snooze.mr-1(data-contact-id=contact.getId() data-objective-id=objective.getId()) snooze
                   button.completed(data-contact-id=contact.getId() data-objective-id=objective.getId() data-objective-periodicity=objective.getPeriod()) completed
