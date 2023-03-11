@@ -389,3 +389,9 @@ input.search {
   font-family: 'Montserrat', sans-serif;
   font-size: 16px;
 }
+
+.search-icon{
+  position: absolute;
+  margin-left: 160px;
+  margin-top:8px;
+}
