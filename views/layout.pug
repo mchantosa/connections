@@ -56,7 +56,7 @@ html(lang="en-US")
             li.fourth(class=(activePage == 'account'? 'active' : ''))
               a.unanchor.nav-rebutton(href="/user/account") Account
             li.fifth
-              form(action="/logout" method="post") 
+              form.logout(action="/logout" method="post") 
                 input.unbutton(type="submit" value="Logout")
       else
         nav#primary-nav

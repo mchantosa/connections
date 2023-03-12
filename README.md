@@ -20,6 +20,7 @@ Additionally, your home page has an upcoming events section that gives you visib
 ## Takeaways and moving forward
 - Mad lib greeting generator
 - Add push, pull, complete buttons to contact pages  
+- Fix vertical spacing to make consistent across browsers 
 - Use rich text for note taking:
   - Currently contacts and objectives offer the use a basic textbox to take notes, a rich text box would be more user friendly and intuitive.
 - Improve address handling:

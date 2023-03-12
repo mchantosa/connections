@@ -36,7 +36,7 @@ describe('register an account', () => {
   it('register a user, username already exists', () => {
     cy.visit(path);
     cy.get('.active').contains('Login');
-    cy.get('form.register dd [id="username"]').type('testAdmin');
+    cy.get('form.register dd [id="username"]').type('TESTADMIN');
     cy.get('form.register dd [id="email"]').type('testadmin@domain.com');
     cy.get('form.register dd [id="password"]').type('12qw!@qw');
     cy.get('form.register dd [id="confirm-password"]').type('12qw!@qw');
@@ -50,7 +50,7 @@ describe('register an account', () => {
     cy.visit(path);
     cy.get('.active').contains('Login');
     cy.get('form.register dd [id="username"]').type('1234567');
-    cy.get('form.register dd [id="email"]').type('testadmin@domain.com');
+    cy.get('form.register dd [id="email"]').type('TESTADMIN@domain.com');
     cy.get('form.register dd [id="password"]').type('12qw!@qw');
     cy.get('form.register dd [id="confirm-password"]').type('12qw!@qw');
     cy.get('form.register').submit();
@@ -125,9 +125,18 @@ describe('register an account', () => {
     cy.get('.active').contains('Login');
     cy.get('li.message.error').contains('Your credentials were invalid, please try again.');
   });
-  it('login a user first time', () => {
+  it('login a user first time username and email', () => {
     cy.visit(path);
-    cy.get('form.login dd [id="userCredential"]').clear().type(user.username);
+    cy.get('form.login dd [id="userCredential"]').clear().type(user.username.toUpperCase());
+    cy.get('form.login dd [id="password"]').type(user.password);
+    cy.get('form.login').submit();
+
+    cy.url().should('equal', `${Cypress.config('baseUrl')}/user/home`);
+    cy.get('.active').contains('Home');
+    cy.get('form.logout').submit();
+
+    cy.visit(path);
+    cy.get('form.login dd [id="userCredential"]').clear().type(user.email.toUpperCase());
     cy.get('form.login dd [id="password"]').type(user.password);
     cy.get('form.login').submit();
 
