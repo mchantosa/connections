@@ -18,7 +18,8 @@ You will receive a weekly set of connection objectives that you can choose to co
 Additionally, your home page has an upcoming events section that gives you visibility into the next 4 weeks of your objectives backlog.
 
 ## Takeaways and moving forward
-- Add an open source banner with a link to my git repo  
+- Mad lib greeting generator
+- Add push, pull, complete buttons to contact pages  
 - Use rich text for note taking:
   - Currently contacts and objectives offer the use a basic textbox to take notes, a rich text box would be more user friendly and intuitive.
 - Improve address handling:
