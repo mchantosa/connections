@@ -71,9 +71,9 @@ html(lang="en-US")
           each kind in kinds
             each message in flash[kind]
               li.message(class=kind)= message
-      br
+      p.space-v1
       p.line-break
-      br
+      p.space-v1
       block header
     main
       block main
@@ -81,12 +81,10 @@ html(lang="en-US")
   footer
     block footer
     div.flex-column-center
-      br
-      br
-      br
+      p.space-v2
+      p.space-v1
       a(href="https://github.com/mchantosa/connections" target="_blank")
         i.github-icon.fa-brands.fa-github.fa-2xl
-      br
-      br
+      p.space-v2
       span Copyright &#169; 2023
       a(href="/home/privacy" data-test-id="privacy") Privacy Statement
