@@ -2,8 +2,9 @@ extends layout
 
 block main
   div.account.flex-column-center
+    p.space-v2
     h2 Account Information 
-    br
+    p.space-v2
     dl.side-by-side 
       dt Username: 
       dd.flex-justified
@@ -14,18 +15,18 @@ block main
       dd.flex-justified
         span(data-test-id="email") #{user.email}
         a.unanchor.rebutton.h-1(href="/user/account/update-email" data-test-id="update-email") edit
-    br
+    p.space-v1
     div
       a.unanchor.rebutton(href="/user/account/reset-password" data-test-id="reset-password") Change Password 
-    br
+    p.space-v2
     h2 User Profile 
-    br
+    p.space-v2
     dl.side-by-side 
       dt First Name:
       dd(data-test-id="first-name") #{user.first_name || "None"}
     dl.side-by-side 
       dt Last Name:
       dd(data-test-id="last-name") #{user.last_name || "None"}
-    br
+    p.space-v1
     div
       a.unanchor.rebutton(href="/user/account/update-account-information" data-test-id="update-account-information") Update Profile Data

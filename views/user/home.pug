@@ -14,13 +14,11 @@ block main
   div.home
     if(!contacts[0])
       div.flex-column-center
-        br
-        br
+        p.space-v2
         p #[strong You have no objectives]
-        br
+        p.space-v1
         p #[strong Please create a contact]
-        br
-        br
+        p.space-v2
         nav.flex-center
           a.unanchor.rebutton(href="/user/contacts/create-contact" data-test-id="create-contact") Create Contact
     else
@@ -33,19 +31,19 @@ block main
           const objective = contact.getObjective();
           return objective.nextContactDateIsAfter(objective.getThisSaturday());
         })
-      br
+      p.space-v2
       h3.flex-center Objectives 
-      br
+      p.space-v1
       div(data-test-id="instructions")
         if(currentObjectives.length === 0)
           p #[strong You currently have no objectives for this week]
-          br
+          p.space-v1
           p #[strong Pull:] Selecting pull will pull an objective into this period
-          br
+          p.space-v1
           p #[strong Snooze:] Selecting snooze will add a week to your objective next contact date
-          br
+          p.space-v1
           p #[strong Complete:] Selecting complete will mark your last date of contact and queue your objective for a period out
-          br
+          p.space-v1
           p #[strong "Coming up"] looks out two weeks
       div.flex-center-wrap
         each contact in currentObjectives
@@ -63,10 +61,9 @@ block main
                 div.connection-buttons
                   button.snooze.mr-1(data-contact-id=contact.getId() data-objective-id=objective.getId()) snooze
                   button.completed(data-contact-id=contact.getId() data-objective-id=objective.getId() data-objective-periodicity=objective.getPeriod()) completed
-        br
-        br
+      p.space-v2
       h3.flex-center Coming Up
-      br
+      p.space-v1
       div.flex-center-wrap
         each contact in futureObjectives
           -
