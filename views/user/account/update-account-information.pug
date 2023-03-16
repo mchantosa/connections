@@ -3,20 +3,20 @@ extends ../layout
 block main
   form(action="/user/account/update-account-information" method="post" data-test-id="update")
     div.account.flex-column-center
-      br
       h2 Update Account Information
-      br
+      p.space-v2
       dl.side-by-side 
         dt
           label(for="first-name") First name:  
         dd
           input(type="text" name="first_name" id="first-name" value=user.first_name)
+      p.space-v1
       dl.side-by-side 
         dt  
           label(for="last-name") Last name:  
         dd
           input(type="text" name="last_name" id="last-name" value=user.last_name)
-      br
+      p.space-v1
     nav.flex-right
       input.unbutton.rebutton(type="submit" value="Update")
       a.unanchor.rebutton(href="/user/account" data-test-id="cancel") Cancel

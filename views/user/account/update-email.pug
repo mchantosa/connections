@@ -4,14 +4,14 @@ block main
   form(action="/user/account/update-email" method="post" data-test-id="update")
     div.account.flex-column-center
       h2 Update Email
-      br
+      p.space-v2
       dl.side-by-side
         dt
           label(for="email") Email:  
         dd
           -let email = (user.newEmail) ? user.newEmail : user.email
           input(type="email" name="email" id="email" value=email)
-    br
+    p.space-v1
     nav.flex-right
       input.unbutton.rebutton(type="submit" value="Update email")
       a.unanchor.rebutton(href="/user/account" data-test-id="cancel") Cancel
