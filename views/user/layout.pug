@@ -3,7 +3,7 @@ extends ../layout
 mixin contact-details
   div.contact.flex-column-center
     h3 Name
-    br
+    p.space-v1
     div
       dl.side-by-side
         dt 
@@ -15,9 +15,9 @@ mixin contact-details
           label(for="last_name") Last Name: 
         dd
           input(type="text" name="last_name" id="last_name" value=contact.getLastName())
-    br
+    p.space-v2
     h3 Contact Information
-    br
+    p.space-v1
     div
       dl.side-by-side
         dt 
@@ -37,9 +37,9 @@ mixin contact-details
           label(for="email") Email:
         dd
           input(type="email" name="email" id="email" placeholder='username@domain.com' value=contact.getEmail())
-    br
+    p.space-v2
     h3 Address
-    br
+    p.space-v1
     div
       dl.side-by-side
         dt
@@ -132,8 +132,8 @@ mixin contact-details
           label(for="country") Country: 
         dd
           input(type="text" name="country" id="country" value=contact.getCountry())
-    br
+    p.space-v2
     h3 Contact Notes
-    br
+    p.space-v1
     textarea(wrap="soft" name="notes" id="notes" placeholder = contact.getPlaceholderNotes()) #{contact.getNotes()}
 

@@ -1,16 +1,16 @@
 extends ../layout
 
 block header
-  h2 #{`Create a contact`}
+  h2 #{'Create a contact'}
  
 block main
+  p.space-v1
   form(action=`/user/contacts/create-contact` method="post" data-test-id='create-contact')
     +contact-details
-    br
     div.contact.flex-column-center
       -let objective = contact.getObjective();
       h3 Objective
-      br
+      p.space-v1
       div
         dl.side-by-side
           dt #[label(for="periodicity") #[strong Period:]]
@@ -20,6 +20,6 @@ block main
               option(selected = !periods.includes(objective.getPeriod()) disabled) Please choose one
               each period in periods
                 option(selected = period === objective.getPeriod() value = period) #{period}
-    br
+    p.space-v2
     div.contact.flex-column-center
       input.unbutton.rebutton(type="submit" value="Save Contact")

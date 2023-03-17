@@ -2,14 +2,16 @@ extends ../layout
 
 block header
   h2 #{`Contact edit page for ${contact.getName()}`}
+  p.space-v1
   nav.flex-right
     a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}` data-test-id="cancel") Cancel
     form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
       input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
  
 block main
+  p.space-v2
   form(action=`/user/contacts/${contact.getId()}/edit` method="post" data-test-id="save-contact")
     +contact-details
-    br
+    p.space-v2
     div.contact.flex-column-center
       input.unbutton.rebutton(type="submit" value="Save Contact")

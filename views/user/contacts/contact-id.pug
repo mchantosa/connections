@@ -1,30 +1,32 @@
 extends ../layout
 
 block header
-  h2 #{`Contact information for ${contact.getName()}`}
+  h2 #{`${contact.getName()}`}
+  p.space-v1
   nav.flex-right
-    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/edit` data-test-id="edit") Edit Contact
+    a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/edit` data-test-id="edit") Edit
     form.delete(action=`/user/contacts/${contact.getId()}/delete` method="post")
-      input.unbutton.rebutton(type="submit" value="DELETE CONTACT")
+      input.unbutton.rebutton(type="submit" value="DELETE")
  
 block main  
+  p.space-v2
   div.contact.flex-column-center
     h2 Name 
     p(data-test-id="name") #{contact.getName()}
-    br
+    p.space-v2
     h2 Contact Information
-    br
+    p.space-v1
     div
       p(data-test-id="preferred-medium") #[strong Preferred medium:&nbsp;&nbsp;]#{contact.getPreferredMediumPretty()}
       p(data-test-id="phone-number") #[strong Phone:&nbsp;&nbsp;]#{contact.getPhoneNumberPretty()}
       p(data-test-id="email") #[strong Email:&nbsp;&nbsp;]#{contact.getEmailPretty()}
-    br
+    p.space-v2
     h2 Address: 
-    br
+    p.space-v1
     p(data-test-id="address") #{contact.getAddressPretty()}
-    br
+    p.space-v2
     h2 Communication Objective
-    br
+    p.space-v1
     div
       if contact.getObjective()
         -let objective = contact.getObjective()
@@ -38,8 +40,8 @@ block main
         br
         div
           a.unanchor.rebutton(href=`/user/contacts/${contact.getId()}/objectives/periodic/create-objective` data-test-id="create-objective") Create an objective
-    br
+    p.space-v2
     h2 Contact Notes
-    br
+    p.space-v1
     div
       textarea(wrap="soft" name="notes" id="notes" disabled) #{contact.getNotes()}
